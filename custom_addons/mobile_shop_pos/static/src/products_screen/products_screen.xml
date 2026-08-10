@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="mobile_shop_pos.ProductsScreen">
+        <div class="o_mobile_pos o_mobile_products_screen">
+
+            <!-- ============ MAIN: PRODUCT GRID ============ -->
+            <div class="o_mobile_pos_products">
+
+                <div class="o_mobile_pos_topbar">
+                    <div class="o_mobile_pos_brand">
+                        <i class="fa fa-cubes" role="img"/>
+                        <span>Products</span>
+                    </div>
+
+                    <div class="o_mobile_pos_search">
+                        <i class="fa fa-search"/>
+                        <input type="text"
+                               placeholder="Search products, brand, model..."
+                               t-att-value="state.searchTerm"
+                               t-on-input="onSearchInput"/>
+                        <i t-if="state.searchTerm"
+                           class="fa fa-times o_mobile_pos_search_clear"
+                           t-on-click="clearSearch"/>
+                    </div>
+
+                    <button type="button"
+                            class="o_mobile_products_add_btn"
+                            t-on-click="openNewProduct">
+                        <i class="fa fa-plus"/> Add Product
+                    </button>
+                </div>
+
+                <div class="o_mobile_pos_categories">
+                    <t t-foreach="state.categories" t-as="cat" t-key="cat.id || 'all'">
+                        <button type="button"
+                                t-att-class="'o_mobile_pos_cat_btn ' + (state.activeCategory === cat.id ? 'active' : '')"
+                                t-on-click="() => this.setCategory(cat.id)">
+                            <t t-esc="cat.name"/>
+                        </button>
+                    </t>
+                </div>
+
+                <div class="o_mobile_pos_grid_wrapper">
+                    <div t-if="state.loading" class="o_mobile_pos_loading">
+                        <i class="fa fa-circle-o-notch fa-spin"/> Loading products...
+                    </div>
+
+                    <div t-elif="!filteredProducts.length" class="o_mobile_pos_empty">
+                        <i class="fa fa-inbox"/>
+                        <div>No products found</div>
+                    </div>
+
+                    <div t-else="" class="o_mobile_pos_grid">
+                        <t t-foreach="filteredProducts" t-as="product" t-key="product.id">
+                            <div class="o_mobile_pos_card"
+                                 t-on-click="() => this.openEditProduct(product)">
+
+                                <div class="o_mobile_pos_card_img">
+                                    <img t-att-src="productImageUrl(product)" alt="product"/>
+                                    <span t-if="product.stock_quantity &lt;= 0"
+                                          class="o_mobile_products_badge_out">Out</span>
+                                    <span t-elif="product.is_low_stock"
+                                          class="o_mobile_products_badge_out">Low</span>
+                                    <i class="fa fa-pencil o_mobile_products_edit_icon"/>
+                                </div>
+
+                                <div class="o_mobile_pos_card_body">
+                                    <div class="o_mobile_pos_card_name" t-esc="product.name"/>
+                                    <div t-if="productSubtitle(product)"
+                                         class="o_mobile_pos_card_sub"
+                                         t-esc="productSubtitle(product)"/>
+                                    <div class="o_mobile_pos_card_footer">
+                                        <span class="o_mobile_pos_card_price">
+                                            LKR <t t-esc="formatMoney(product.selling_price)"/>
+                                        </span>
+                                        <span class="o_mobile_pos_card_stock">
+                                            <t t-esc="product.stock_quantity"/> in stock
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ SLIDE-OVER: ADD / EDIT FORM ============ -->
+            <div t-if="state.panelOpen" class="o_mobile_products_overlay" t-on-click="closePanel"/>
+
+            <div t-att-class="'o_mobile_products_panel ' + (state.panelOpen ? 'open' : '')">
+                <div class="o_mobile_products_panel_header">
+                    <span><t t-esc="state.isNew ? 'Add Product' : 'Edit Product'"/></span>
+                    <button type="button" class="o_mobile_products_panel_close" t-on-click="closePanel">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+
+                <div class="o_mobile_products_panel_body">
+
+                    <div class="o_mobile_products_image_upload">
+                        <img t-att-src="formImageUrl()" alt="product"/>
+                        <div class="o_mobile_products_image_actions">
+                            <label class="o_mobile_products_upload_btn">
+                                <i class="fa fa-upload"/> Upload
+                                <input type="file" accept="image/*" t-on-change="onImageChange"/>
+                            </label>
+                            <button t-if="state.form.image"
+                                    type="button"
+                                    class="o_mobile_products_remove_img_btn"
+                                    t-on-click="removeImage">
+                                <i class="fa fa-trash"/>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_products_field">
+                        <label>Category *</label>
+                        <div class="o_mobile_products_cat_pills">
+                            <t t-foreach="state.formCategories" t-as="cat" t-key="cat.id">
+                                <button type="button"
+                                        t-att-class="'o_mobile_pos_cat_btn ' + (state.form.category_id === cat.id ? 'active' : '')"
+                                        t-on-click="() => this.setFormCategory(cat.id)">
+                                    <t t-esc="cat.name"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_products_field_row">
+                        <div class="o_mobile_products_field">
+                            <label>Brand *</label>
+                            <input type="text" t-att-value="state.form.brand"
+                                   placeholder="e.g. Apple"
+                                   t-on-input="(ev) => this.onFieldInput('brand', ev)"/>
+                        </div>
+                        <div class="o_mobile_products_field">
+                            <label>Model *</label>
+                            <input type="text" t-att-value="state.form.model_name"
+                                   placeholder="e.g. 15 Pro"
+                                   t-on-input="(ev) => this.onFieldInput('model_name', ev)"/>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_products_field">
+                        <label>
+                            Specifications
+                            <span class="o_mobile_products_hint">(Storage, RAM, Color, Wattage, mAh...)</span>
+                        </label>
+
+                        <t t-foreach="state.form.specs" t-as="spec" t-key="spec_index">
+                            <div class="o_mobile_products_field_row">
+                                <select t-on-change="(ev) => this.onSpecAttributeChange(spec, ev)">
+                                    <t t-foreach="state.specAttributes" t-as="attr" t-key="attr.id">
+                                        <option t-att-value="attr.id"
+                                                t-att-selected="attr.id === spec.attribute_id">
+                                            <t t-esc="attr.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                                <input type="text"
+                                       t-att-value="spec.value"
+                                       placeholder="Value"
+                                       t-on-input="(ev) => this.onSpecValueInput(spec, ev)"/>
+                                <button type="button"
+                                        class="o_mobile_pos_line_remove"
+                                        t-on-click="() => this.removeSpecLine(spec)">
+                                    <i class="fa fa-times"/>
+                                </button>
+                            </div>
+                        </t>
+
+                        <div class="o_mobile_products_field_row">
+                            <button type="button" class="o_mobile_pos_cat_btn" t-on-click="addSpecLine">
+                                <i class="fa fa-plus"/> Add Spec
+                            </button>
+                            <button type="button" class="o_mobile_pos_cat_btn" t-on-click="createNewSpecType">
+                                <i class="fa fa-plus"/> New Spec Type
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_products_field_row">
+                        <div class="o_mobile_products_field">
+                            <label>Purchase Price</label>
+                            <input type="number" step="0.01" t-att-value="state.form.purchase_price"
+                                   t-on-input="(ev) => this.onNumberInput('purchase_price', ev)"/>
+                        </div>
+                        <div class="o_mobile_products_field">
+                            <label>Selling Price</label>
+                            <input type="number" step="0.01" t-att-value="state.form.selling_price"
+                                   t-on-input="(ev) => this.onNumberInput('selling_price', ev)"/>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_products_field_row">
+                        <div class="o_mobile_products_field">
+                            <label>
+                                Stock Quantity
+                                <span class="o_mobile_products_hint">(manual correction — use Add Stock for normal restocking)</span>
+                            </label>
+                            <input type="number" t-att-value="state.form.stock_quantity"
+                                   t-on-input="(ev) => this.onNumberInput('stock_quantity', ev)"/>
+                        </div>
+                        <div class="o_mobile_products_field">
+                            <label>Reorder Level</label>
+                            <input type="number" t-att-value="state.form.reorder_level"
+                                   t-on-input="(ev) => this.onNumberInput('reorder_level', ev)"/>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_products_field">
+                        <label>Notes</label>
+                        <textarea rows="3"
+                                  t-att-value="state.form.notes"
+                                  t-on-input="(ev) => this.onFieldInput('notes', ev)"/>
+                    </div>
+                </div>
+
+                <div class="o_mobile_products_panel_footer">
+                    <button t-if="!state.isNew"
+                            type="button"
+                            class="o_mobile_products_delete_btn"
+                            t-on-click="deleteProduct">
+                        <i class="fa fa-trash"/> Delete
+                    </button>
+                    <button type="button"
+                            class="o_mobile_products_save_btn"
+                            t-att-disabled="state.saving"
+                            t-on-click="saveProduct">
+                        <i t-if="state.saving" class="fa fa-circle-o-notch fa-spin"/>
+                        <t t-if="!state.saving">Save Product</t>
+                        <t t-else="">Saving...</t>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

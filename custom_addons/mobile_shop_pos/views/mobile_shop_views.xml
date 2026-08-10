@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ============ CATEGORY VIEWS ============ -->
+
+    <record id="mobile_product_category_list_view" model="ir.ui.view">
+        <field name="name">mobile.product.category.list</field>
+        <field name="model">mobile.product.category</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="mobile_product_category_action" model="ir.actions.act_window">
+        <field name="name">Categories</field>
+        <field name="res_model">mobile.product.category</field>
+        <field name="view_mode">list</field>
+    </record>
+
+
+    <!-- ============ SPECIFICATION ATTRIBUTE VIEWS ============ -->
+
+    <record id="mobile_spec_attribute_list_view" model="ir.ui.view">
+        <field name="name">mobile.spec.attribute.list</field>
+        <field name="model">mobile.spec.attribute</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="mobile_spec_attribute_action" model="ir.actions.act_window">
+        <field name="name">Specification Types</field>
+        <field name="res_model">mobile.spec.attribute</field>
+        <field name="view_mode">list</field>
+    </record>
+
+
+    <!-- ============ PRODUCT VIEWS ============ -->
+
+    <record id="mobile_phone_product_list_view" model="ir.ui.view">
+        <field name="name">mobile.phone.product.list</field>
+        <field name="model">mobile.phone.product</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="brand"/>
+                <field name="model_name"/>
+                <field name="spec_summary"/>
+                <field name="selling_price"/>
+                <field name="stock_quantity"/>
+                <field name="is_low_stock" invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="mobile_phone_product_form_view" model="ir.ui.view">
+        <field name="name">mobile.phone.product.form</field>
+        <field name="model">mobile.phone.product</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="category_id"/>
+                        </group>
+
+                        <group>
+                            <field name="stock_quantity"/>
+                            <field name="reorder_level"/>
+                        </group>
+                    </group>
+
+                    <group string="Specification">
+                        <group>
+                            <field name="brand"/>
+                            <field name="model_name"/>
+                        </group>
+                    </group>
+
+                    <field name="spec_ids">
+                        <list editable="bottom">
+                            <field name="attribute_id"/>
+                            <field name="value"/>
+                        </list>
+                    </field>
+
+                    <group string="Pricing">
+                        <group>
+                            <field name="purchase_price"/>
+                            <field name="selling_price"/>
+                        </group>
+                    </group>
+
+                    <group string="Image">
+                        <field name="image" widget="image"/>
+                    </group>
+
+                    <group string="Notes">
+                        <field name="notes"/>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="mobile_phone_product_search_view" model="ir.ui.view">
+        <field name="name">mobile.phone.product.search</field>
+        <field name="model">mobile.phone.product</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="brand"/>
+                <field name="model_name"/>
+                <field name="category_id"/>
+
+                <filter name="in_stock" string="In Stock" domain="[('stock_quantity','>',0)]"/>
+                <filter name="out_of_stock" string="Out of Stock" domain="[('stock_quantity','=',0)]"/>
+                <filter name="low_stock" string="Low Stock" domain="[('is_low_stock','=',True)]"/>
+                <filter name="new_products" string="Recently Added"
+                        domain="[('create_date','&gt;=', (context_today() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+
+                <separator/>
+
+                <group>
+                    <filter name="group_category" string="Category" context="{'group_by':'category_id'}"/>
+                    <filter name="group_brand" string="Brand" context="{'group_by':'brand'}"/>
+                    <filter name="group_model" string="Model" context="{'group_by':'model_name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="mobile_phone_product_action" model="ir.actions.act_window">
+        <field name="name">Products</field>
+        <field name="res_model">mobile.phone.product</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="mobile_phone_product_search_view"/>
+        <field name="context">{'search_default_group_category': 1}</field>
+    </record>
+
+    <menuitem id="mobile_shop_menu_root" name="Mobile Shop"/>
+
+    <menuitem
+        id="mobile_phone_product_menu"
+        name="Products"
+        parent="mobile_shop_menu_root"
+        action="mobile_shop_pos.mobile_products_screen_action"
+        sequence="10"/>
+
+    <menuitem
+        id="mobile_product_category_menu"
+        name="Categories"
+        parent="mobile_shop_menu_root"
+        action="mobile_product_category_action"
+        sequence="11"/>
+
+    <menuitem
+        id="mobile_spec_attribute_menu"
+        name="Specification Types"
+        parent="mobile_shop_menu_root"
+        action="mobile_spec_attribute_action"
+        sequence="12"/>
+
+</odoo>

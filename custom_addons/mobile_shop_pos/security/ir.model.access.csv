@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id,perm_read,perm_write,perm_create,perm_unlink
+access_mobile_phone_product,mobile.phone.product,model_mobile_phone_product,,1,1,1,1
+access_mobile_product_category,mobile.product.category,model_mobile_product_category,,1,1,1,1
+access_mobile_spec_attribute,mobile.spec.attribute,model_mobile_spec_attribute,,1,1,1,1
+access_mobile_product_spec,mobile.product.spec,model_mobile_product_spec,,1,1,1,1
+access_mobile_purchase_order,mobile.purchase.order,model_mobile_purchase_order,,1,1,1,1
+access_mobile_purchase_line,mobile.purchase.line,model_mobile_purchase_line,,1,1,1,1
+access_mobile_sale_order,mobile.sale.order,model_mobile_sale_order,,1,1,1,1
+access_mobile_sale_line,mobile.sale.line,model_mobile_sale_line,,1,1,1,1

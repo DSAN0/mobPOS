@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="category_phone" model="mobile.product.category">
+        <field name="name">Phone</field>
+    </record>
+    <record id="category_charger" model="mobile.product.category">
+        <field name="name">Charger</field>
+    </record>
+    <record id="category_cable" model="mobile.product.category">
+        <field name="name">Cable</field>
+    </record>
+    <record id="category_headphone" model="mobile.product.category">
+        <field name="name">Headphone</field>
+    </record>
+    <record id="category_powerbank" model="mobile.product.category">
+        <field name="name">Power Bank</field>
+    </record>
+    <record id="category_accessory" model="mobile.product.category">
+        <field name="name">Accessory</field>
+    </record>
+    <record id="category_other" model="mobile.product.category">
+        <field name="name">Other</field>
+    </record>
+</odoo>

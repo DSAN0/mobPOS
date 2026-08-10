@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="mobile_sale_list_view" model="ir.ui.view">
+        <field name="name">mobile.sale.list</field>
+        <field name="model">mobile.sale.order</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="sale_date"/>
+                <field name="total_amount"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="mobile_sale_form_view" model="ir.ui.view">
+        <field name="name">mobile.sale.form</field>
+        <field name="model">mobile.sale.order</field>
+        <field name="arch" type="xml">
+            <form>
+
+                <header>
+                    <button
+                        name="action_confirm"
+                        string="Confirm Bill"
+                        type="object"
+                        class="btn-primary"
+                        invisible="state != 'draft'"/>
+
+                    <button
+                        name="%(action_report_mobile_sale)d"
+                        string="Print Receipt"
+                        type="action"
+                        invisible="state != 'confirmed'"/>
+
+                    <button
+                        name="action_cancel"
+                        string="Cancel"
+                        type="object"
+                        invisible="state != 'confirmed'"/>
+
+                    <field name="state" widget="statusbar"/>
+                </header>
+
+                <sheet>
+
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sale_date"/>
+                        </group>
+
+                        <group>
+                            <field name="payment_method"/>
+                            <field name="amount_tendered" invisible="payment_method != 'cash'"/>
+                            <field name="change_due" invisible="payment_method != 'cash'" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <field name="line_ids" readonly="state != 'draft'">
+                        <list editable="bottom">
+                            <field name="product_id"/>
+                            <field name="quantity"/>
+                            <field name="price"/>
+                            <field name="subtotal" readonly="1"/>
+                        </list>
+                    </field>
+
+                    <group>
+                        <group/>
+                        <group>
+                            <field name="total_amount" readonly="1"/>
+                        </group>
+                    </group>
+
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="mobile_sale_action" model="ir.actions.act_window">
+        <field name="name">Create Bill</field>
+        <field name="res_model">mobile.sale.order</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="mobile_sale_menu"
+        name="Create Bill"
+        parent="mobile_shop_menu_root"
+        action="mobile_sale_action"
+        sequence="15"/>
+
+</odoo>

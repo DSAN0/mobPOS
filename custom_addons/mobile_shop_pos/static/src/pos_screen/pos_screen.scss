@@ -1,0 +1,539 @@
+// ==========================================================================
+// Mobile Shop POS Screen
+// ==========================================================================
+
+$mpos-primary: #e609d0d9;
+$mpos-primary-dark: #0df87a;
+$mpos-bg: #F4F6FB;
+$mpos-card-bg: #FFFFFF;
+$mpos-border: #E4E7F0;
+$mpos-text: #1F2430;
+$mpos-muted: #8A90A3;
+$mpos-danger: #E13B3B;
+$mpos-success: #2FAE60;
+$mpos-radius: 12px;
+
+.o_mobile_pos {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    background: $mpos-bg;
+    color: $mpos-text;
+    font-family: "Segoe UI", Roboto, -apple-system, sans-serif;
+    overflow: hidden;
+
+    * {
+        box-sizing: border-box;
+    }
+
+    // ---------------------------------------------------------------
+    // Products (left column)
+    // ---------------------------------------------------------------
+    &_products {
+        flex: 1 1 65%;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        padding: 16px;
+        overflow: hidden;
+    }
+
+    &_topbar {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+    }
+
+    &_brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 18px;
+        color: $mpos-primary;
+        white-space: nowrap;
+    }
+
+    &_search {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: $mpos-card-bg;
+        border: 1px solid $mpos-border;
+        border-radius: 999px;
+        padding: 8px 16px;
+        min-width: 220px;
+
+        i.fa-search {
+            color: $mpos-muted;
+        }
+
+        input {
+            border: none;
+            outline: none;
+            flex: 1;
+            background: transparent;
+            font-size: 14px;
+        }
+
+        &_clear {
+            cursor: pointer;
+            color: $mpos-muted;
+            &:hover { color: $mpos-danger; }
+        }
+    }
+
+    &_categories {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        margin-bottom: 6px;
+
+        &::-webkit-scrollbar { height: 4px; }
+        &::-webkit-scrollbar-thumb { background: $mpos-border; border-radius: 4px; }
+    }
+
+    &_cat_btn {
+        flex: 0 0 auto;
+        border: 1px solid $mpos-border;
+        background: $mpos-card-bg;
+        color: $mpos-text;
+        padding: 8px 18px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .15s ease;
+        white-space: nowrap;
+
+        &:hover { border-color: $mpos-primary; }
+
+        &.active {
+            background: $mpos-primary;
+            border-color: $mpos-primary;
+            color: #fff;
+        }
+    }
+
+    &_grid_wrapper {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    &_grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+        padding-bottom: 20px;
+    }
+
+    &_card {
+        background: $mpos-card-bg;
+        border: 1px solid $mpos-border;
+        border-radius: $mpos-radius;
+        cursor: pointer;
+        overflow: hidden;
+        transition: transform .12s ease, box-shadow .12s ease;
+        display: flex;
+        flex-direction: column;
+        user-select: none;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(31, 36, 48, 0.08);
+            border-color: $mpos-primary;
+        }
+
+        &:active { transform: translateY(0); }
+
+        &.out_of_stock {
+            opacity: .45;
+            pointer-events: none;
+        }
+
+        &_img {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: #F0F2F8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        &_badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: $mpos-primary;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            min-width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 6px;
+        }
+
+        &_body {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        &_name {
+            font-size: 13.5px;
+            font-weight: 700;
+            line-height: 1.25;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        &_sub {
+            font-size: 11.5px;
+            color: $mpos-muted;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        &_footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        &_price {
+            font-size: 13px;
+            font-weight: 700;
+            color: $mpos-primary-dark;
+        }
+
+        &_stock {
+            font-size: 10.5px;
+            color: $mpos-muted;
+        }
+    }
+
+    &_loading, &_empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 100%;
+        color: $mpos-muted;
+        font-size: 14px;
+
+        i { font-size: 28px; }
+    }
+
+    // ---------------------------------------------------------------
+    // Cart (right column)
+    // ---------------------------------------------------------------
+    &_cart {
+        flex: 0 0 380px;
+        max-width: 380px;
+        display: flex;
+        flex-direction: column;
+        background: $mpos-card-bg;
+        border-left: 1px solid $mpos-border;
+        padding: 16px;
+        overflow: hidden;
+    }
+
+    &_cart_header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 700;
+        font-size: 15px;
+        margin-bottom: 10px;
+
+        i { margin-right: 6px; color: $mpos-primary; }
+    }
+
+    &_clear_btn {
+        border: none;
+        background: none;
+        color: $mpos-danger;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        &:hover { text-decoration: underline; }
+    }
+
+    &_cart_lines {
+        flex: 1;
+        overflow-y: auto;
+        border-top: 1px dashed $mpos-border;
+        border-bottom: 1px dashed $mpos-border;
+        padding: 6px 0;
+        margin-bottom: 10px;
+        min-height: 80px;
+    }
+
+    &_cart_empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: $mpos-muted;
+        font-size: 13px;
+        gap: 8px;
+        padding: 20px 0;
+
+        i { font-size: 22px; }
+    }
+
+    &_line {
+        display: grid;
+        grid-template-columns: 1fr auto auto auto;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 2px;
+        border-bottom: 1px solid $mpos-border;
+
+        &:last-child { border-bottom: none; }
+    }
+
+    &_line_info {
+        min-width: 0;
+    }
+
+    &_line_name {
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &_line_sub {
+        font-size: 11px;
+        color: $mpos-muted;
+    }
+
+    &_line_qty {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        button {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 1px solid $mpos-border;
+            background: $mpos-bg;
+            cursor: pointer;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        input {
+            width: 34px;
+            text-align: center;
+            border: 1px solid $mpos-border;
+            border-radius: 6px;
+            font-size: 12.5px;
+            padding: 2px 0;
+        }
+    }
+
+    &_line_amount {
+        font-size: 12.5px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    &_line_remove {
+        border: none;
+        background: none;
+        color: $mpos-muted;
+        cursor: pointer;
+
+        &:hover { color: $mpos-danger; }
+    }
+
+    &_totals {
+        margin-bottom: 10px;
+    }
+
+    &_total_row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &_total_main {
+        font-size: 20px;
+        font-weight: 800;
+        color: $mpos-primary-dark;
+    }
+
+    &_payment {
+        margin-bottom: 10px;
+    }
+
+    &_payment_methods {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+
+    &_pay_btn {
+        border: 1px solid $mpos-border;
+        background: $mpos-bg;
+        border-radius: 8px;
+        padding: 8px 4px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+
+        i { font-size: 15px; }
+
+        &.active {
+            background: $mpos-primary;
+            border-color: $mpos-primary;
+            color: #fff;
+        }
+    }
+
+    &_tendered {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        background: $mpos-bg;
+        border-radius: 8px;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+        font-size: 12.5px;
+    }
+
+    &_tendered_display, &_change_display {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &_tendered_amount {
+        font-weight: 700;
+    }
+
+    &_change_display {
+        font-weight: 700;
+
+        &.negative { color: $mpos-danger; }
+        &.positive { color: $mpos-success; }
+    }
+
+    &_quick_amounts {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-bottom: 8px;
+
+        button {
+            border: 1px solid $mpos-border;
+            background: $mpos-card-bg;
+            border-radius: 6px;
+            padding: 6px 2px;
+            font-size: 11.5px;
+            font-weight: 600;
+            cursor: pointer;
+
+            &:hover { border-color: $mpos-primary; }
+        }
+    }
+
+    &_numpad {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+    }
+
+    &_numkey {
+        border: 1px solid $mpos-border;
+        background: $mpos-bg;
+        border-radius: 8px;
+        padding: 10px 0;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+
+        &:hover { background: darken($mpos-bg, 4%); }
+
+        &_back { color: $mpos-primary; }
+        &_clear {
+            grid-column: span 3;
+            color: $mpos-danger;
+        }
+    }
+
+    &_checkout_btn {
+        margin-top: auto;
+        border: none;
+        background: $mpos-primary;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        border-radius: $mpos-radius;
+        padding: 14px;
+        cursor: pointer;
+        transition: background .15s ease;
+
+        &:hover:not(:disabled) { background: $mpos-primary-dark; }
+
+        &:disabled {
+            background: $mpos-border;
+            color: $mpos-muted;
+            cursor: not-allowed;
+        }
+    }
+}
+
+// Responsive: stack cart below products on narrow / tablet screens
+@media (max-width: 992px) {
+    .o_mobile_pos {
+        flex-direction: column;
+        overflow-y: auto;
+
+        &_products {
+            flex: none;
+        }
+
+        &_cart {
+            flex: none;
+            max-width: none;
+            border-left: none;
+            border-top: 1px solid $mpos-border;
+        }
+    }
+}

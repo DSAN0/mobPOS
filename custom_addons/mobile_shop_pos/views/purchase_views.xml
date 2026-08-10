@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="mobile_purchase_list_view" model="ir.ui.view">
+        <field name="name">mobile.purchase.list</field>
+        <field name="model">mobile.purchase.order</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="purchase_date"/>
+                <field name="total_amount"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="mobile_purchase_form_view" model="ir.ui.view">
+        <field name="name">mobile.purchase.form</field>
+        <field name="model">mobile.purchase.order</field>
+        <field name="arch" type="xml">
+            <form>
+
+                <header>
+                    <button
+                        name="action_receive"
+                        string="Add to Stock"
+                        type="object"
+                        class="btn-primary"
+                        invisible="state == 'received'"/>
+
+                    <field name="state" widget="statusbar"/>
+                </header>
+
+                <sheet>
+
+                    <group>
+                        <field name="name"/>
+                        <field name="purchase_date"/>
+                    </group>
+
+                    <field name="line_ids">
+                        <list editable="bottom">
+                            <field name="product_id" placeholder="Type to search or create a new product..."/>
+                            <field name="quantity"/>
+                            <field name="cost_price"/>
+                            <field name="subtotal" readonly="1"/>
+                        </list>
+                    </field>
+
+                    <group>
+                        <group/>
+                        <group>
+                            <field name="total_amount" readonly="1"/>
+                        </group>
+                    </group>
+
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="mobile_purchase_action" model="ir.actions.act_window">
+        <field name="name">Add Stock</field>
+        <field name="res_model">mobile.purchase.order</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        id="mobile_purchase_menu"
+        name="Add Stock"
+        parent="mobile_shop_menu_root"
+        action="mobile_shop_pos.mobile_stock_screen_action"
+        sequence="20"/>
+
+</odoo>

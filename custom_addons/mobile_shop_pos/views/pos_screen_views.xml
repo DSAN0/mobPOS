@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem
+        id="mobile_shop_menu_root"
+        name="Mobile Shop"/>
+
+    <record id="mobile_pos_screen_action" model="ir.actions.client">
+        <field name="name">POS Screen</field>
+        <field name="tag">mobile_shop_pos.pos_screen</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem
+        id="mobile_pos_screen_menu"
+        name="POS Screen"
+        parent="mobile_shop_menu_root"
+        action="mobile_pos_screen_action"
+        sequence="1"/>
+
+    <record id="mobile_products_screen_action" model="ir.actions.client">
+        <field name="name">Products</field>
+        <field name="tag">mobile_shop_pos.products_screen</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="mobile_stock_screen_action" model="ir.actions.client">
+        <field name="name">Add Stock</field>
+        <field name="tag">mobile_shop_pos.stock_screen</field>
+        <field name="target">current</field>
+    </record>
+
+</odoo>
