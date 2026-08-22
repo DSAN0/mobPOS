@@ -98,7 +98,8 @@
         id="mobile_sale_report_menu"
         name="Sales Report"
         parent="mobile_shop_menu_root"
-        action="mobile_sale_report_action"
+        action="mobile_shop_pos.mobile_sales_report_screen_action"
+        groups="mobile_shop_pos.group_mobile_shop_manager"
         sequence="30"/>
 
 </odoo>

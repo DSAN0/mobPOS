@@ -100,7 +100,10 @@ class MobileSaleOrder(models.Model):
                     )
 
             for line in sale.line_ids:
-                line.product_id.stock_quantity -= line.quantity
+                # sudo(): decrementing stock on confirm is a system action,
+                # not a general product edit — Cashiers can confirm sales
+                # without needing broad write access to mobile.phone.product.
+                line.product_id.sudo().stock_quantity -= line.quantity
 
             sale.state = 'confirmed'
 
@@ -110,7 +113,7 @@ class MobileSaleOrder(models.Model):
                 continue
 
             for line in sale.line_ids:
-                line.product_id.stock_quantity += line.quantity
+                line.product_id.sudo().stock_quantity += line.quantity
 
             sale.state = 'cancelled'
 
@@ -169,6 +172,19 @@ class MobileSaleLine(models.Model):
         compute="_compute_profit",
         store=True
     )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        # The client (POS Screen) never sends cost_price, and even if it did,
+        # we don't trust it: cashiers create these records too, and cost/
+        # profit numbers must not be client-settable. Always snapshot the
+        # product's current purchase_price at creation time instead.
+        for vals in vals_list:
+            product_id = vals.get('product_id')
+            if product_id:
+                product = self.env['mobile.phone.product'].browse(product_id)
+                vals['cost_price'] = product.purchase_price
+        return super().create(vals_list)
 
     @api.onchange('product_id')
     def _onchange_product_id(self):

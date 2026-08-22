@@ -93,8 +93,11 @@
 
                     <group string="Pricing">
                         <group>
-                            <field name="purchase_price"/>
+                            <field name="purchase_price" groups="mobile_shop_pos.group_mobile_shop_manager"/>
                             <field name="selling_price"/>
+                        </group>
+                        <group>
+                            <field name="warranty" placeholder="e.g. 1 Year, 6 Months — leave blank for none"/>
                         </group>
                     </group>
 
@@ -146,13 +149,15 @@
         <field name="context">{'search_default_group_category': 1}</field>
     </record>
 
-    <menuitem id="mobile_shop_menu_root" name="Mobile Shop"/>
-
+    <!-- Manager-only: full product editor (price, stock, delete). Cashiers
+         browse products read-only through the POS Screen's own search grid
+         instead — this screen is never shown to them. -->
     <menuitem
         id="mobile_phone_product_menu"
         name="Products"
         parent="mobile_shop_menu_root"
         action="mobile_shop_pos.mobile_products_screen_action"
+        groups="mobile_shop_pos.group_mobile_shop_manager"
         sequence="10"/>
 
     <menuitem
@@ -160,6 +165,7 @@
         name="Categories"
         parent="mobile_shop_menu_root"
         action="mobile_product_category_action"
+        groups="mobile_shop_pos.group_mobile_shop_manager"
         sequence="11"/>
 
     <menuitem
@@ -167,6 +173,7 @@
         name="Specification Types"
         parent="mobile_shop_menu_root"
         action="mobile_spec_attribute_action"
+        groups="mobile_shop_pos.group_mobile_shop_manager"
         sequence="12"/>
 
 </odoo>

@@ -193,6 +193,16 @@
                         </div>
                     </div>
 
+                    <div class="o_mobile_products_field">
+                        <label>
+                            Warranty
+                            <span class="o_mobile_products_hint">(leave blank if none)</span>
+                        </label>
+                        <input type="text" t-att-value="state.form.warranty"
+                               placeholder="e.g. 1 Year, 6 Months"
+                               t-on-input="(ev) => this.onFieldInput('warranty', ev)"/>
+                    </div>
+
                     <div class="o_mobile_products_field_row">
                         <div class="o_mobile_products_field">
                             <label>

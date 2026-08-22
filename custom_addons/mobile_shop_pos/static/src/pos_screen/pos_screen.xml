@@ -72,6 +72,11 @@
                                             <t t-esc="product.stock_quantity"/> left
                                         </span>
                                     </div>
+                                    <button type="button"
+                                            class="o_mobile_pos_card_details_btn"
+                                            t-on-click.stop="() => this.openDetails(product)">
+                                        Show Details
+                                    </button>
                                 </div>
                             </div>
                         </t>
@@ -203,6 +208,67 @@
                     </t>
                     <t t-else="">Processing...</t>
                 </button>
+            </div>
+
+            <!-- ============ PRODUCT DETAILS OVERLAY ============ -->
+            <div t-if="state.detailsProduct" class="o_mobile_pos_details_overlay" t-on-click="closeDetails">
+                <div class="o_mobile_pos_details_panel" t-on-click.stop="() => {}">
+
+                    <button type="button" class="o_mobile_pos_details_close" t-on-click="closeDetails">
+                        <i class="fa fa-times"/>
+                    </button>
+
+                    <div class="o_mobile_pos_details_img">
+                        <img t-att-src="productImageUrl(state.detailsProduct)" alt="product"/>
+                    </div>
+
+                    <div class="o_mobile_pos_details_body">
+                        <div class="o_mobile_pos_details_name" t-esc="state.detailsProduct.name"/>
+
+                        <div class="o_mobile_pos_details_row" t-if="state.detailsProduct.category_id">
+                            <span class="o_mobile_pos_details_label">Category</span>
+                            <span t-esc="state.detailsProduct.category_id[1]"/>
+                        </div>
+
+                        <div class="o_mobile_pos_details_row" t-if="state.detailsProduct.brand">
+                            <span class="o_mobile_pos_details_label">Brand</span>
+                            <span t-esc="state.detailsProduct.brand"/>
+                        </div>
+
+                        <div class="o_mobile_pos_details_row" t-if="state.detailsProduct.model_name">
+                            <span class="o_mobile_pos_details_label">Model</span>
+                            <span t-esc="state.detailsProduct.model_name"/>
+                        </div>
+
+                        <div class="o_mobile_pos_details_row" t-if="state.detailsProduct.spec_summary">
+                            <span class="o_mobile_pos_details_label">Specifications</span>
+                            <span t-esc="state.detailsProduct.spec_summary"/>
+                        </div>
+
+                        <div class="o_mobile_pos_details_row">
+                            <span class="o_mobile_pos_details_label">Warranty</span>
+                            <span t-if="state.detailsProduct.warranty" t-esc="state.detailsProduct.warranty"/>
+                            <span t-if="!state.detailsProduct.warranty" class="o_mobile_pos_details_none">No warranty</span>
+                        </div>
+
+                        <div class="o_mobile_pos_details_row">
+                            <span class="o_mobile_pos_details_label">In Stock</span>
+                            <span t-esc="state.detailsProduct.stock_quantity"/>
+                        </div>
+
+                        <div class="o_mobile_pos_details_price">
+                            LKR <t t-esc="formatMoney(state.detailsProduct.selling_price)"/>
+                        </div>
+
+                        <button type="button"
+                                class="o_mobile_pos_details_add_btn"
+                                t-att-disabled="state.detailsProduct.stock_quantity &lt;= 0"
+                                t-on-click="() => this.addToCartFromDetails(state.detailsProduct)">
+                            <i class="fa fa-cart-plus"/> Add to Bill
+                        </button>
+                    </div>
+
+                </div>
             </div>
         </div>
     </t>

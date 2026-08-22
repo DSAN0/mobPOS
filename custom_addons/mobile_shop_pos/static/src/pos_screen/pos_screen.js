@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, useState, onWillStart } from "@odoo/owl";
+import { Component, useState, onWillStart, onMounted, onWillUnmount } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
@@ -18,6 +18,12 @@ export class MobileShopPOSScreen extends Component {
 
         this.quickKeys = QUICK_KEYS;
 
+        // Kiosk look: hide messaging/activities/apps clutter from the navbar
+        // while this screen is open. Removed again on unmount so the
+        // Owner/Manager gets the normal Odoo UI everywhere else.
+        onMounted(() => document.body.classList.add("o_mobile_shop_kiosk"));
+        onWillUnmount(() => document.body.classList.remove("o_mobile_shop_kiosk"));
+
         this.state = useState({
             categories: [{ id: null, name: "All" }],
             products: [],
@@ -28,6 +34,7 @@ export class MobileShopPOSScreen extends Component {
             amountTendered: 0,
             loading: true,
             processing: false,
+            detailsProduct: null,
         });
 
         onWillStart(async () => {
@@ -53,6 +60,10 @@ export class MobileShopPOSScreen extends Component {
     async loadProducts() {
         this.state.loading = true;
         try {
+            // NOTE: purchase_price is intentionally NOT fetched here. This
+            // screen is used by Cashiers too, and cost/profit data should
+            // never reach their browser. The sale line's cost snapshot is
+            // computed server-side at creation time instead (see sale.py).
             const products = await this.orm.searchRead(
                 "mobile.phone.product",
                 [["stock_quantity", ">", 0]],
@@ -63,9 +74,9 @@ export class MobileShopPOSScreen extends Component {
                     "brand",
                     "model_name",
                     "spec_summary",
-                    "purchase_price",
                     "selling_price",
                     "stock_quantity",
+                    "warranty",
                     "image",
                 ],
                 { order: "name asc" }
@@ -152,6 +163,23 @@ export class MobileShopPOSScreen extends Component {
         this.state.searchTerm = "";
     }
 
+    /* ---------------------------------------------------------------- */
+    /* Product details panel                                             */
+    /* ---------------------------------------------------------------- */
+
+    openDetails(product) {
+        this.state.detailsProduct = product;
+    }
+
+    closeDetails() {
+        this.state.detailsProduct = null;
+    }
+
+    addToCartFromDetails(product) {
+        this.addToCart(product);
+        this.closeDetails();
+    }
+
     addToCart(product) {
         if (product.stock_quantity <= 0) {
             return;
@@ -172,7 +200,6 @@ export class MobileShopPOSScreen extends Component {
                 name: product.name,
                 subtitle: this.productSubtitle(product),
                 price: product.selling_price,
-                cost: product.purchase_price,
                 qty: 1,
                 stock: product.stock_quantity,
             });
@@ -304,6 +331,9 @@ export class MobileShopPOSScreen extends Component {
         }
         this.state.processing = true;
         try {
+            // cost_price is deliberately omitted here — the server snapshots
+            // it from the product's current purchase_price on creation, so
+            // the browser never needs to know or send it.
             const lineCommands = this.state.cart.map((l) => [
                 0,
                 0,
@@ -311,7 +341,6 @@ export class MobileShopPOSScreen extends Component {
                     product_id: l.productId,
                     quantity: l.qty,
                     price: l.price,
-                    cost_price: l.cost,
                 },
             ]);
             const amountTendered =

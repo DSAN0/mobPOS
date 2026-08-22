@@ -48,9 +48,14 @@ class MobilePurchaseOrder(models.Model):
                 continue
 
             for line in order.line_ids:
-                line.product_id.stock_quantity += line.quantity
+                # sudo(): updating stock/cost on receipt is a system action
+                # tied to this specific operation, not a general product
+                # edit — Cashiers can add stock without needing broad write
+                # access to mobile.phone.product.
+                product = line.product_id.sudo()
+                product.stock_quantity += line.quantity
                 if line.cost_price:
-                    line.product_id.purchase_price = line.cost_price
+                    product.purchase_price = line.cost_price
 
             order.state = 'received'
 

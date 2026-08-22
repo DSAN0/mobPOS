@@ -1,0 +1,83 @@
+.o_mobile_report_screen {
+
+    .o_mobile_report_summary {
+        display: flex;
+        gap: 12px;
+        padding: 12px 16px;
+        flex-wrap: wrap;
+    }
+
+    .o_mobile_report_card {
+        flex: 1;
+        min-width: 140px;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 12px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .o_mobile_report_card_label {
+        font-size: 12px;
+        color: #6c757d;
+        text-transform: uppercase;
+    }
+
+    .o_mobile_report_card_value {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .o_mobile_report_card_profit {
+        background: #e6f4ea;
+        border-color: #b7dfc0;
+
+        .o_mobile_report_card_value {
+            color: #1e7e34;
+        }
+    }
+
+    .o_mobile_report_sort {
+        display: flex;
+        gap: 6px;
+        padding: 0 16px 12px;
+        flex-wrap: wrap;
+    }
+
+    .o_mobile_report_table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th, td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        th {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #6c757d;
+        }
+
+        .text-end {
+            text-align: right;
+        }
+    }
+
+    .o_mobile_report_row_name {
+        font-weight: 600;
+    }
+
+    .o_mobile_report_row_sub {
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    .o_mobile_report_profit_cell {
+        font-weight: 600;
+        color: #1e7e34;
+    }
+}

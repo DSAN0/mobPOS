@@ -7,60 +7,123 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">mobile_shop_pos.report_mobile_sale_document</field>
         <field name="report_file">mobile_shop_pos.report_mobile_sale_document</field>
+        <field name="print_report_name">'Receipt - %s' % (object.name)</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
         <field name="binding_model_id" ref="model_mobile_sale_order"/>
         <field name="binding_type">report</field>
     </record>
 
     <template id="report_mobile_sale_document">
         <t t-call="web.html_container">
-            <t t-foreach="docs" t-as="o">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="doc.env.company"/>
                 <t t-call="web.basic_layout">
 
-                    <div class="page" style="font-family: monospace; max-width: 320px; margin: 0 auto;">
+                    <div class="page" style="font-family: Arial, Helvetica, sans-serif; color:#222; padding: 10px 30px;">
 
-                        <div style="text-align: center; margin-bottom: 10px;">
-                            <h3 style="margin: 0;">Mobile Shop</h3>
-                            <div>Sale Receipt</div>
+                        <!-- Header: logo + shop name -->
+                        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom: 4px solid #6b21a8; padding-bottom: 16px; margin-bottom: 20px;">
+                            <div style="display:flex; align-items:center;">
+                                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"
+                                     style="max-height: 70px; max-width: 160px; margin-right: 18px;"/>
+                                <div>
+                                    <div style="font-size: 22px; font-weight: bold; color:#6b21a8;">
+                                        <span t-field="company.name"/>
+                                    </div>
+                                    <div style="font-size: 11px; color:#555;" t-if="company.street or company.city">
+                                        <span t-field="company.street"/>
+                                        <span t-if="company.city">, </span>
+                                        <span t-field="company.city"/>
+                                    </div>
+                                    <div style="font-size: 11px; color:#555;" t-if="company.phone or company.email">
+                                        <span t-if="company.phone" t-field="company.phone"/>
+                                        <span t-if="company.phone and company.email"> · </span>
+                                        <span t-if="company.email" t-field="company.email"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size: 20px; font-weight: bold; color:#6b21a8;">SALES RECEIPT</div>
+                                <div style="font-size: 13px; margin-top: 4px;">
+                                    Bill No: <strong t-field="doc.name"/>
+                                </div>
+                                <div style="font-size: 11px; color:#555;">
+                                    <span t-field="doc.create_date"
+                                          t-options="{'widget': 'datetime', 'format': 'dd MMM yyyy, hh:mm a'}"/>
+                                </div>
+                            </div>
                         </div>
 
-                        <div style="border-top: 1px dashed #000; border-bottom: 1px dashed #000; padding: 5px 0; margin-bottom: 8px;">
-                            <div>Bill No: <span t-field="o.name"/></div>
-                            <div>Date: <span t-field="o.sale_date"/></div>
-                        </div>
-
-                        <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+                        <!-- Items table -->
+                        <table style="width:100%; border-collapse: collapse; font-size: 12px;">
                             <thead>
-                                <tr style="border-bottom: 1px dashed #000;">
-                                    <th style="text-align: left;">Item</th>
-                                    <th style="text-align: center;">Qty</th>
-                                    <th style="text-align: right;">Price</th>
-                                    <th style="text-align: right;">Total</th>
+                                <tr style="background-color:#6b21a8; color:#fff;">
+                                    <th style="padding:8px; text-align:left;">Product</th>
+                                    <th style="padding:8px; text-align:left;">Warranty</th>
+                                    <th style="padding:8px; text-align:center;">Qty</th>
+                                    <th style="padding:8px; text-align:right;">Unit Price</th>
+                                    <th style="padding:8px; text-align:right;">Subtotal</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr t-foreach="o.line_ids" t-as="line">
-                                    <td style="text-align: left;"><span t-field="line.product_id.name"/></td>
-                                    <td style="text-align: center;"><span t-field="line.quantity"/></td>
-                                    <td style="text-align: right;"><span t-field="line.price" t-options="{'widget': 'float', 'precision': 2}"/></td>
-                                    <td style="text-align: right;"><span t-field="line.subtotal" t-options="{'widget': 'float', 'precision': 2}"/></td>
+                                <tr t-foreach="doc.line_ids" t-as="line"
+                                    t-attf-style="background-color:#{'#f5eefc' if line_index % 2 == 0 else '#ffffff'};">
+                                    <td style="padding:8px; border-bottom:1px solid #eee;">
+                                        <span t-field="line.product_id.name"/>
+                                    </td>
+                                    <td style="padding:8px; border-bottom:1px solid #eee;">
+                                        <span t-if="line.product_id.warranty" t-field="line.product_id.warranty"/>
+                                        <span t-if="not line.product_id.warranty" style="color:#999;">—</span>
+                                    </td>
+                                    <td style="padding:8px; border-bottom:1px solid #eee; text-align:center;">
+                                        <span t-field="line.quantity"/>
+                                    </td>
+                                    <td style="padding:8px; border-bottom:1px solid #eee; text-align:right;">
+                                        LKR <span t-field="line.price" t-options="{'widget': 'float', 'precision': 2}"/>
+                                    </td>
+                                    <td style="padding:8px; border-bottom:1px solid #eee; text-align:right;">
+                                        LKR <span t-field="line.subtotal" t-options="{'widget': 'float', 'precision': 2}"/>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
 
-                        <div style="border-top: 1px dashed #000; margin-top: 8px; padding-top: 8px; text-align: right; font-weight: bold; font-size: 14px;">
-                            Total: <span t-field="o.total_amount" t-options="{'widget': 'float', 'precision': 2}"/>
+                        <!-- Totals -->
+                        <div style="display:flex; justify-content:flex-end; margin-top: 18px;">
+                            <table style="width: 280px; font-size: 13px;">
+                                <tr>
+                                    <td style="padding:4px 8px; font-weight:bold; font-size:16px;">Total</td>
+                                    <td style="padding:4px 8px; text-align:right; font-weight:bold; font-size:16px; color:#6b21a8;">
+                                        LKR <span t-field="doc.total_amount" t-options="{'widget': 'float', 'precision': 2}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:4px 8px;">Payment Method</td>
+                                    <td style="padding:4px 8px; text-align:right;">
+                                        <span t-field="doc.payment_method"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="doc.payment_method == 'cash'">
+                                    <td style="padding:4px 8px;">Tendered</td>
+                                    <td style="padding:4px 8px; text-align:right;">
+                                        LKR <span t-field="doc.amount_tendered" t-options="{'widget': 'float', 'precision': 2}"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="doc.payment_method == 'cash'">
+                                    <td style="padding:4px 8px;">Change</td>
+                                    <td style="padding:4px 8px; text-align:right;">
+                                        LKR <span t-field="doc.change_due" t-options="{'widget': 'float', 'precision': 2}"/>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
 
-                        <div style="margin-top: 8px; font-size: 12px;">
-                            <div>Payment: <span t-field="o.payment_method"/></div>
-                            <t t-if="o.payment_method == 'cash'">
-                                <div>Tendered: <span t-field="o.amount_tendered" t-options="{'widget': 'float', 'precision': 2}"/></div>
-                                <div>Change: <span t-field="o.change_due" t-options="{'widget': 'float', 'precision': 2}"/></div>
-                            </t>
-                        </div>
-
-                        <div style="text-align: center; margin-top: 15px; font-size: 11px;">
-                            Thank you for your purchase!
+                        <!-- Footer -->
+                        <div style="margin-top: 40px; border-top: 1px solid #ddd; padding-top: 14px; font-size: 11px; color:#777; text-align:center;">
+                            <div>Thank you for your purchase!</div>
+                            <div style="margin-top:4px;">
+                                Please retain this receipt as proof of warranty where applicable. Warranty terms are set by the product/manufacturer.
+                            </div>
                         </div>
 
                     </div>

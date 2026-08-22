@@ -3,6 +3,7 @@
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 
@@ -17,6 +18,7 @@ function emptyForm() {
         selling_price: 0,
         stock_quantity: 0,
         reorder_level: 5,
+        warranty: "",
         image: false,
         notes: "",
         specs: [], // [{ attribute_id, attribute_name, value }]
@@ -31,6 +33,7 @@ export class MobileShopProductsScreen extends Component {
         this.orm = useService("orm");
         this.notification = useService("notification");
         this.dialog = useService("dialog");
+        this.action = useService("action");
 
         this.state = useState({
             categories: [{ id: null, name: "All" }],
@@ -47,6 +50,22 @@ export class MobileShopProductsScreen extends Component {
         });
 
         onWillStart(async () => {
+            // This screen shows cost price and lets anyone editing here change
+            // prices or delete products, so it's restricted to Owner/Manager
+            // even beyond the menu being hidden — opening the client action
+            // directly by URL must not bypass this.
+            const isManager = await user.hasGroup("mobile_shop_pos.group_mobile_shop_manager");
+            if (!isManager) {
+                this.notification.add(
+                    _t("You don't have access to the product editor."),
+                    { type: "danger" }
+                );
+                await this.action.doAction("mobile_shop_pos.mobile_pos_screen_action", {
+                    clearBreadcrumbs: true,
+                });
+                return;
+            }
+
             await this.loadCategories();
             await this.loadSpecAttributes();
             await this.loadProducts();
@@ -201,6 +220,7 @@ export class MobileShopProductsScreen extends Component {
                 "selling_price",
                 "stock_quantity",
                 "reorder_level",
+                "warranty",
                 "image",
                 "notes",
             ]
@@ -349,6 +369,7 @@ export class MobileShopProductsScreen extends Component {
                 selling_price: form.selling_price,
                 stock_quantity: form.stock_quantity,
                 reorder_level: form.reorder_level,
+                warranty: form.warranty,
                 image: form.image || false,
                 notes: form.notes,
                 spec_ids: specCommands,

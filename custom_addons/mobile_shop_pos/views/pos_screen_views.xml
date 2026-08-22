@@ -3,7 +3,8 @@
 
     <menuitem
         id="mobile_shop_menu_root"
-        name="Mobile Shop"/>
+        name="Mobile Shop"
+        groups="mobile_shop_pos.group_mobile_shop_cashier,mobile_shop_pos.group_mobile_shop_manager"/>
 
     <record id="mobile_pos_screen_action" model="ir.actions.client">
         <field name="name">POS Screen</field>
@@ -16,6 +17,7 @@
         name="POS Screen"
         parent="mobile_shop_menu_root"
         action="mobile_pos_screen_action"
+        groups="mobile_shop_pos.group_mobile_shop_cashier,mobile_shop_pos.group_mobile_shop_manager"
         sequence="1"/>
 
     <record id="mobile_products_screen_action" model="ir.actions.client">

@@ -71,6 +71,7 @@
         name="Add Stock"
         parent="mobile_shop_menu_root"
         action="mobile_shop_pos.mobile_stock_screen_action"
+        groups="mobile_shop_pos.group_mobile_shop_cashier,mobile_shop_pos.group_mobile_shop_manager"
         sequence="20"/>
 
 </odoo>

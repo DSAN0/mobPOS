@@ -1,0 +1,386 @@
+// ==========================================================================
+// Mobile Repair Screen
+// ==========================================================================
+
+$rep-primary: #0d9488;
+$rep-primary-dark: #0f766e;
+$rep-bg: #F4F6FB;
+$rep-card-bg: #FFFFFF;
+$rep-border: #E4E7F0;
+$rep-text: #1F2430;
+$rep-muted: #8A90A3;
+$rep-danger: #E13B3B;
+$rep-success: #2FAE60;
+$rep-warning: #E0A106;
+$rep-radius: 12px;
+
+.o_mobile_repair {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background: $rep-bg;
+    color: $rep-text;
+    font-family: "Segoe UI", Roboto, -apple-system, sans-serif;
+    padding: 16px;
+    overflow: hidden;
+
+    * { box-sizing: border-box; }
+
+    &_topbar {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+    }
+
+    &_brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 18px;
+        color: $rep-primary;
+        white-space: nowrap;
+    }
+
+    &_search {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: $rep-card-bg;
+        border: 1px solid $rep-border;
+        border-radius: 999px;
+        padding: 8px 16px;
+        min-width: 220px;
+
+        i.fa-search { color: $rep-muted; }
+
+        input {
+            border: none;
+            outline: none;
+            flex: 1;
+            background: transparent;
+            font-size: 14px;
+        }
+
+        &_clear {
+            cursor: pointer;
+            color: $rep-muted;
+            &:hover { color: $rep-danger; }
+        }
+    }
+
+    &_new_btn {
+        border: none;
+        background: $rep-primary;
+        color: #fff;
+        font-weight: 700;
+        font-size: 13px;
+        border-radius: 999px;
+        padding: 10px 20px;
+        cursor: pointer;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: background .15s ease;
+
+        &:hover { background: $rep-primary-dark; }
+    }
+
+    &_tabs {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        margin-bottom: 6px;
+
+        &::-webkit-scrollbar { height: 4px; }
+        &::-webkit-scrollbar-thumb { background: $rep-border; border-radius: 4px; }
+    }
+
+    &_tab_btn {
+        flex: 0 0 auto;
+        border: 1px solid $rep-border;
+        background: $rep-card-bg;
+        color: $rep-text;
+        padding: 8px 18px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .15s ease;
+        white-space: nowrap;
+
+        &:hover { border-color: $rep-primary; }
+
+        &.active {
+            background: $rep-primary;
+            border-color: $rep-primary;
+            color: #fff;
+        }
+    }
+
+    &_list_wrapper {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    &_list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-bottom: 20px;
+    }
+
+    &_loading, &_empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 100%;
+        color: $rep-muted;
+        font-size: 14px;
+
+        i { font-size: 28px; }
+    }
+
+    &_card {
+        background: $rep-card-bg;
+        border: 1px solid $rep-border;
+        border-radius: $rep-radius;
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    &_card_main {
+        flex: 1;
+        min-width: 240px;
+    }
+
+    &_card_top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 4px;
+    }
+
+    &_job_no {
+        font-weight: 700;
+        font-size: 13px;
+        color: $rep-primary;
+    }
+
+    &_status_badge {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+        color: #fff;
+        background: $rep-muted;
+
+        &.status_received { background: $rep-warning; }
+        &.status_in_progress { background: #3B82F6; }
+        &.status_ready { background: $rep-primary; }
+        &.status_delivered { background: $rep-success; }
+        &.status_cancelled { background: $rep-danger; }
+    }
+
+    &_customer {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    &_device {
+        font-size: 12.5px;
+        color: $rep-text;
+        margin-top: 2px;
+    }
+
+    &_issue {
+        font-size: 12px;
+        color: $rep-muted;
+        margin-top: 2px;
+    }
+
+    &_meta {
+        display: flex;
+        gap: 14px;
+        margin-top: 6px;
+        font-size: 11px;
+        color: $rep-muted;
+        flex-wrap: wrap;
+    }
+
+    &_cost {
+        font-weight: 700;
+        color: $rep-primary-dark;
+    }
+
+    &_card_actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    &_action_btn {
+        border: 1px solid $rep-border;
+        background: $rep-bg;
+        color: $rep-text;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all .15s ease;
+
+        &:hover { border-color: $rep-primary; color: $rep-primary; }
+
+        &.primary {
+            background: $rep-primary;
+            border-color: $rep-primary;
+            color: #fff;
+
+            &:hover { background: $rep-primary-dark; color: #fff; }
+        }
+
+        &.danger {
+            color: $rep-danger;
+            border-color: $rep-danger;
+
+            &:hover { background: $rep-danger; color: #fff; }
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // New repair panel
+    // ---------------------------------------------------------------
+    &_overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(20, 22, 30, 0.55);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 20px;
+    }
+
+    &_panel {
+        background: $rep-card-bg;
+        border-radius: $rep-radius;
+        width: 100%;
+        max-width: 440px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+    }
+
+    &_panel_header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 18px;
+        border-bottom: 1px solid $rep-border;
+        font-weight: 700;
+        font-size: 15px;
+
+        button {
+            border: none;
+            background: $rep-bg;
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            cursor: pointer;
+            color: $rep-text;
+
+            &:hover { background: $rep-border; }
+        }
+    }
+
+    &_panel_body {
+        padding: 16px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    &_field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            color: $rep-muted;
+        }
+
+        input, textarea {
+            border: 1px solid $rep-border;
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 13.5px;
+            font-family: inherit;
+            outline: none;
+
+            &:focus { border-color: $rep-primary; }
+        }
+
+        textarea { resize: vertical; }
+    }
+
+    &_panel_footer {
+        display: flex;
+        gap: 10px;
+        padding: 16px 18px;
+        border-top: 1px solid $rep-border;
+    }
+
+    &_cancel_btn {
+        flex: 1;
+        border: 1px solid $rep-border;
+        background: $rep-bg;
+        color: $rep-text;
+        font-weight: 600;
+        font-size: 13.5px;
+        border-radius: 8px;
+        padding: 11px;
+        cursor: pointer;
+
+        &:hover { background: $rep-border; }
+    }
+
+    &_save_btn {
+        flex: 2;
+        border: none;
+        background: $rep-primary;
+        color: #fff;
+        font-weight: 700;
+        font-size: 13.5px;
+        border-radius: 8px;
+        padding: 11px;
+        cursor: pointer;
+        transition: background .15s ease;
+
+        &:hover:not(:disabled) { background: $rep-primary-dark; }
+
+        &:disabled {
+            background: $rep-border;
+            color: $rep-muted;
+            cursor: not-allowed;
+        }
+    }
+}

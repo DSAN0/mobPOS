@@ -52,6 +52,11 @@ class MobilePhoneProduct(models.Model):
         store=True
     )
 
+    warranty = fields.Char(
+        string="Warranty",
+        help="e.g. '1 Year', '6 Months'. Leave blank if this product has no warranty."
+    )
+
     image = fields.Image(string="Product Image")
     notes = fields.Text(string="Notes")
 

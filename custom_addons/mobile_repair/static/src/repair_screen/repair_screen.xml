@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="mobile_repair.RepairScreen">
+        <div class="o_mobile_repair">
+
+            <div class="o_mobile_repair_topbar">
+                <div class="o_mobile_repair_brand">
+                    <i class="fa fa-wrench" role="img"/>
+                    <span>Repair Jobs</span>
+                </div>
+
+                <div class="o_mobile_repair_search">
+                    <i class="fa fa-search"/>
+                    <input type="text"
+                           placeholder="Search by name, phone, device, job no..."
+                           t-att-value="state.searchTerm"
+                           t-on-input="onSearchInput"/>
+                    <i t-if="state.searchTerm"
+                       class="fa fa-times o_mobile_repair_search_clear"
+                       t-on-click="clearSearch"/>
+                </div>
+
+                <button type="button" class="o_mobile_repair_new_btn" t-on-click="openNewRepairPanel">
+                    <i class="fa fa-plus"/> Log New Repair
+                </button>
+            </div>
+
+            <div class="o_mobile_repair_tabs">
+                <t t-foreach="statusTabs" t-as="tab" t-key="tab.id || 'all'">
+                    <button type="button"
+                            t-att-class="'o_mobile_repair_tab_btn ' + (state.activeStatus === tab.id ? 'active' : '')"
+                            t-on-click="() => this.setStatusFilter(tab.id)">
+                        <t t-esc="tab.label"/>
+                    </button>
+                </t>
+            </div>
+
+            <div class="o_mobile_repair_list_wrapper">
+                <div t-if="state.loading" class="o_mobile_repair_loading">
+                    <i class="fa fa-circle-o-notch fa-spin"/> Loading repair jobs...
+                </div>
+
+                <div t-elif="!filteredRepairs.length" class="o_mobile_repair_empty">
+                    <i class="fa fa-wrench"/>
+                    <div>No repair jobs found</div>
+                </div>
+
+                <div t-else="" class="o_mobile_repair_list">
+                    <t t-foreach="filteredRepairs" t-as="repair" t-key="repair.id">
+                        <div class="o_mobile_repair_card">
+
+                            <div class="o_mobile_repair_card_main">
+                                <div class="o_mobile_repair_card_top">
+                                    <span class="o_mobile_repair_job_no" t-esc="repair.name"/>
+                                    <span t-attf-class="o_mobile_repair_status_badge status_#{repair.status}">
+                                        <t t-esc="statusLabel(repair.status)"/>
+                                    </span>
+                                </div>
+                                <div class="o_mobile_repair_customer">
+                                    <t t-esc="repair.customer_name"/> · <t t-esc="repair.customer_phone"/>
+                                </div>
+                                <div class="o_mobile_repair_device" t-esc="repair.device"/>
+                                <div class="o_mobile_repair_issue" t-esc="repair.issue_description"/>
+                                <div class="o_mobile_repair_meta">
+                                    <span>Received: <t t-esc="repair.received_date"/></span>
+                                    <span t-if="repair.delivered_date">Delivered: <t t-esc="repair.delivered_date"/></span>
+                                    <span class="o_mobile_repair_cost">LKR <t t-esc="formatMoney(repair.cost)"/></span>
+                                </div>
+                            </div>
+
+                            <div class="o_mobile_repair_card_actions">
+                                <button t-if="repair.status === 'received'" type="button"
+                                        class="o_mobile_repair_action_btn"
+                                        t-on-click="() => this.markInProgress(repair)">
+                                    Start Repair
+                                </button>
+                                <button t-if="repair.status === 'in_progress'" type="button"
+                                        class="o_mobile_repair_action_btn"
+                                        t-on-click="() => this.markReady(repair)">
+                                    Mark Ready
+                                </button>
+                                <button t-if="repair.status === 'ready'" type="button"
+                                        class="o_mobile_repair_action_btn primary"
+                                        t-on-click="() => this.markDelivered(repair)">
+                                    Mark Delivered
+                                </button>
+                                <button t-if="state.isManager and repair.status !== 'delivered' and repair.status !== 'cancelled'" type="button"
+                                        class="o_mobile_repair_action_btn danger"
+                                        t-on-click="() => this.cancelRepair(repair)">
+                                    Cancel
+                                </button>
+                                <button type="button"
+                                        class="o_mobile_repair_action_btn"
+                                        title="Reprint Intake Receipt"
+                                        t-on-click="() => this.printIntakeReceipt(repair.id)">
+                                    <i class="fa fa-print"/> Intake
+                                </button>
+                                <button t-if="repair.status === 'delivered'" type="button"
+                                        class="o_mobile_repair_action_btn"
+                                        title="Reprint Delivery Receipt"
+                                        t-on-click="() => this.printDeliveryReceipt(repair.id)">
+                                    <i class="fa fa-print"/> Delivery
+                                </button>
+                            </div>
+
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+            <!-- ============ NEW REPAIR PANEL ============ -->
+            <div t-if="state.panelOpen" class="o_mobile_repair_overlay" t-on-click="closePanel">
+                <div class="o_mobile_repair_panel" t-on-click.stop="() => {}">
+
+                    <div class="o_mobile_repair_panel_header">
+                        <span>Log New Repair</span>
+                        <button type="button" t-on-click="closePanel"><i class="fa fa-times"/></button>
+                    </div>
+
+                    <div class="o_mobile_repair_panel_body">
+                        <div class="o_mobile_repair_field">
+                            <label>Customer Name</label>
+                            <input type="text" t-att-value="state.form.customer_name"
+                                   t-on-input="(ev) => this.onFieldInput('customer_name', ev)"/>
+                        </div>
+
+                        <div class="o_mobile_repair_field">
+                            <label>Customer Phone</label>
+                            <input type="text" t-att-value="state.form.customer_phone"
+                                   t-on-input="(ev) => this.onFieldInput('customer_phone', ev)"/>
+                        </div>
+
+                        <div class="o_mobile_repair_field">
+                            <label>Device</label>
+                            <input type="text" placeholder="e.g. iPhone 13 Pro Max"
+                                   t-att-value="state.form.device"
+                                   t-on-input="(ev) => this.onFieldInput('device', ev)"/>
+                        </div>
+
+                        <div class="o_mobile_repair_field">
+                            <label>Issue Description</label>
+                            <textarea rows="4" t-att-value="state.form.issue_description"
+                                      t-on-input="(ev) => this.onFieldInput('issue_description', ev)"/>
+                        </div>
+
+                        <div class="o_mobile_repair_field">
+                            <label>Estimated Cost (LKR)</label>
+                            <input type="number" step="0.01" t-att-value="state.form.cost"
+                                   t-on-input="onCostInput"/>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_repair_panel_footer">
+                        <button type="button" class="o_mobile_repair_cancel_btn" t-on-click="closePanel">
+                            Cancel
+                        </button>
+                        <button type="button" class="o_mobile_repair_save_btn"
+                                t-att-disabled="state.saving"
+                                t-on-click="submitNewRepair">
+                            <t t-if="!state.saving">Log Repair</t>
+                            <t t-else="">Saving...</t>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </t>
+
+</templates>
