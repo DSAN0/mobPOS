@@ -55,12 +55,14 @@
                         </div>
 
                         <!-- Items table -->
-                        <table style="width:100%; border-collapse: collapse; font-size: 12px;">
+                        <table style="width:100%; border-collapse: collapse; font-size: 11.5px;">
                             <thead>
                                 <tr style="background-color:#6b21a8; color:#fff;">
                                     <th style="padding:8px; text-align:left;">Product</th>
                                     <th style="padding:8px; text-align:left;">Warranty</th>
                                     <th style="padding:8px; text-align:center;">Qty</th>
+                                    <th style="padding:8px; text-align:right;">Normal Price</th>
+                                    <th style="padding:8px; text-align:center;">Discount</th>
                                     <th style="padding:8px; text-align:right;">Unit Price</th>
                                     <th style="padding:8px; text-align:right;">Subtotal</th>
                                 </tr>
@@ -79,6 +81,21 @@
                                         <span t-field="line.quantity"/>
                                     </td>
                                     <td style="padding:8px; border-bottom:1px solid #eee; text-align:right;">
+                                        <span t-if="line.discount_percent &gt; 0" style="text-decoration:line-through; color:#999;">
+                                            LKR <t t-esc="'%.2f' % line.list_price"/>
+                                        </span>
+                                        <span t-if="line.discount_percent &lt;= 0">
+                                            LKR <t t-esc="'%.2f' % line.list_price"/>
+                                        </span>
+                                    </td>
+                                    <td style="padding:8px; border-bottom:1px solid #eee; text-align:center;">
+                                        <span t-if="line.discount_percent &gt; 0" style="color:#E13B3B; font-weight:bold;">
+                                            -<t t-esc="'%.1f' % line.discount_percent"/>%
+                                        </span>
+                                        <span t-if="line.discount_percent &lt;= 0" style="color:#999;">—</span>
+                                    </td>
+                                    <td style="padding:8px; border-bottom:1px solid #eee; text-align:right;"
+                                        t-attf-style="padding:8px; border-bottom:1px solid #eee; text-align:right; #{'color:#E13B3B; font-weight:bold;' if line.discount_percent > 0 else ''}">
                                         LKR <span t-field="line.price" t-options="{'widget': 'float', 'precision': 2}"/>
                                     </td>
                                     <td style="padding:8px; border-bottom:1px solid #eee; text-align:right;">
@@ -90,7 +107,19 @@
 
                         <!-- Totals -->
                         <div style="display:flex; justify-content:flex-end; margin-top: 18px;">
-                            <table style="width: 280px; font-size: 13px;">
+                            <table style="width: 300px; font-size: 13px;">
+                                <tr t-if="doc.total_discount &gt; 0">
+                                    <td style="padding:4px 8px;">Subtotal (before discount)</td>
+                                    <td style="padding:4px 8px; text-align:right;">
+                                        LKR <span t-esc="'%.2f' % (doc.total_amount + doc.total_discount)"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="doc.total_discount &gt; 0">
+                                    <td style="padding:4px 8px; color:#E13B3B; font-weight:bold;">Total Discount</td>
+                                    <td style="padding:4px 8px; text-align:right; color:#E13B3B; font-weight:bold;">
+                                        - LKR <span t-field="doc.total_discount" t-options="{'widget': 'float', 'precision': 2}"/>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td style="padding:4px 8px; font-weight:bold; font-size:16px;">Total</td>
                                     <td style="padding:4px 8px; text-align:right; font-weight:bold; font-size:16px; color:#6b21a8;">

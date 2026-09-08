@@ -2,8 +2,8 @@
 // Mobile Shop POS Screen
 // ==========================================================================
 
-$mpos-primary: #e609d0d9;
-$mpos-primary-dark: #0df87a;
+$mpos-primary: #3B5BFE;
+$mpos-primary-dark: #2A44D6;
 $mpos-bg: #F4F6FB;
 $mpos-card-bg: #FFFFFF;
 $mpos-border: #E4E7F0;
@@ -11,6 +11,7 @@ $mpos-text: #1F2430;
 $mpos-muted: #8A90A3;
 $mpos-danger: #E13B3B;
 $mpos-success: #2FAE60;
+$mpos-warning: #E08A1E;
 $mpos-radius: 12px;
 
 .o_mobile_pos {
@@ -30,7 +31,7 @@ $mpos-radius: 12px;
     // Products (left column)
     // ---------------------------------------------------------------
     &_products {
-        flex: 1 1 65%;
+        flex: 1 1 55%;
         display: flex;
         flex-direction: column;
         min-width: 0;
@@ -127,7 +128,7 @@ $mpos-radius: 12px;
 
     &_grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 12px;
         padding-bottom: 20px;
     }
@@ -189,6 +190,30 @@ $mpos-radius: 12px;
             padding: 0 6px;
         }
 
+        &_low_badge {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: $mpos-warning;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
+        &_sale_badge {
+            position: absolute;
+            bottom: 6px;
+            left: 6px;
+            background: $mpos-danger;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
         &_body {
             padding: 10px;
             display: flex;
@@ -225,6 +250,22 @@ $mpos-radius: 12px;
             font-size: 13px;
             font-weight: 700;
             color: $mpos-primary-dark;
+        }
+
+        &_price_wrap {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        &_price_old {
+            font-size: 11px;
+            color: $mpos-muted;
+            text-decoration: line-through;
+        }
+
+        &_price_sale {
+            color: $mpos-danger !important;
         }
 
         &_stock {
@@ -267,11 +308,11 @@ $mpos-radius: 12px;
     }
 
     // ---------------------------------------------------------------
-    // Cart (right column)
+    // Cart (right column) — now wider, split into items-list | numpad
     // ---------------------------------------------------------------
     &_cart {
-        flex: 0 0 380px;
-        max-width: 380px;
+        flex: 0 0 660px;
+        max-width: 660px;
         display: flex;
         flex-direction: column;
         background: $mpos-card-bg;
@@ -287,6 +328,7 @@ $mpos-radius: 12px;
         font-weight: 700;
         font-size: 15px;
         margin-bottom: 10px;
+        flex: 0 0 auto;
 
         i { margin-right: 6px; color: $mpos-primary; }
     }
@@ -305,14 +347,37 @@ $mpos-radius: 12px;
         &:hover { text-decoration: underline; }
     }
 
+    &_cart_split {
+        flex: 1;
+        display: flex;
+        gap: 14px;
+        min-height: 0;
+        margin-bottom: 12px;
+    }
+
+    &_cart_left {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &_cart_right {
+        flex: 0 0 268px;
+        display: flex;
+        flex-direction: column;
+        border-left: 1px dashed $mpos-border;
+        padding-left: 14px;
+        overflow-y: auto;
+    }
+
     &_cart_lines {
         flex: 1;
         overflow-y: auto;
         border-top: 1px dashed $mpos-border;
         border-bottom: 1px dashed $mpos-border;
-        padding: 6px 0;
-        margin-bottom: 10px;
-        min-height: 80px;
+        padding: 6px 4px 6px 0;
+        min-height: 120px;
     }
 
     &_cart_empty {
@@ -334,7 +399,7 @@ $mpos-radius: 12px;
         grid-template-columns: 1fr auto auto auto;
         align-items: center;
         gap: 8px;
-        padding: 8px 2px;
+        padding: 9px 4px;
         border-bottom: 1px solid $mpos-border;
 
         &:last-child { border-bottom: none; }
@@ -345,7 +410,7 @@ $mpos-radius: 12px;
     }
 
     &_line_name {
-        font-size: 13px;
+        font-size: 13.5px;
         font-weight: 600;
         white-space: nowrap;
         overflow: hidden;
@@ -353,8 +418,30 @@ $mpos-radius: 12px;
     }
 
     &_line_sub {
+        font-size: 11.5px;
+        color: $mpos-muted;
+    }
+
+    &_line_discount_sub {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    &_line_price_old {
         font-size: 11px;
         color: $mpos-muted;
+        text-decoration: line-through;
+    }
+
+    &_line_discount_chip {
+        background: $mpos-danger;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 999px;
     }
 
     &_line_qty {
@@ -363,8 +450,8 @@ $mpos-radius: 12px;
         gap: 4px;
 
         button {
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             border-radius: 6px;
             border: 1px solid $mpos-border;
             background: $mpos-bg;
@@ -374,17 +461,17 @@ $mpos-radius: 12px;
         }
 
         input {
-            width: 34px;
+            width: 38px;
             text-align: center;
             border: 1px solid $mpos-border;
             border-radius: 6px;
             font-size: 12.5px;
-            padding: 2px 0;
+            padding: 3px 0;
         }
     }
 
     &_line_amount {
-        font-size: 12.5px;
+        font-size: 13px;
         font-weight: 700;
         white-space: nowrap;
     }
@@ -399,7 +486,8 @@ $mpos-radius: 12px;
     }
 
     &_totals {
-        margin-bottom: 10px;
+        flex: 0 0 auto;
+        padding-top: 10px;
     }
 
     &_total_row {
@@ -408,14 +496,29 @@ $mpos-radius: 12px;
         align-items: center;
     }
 
+    &_total_sub {
+        font-size: 12.5px;
+        color: $mpos-muted;
+        margin-bottom: 2px;
+    }
+
+    &_total_discount {
+        font-size: 13px;
+        font-weight: 700;
+        color: $mpos-danger;
+        margin-bottom: 6px;
+    }
+
     &_total_main {
-        font-size: 20px;
+        font-size: 22px;
         font-weight: 800;
         color: $mpos-primary-dark;
     }
 
     &_payment {
-        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
     }
 
     &_payment_methods {
@@ -429,8 +532,8 @@ $mpos-radius: 12px;
         border: 1px solid $mpos-border;
         background: $mpos-bg;
         border-radius: 8px;
-        padding: 8px 4px;
-        font-size: 12px;
+        padding: 8px 2px;
+        font-size: 11px;
         font-weight: 600;
         cursor: pointer;
         display: flex;
@@ -438,7 +541,7 @@ $mpos-radius: 12px;
         align-items: center;
         gap: 4px;
 
-        i { font-size: 15px; }
+        i { font-size: 14px; }
 
         &.active {
             background: $mpos-primary;
@@ -455,7 +558,7 @@ $mpos-radius: 12px;
         border-radius: 8px;
         padding: 8px 10px;
         margin-bottom: 8px;
-        font-size: 12.5px;
+        font-size: 12px;
     }
 
     &_tendered_display, &_change_display {
@@ -477,15 +580,15 @@ $mpos-radius: 12px;
     &_quick_amounts {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 6px;
+        gap: 5px;
         margin-bottom: 8px;
 
         button {
             border: 1px solid $mpos-border;
             background: $mpos-card-bg;
             border-radius: 6px;
-            padding: 6px 2px;
-            font-size: 11.5px;
+            padding: 6px 1px;
+            font-size: 10.5px;
             font-weight: 600;
             cursor: pointer;
 
@@ -518,7 +621,7 @@ $mpos-radius: 12px;
     }
 
     &_checkout_btn {
-        margin-top: auto;
+        flex: 0 0 auto;
         border: none;
         background: $mpos-primary;
         color: #fff;
@@ -635,6 +738,34 @@ $mpos-radius: 12px;
         text-align: right;
     }
 
+    &_details_price_wrap {
+        margin-top: 14px;
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    &_details_price_old {
+        font-size: 14px;
+        color: $mpos-muted;
+        text-decoration: line-through;
+    }
+
+    &_details_price_sale {
+        color: $mpos-danger !important;
+    }
+
+    &_details_discount_chip {
+        background: $mpos-danger;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 999px;
+    }
+
     &_details_add_btn {
         width: 100%;
         margin-top: 14px;
@@ -663,6 +794,17 @@ $mpos-radius: 12px;
 }
 
 // Responsive: stack cart below products on narrow / tablet screens
+@media (max-width: 1200px) {
+    .o_mobile_pos_cart {
+        flex-basis: 520px;
+        max-width: 520px;
+    }
+
+    .o_mobile_pos_cart_right {
+        flex-basis: 230px;
+    }
+}
+
 @media (max-width: 992px) {
     .o_mobile_pos {
         flex-direction: column;
@@ -678,5 +820,19 @@ $mpos-radius: 12px;
             border-left: none;
             border-top: 1px solid $mpos-border;
         }
+    }
+}
+
+@media (max-width: 640px) {
+    .o_mobile_pos_cart_split {
+        flex-direction: column;
+    }
+
+    .o_mobile_pos_cart_right {
+        flex-basis: auto;
+        border-left: none;
+        border-top: 1px dashed $mpos-border;
+        padding-left: 0;
+        padding-top: 12px;
     }
 }

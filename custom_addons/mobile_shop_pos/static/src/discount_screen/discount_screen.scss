@@ -1,0 +1,79 @@
+// ==========================================================================
+// Mobile Shop — Discount Items screen
+// New file — safe to drop in as-is. Reuses $mpos-* variables and the
+// .o_mobile_pos_* / .o_mobile_products_panel* base classes already defined
+// in pos_screen.scss and products_screen.scss (both load earlier in the
+// same web.assets_backend bundle — see __manifest__.py ordering).
+// ==========================================================================
+
+.o_mobile_discount_toggle_btn {
+    flex: 0 0 auto;
+    border: 1px solid $mpos-border;
+    background: $mpos-card-bg;
+    color: $mpos-text;
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &:hover { border-color: $mpos-primary; }
+
+    &.active {
+        background: $mpos-danger;
+        border-color: $mpos-danger;
+        color: #fff;
+    }
+}
+
+.o_mobile_discount_readonly_note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: $mpos-bg;
+    border: 1px dashed $mpos-border;
+    color: $mpos-muted;
+    font-size: 12.5px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+
+    i { color: $mpos-primary; }
+}
+
+// Cashier view: cards aren't clickable, so drop the hover/pointer affordance
+.o_mobile_discount_card_static {
+    cursor: default;
+
+    &:hover {
+        transform: none;
+        box-shadow: none;
+        border-color: $mpos-border;
+    }
+}
+
+.o_mobile_discount_panel {
+    width: 380px;
+}
+
+.o_mobile_discount_product_name {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 16px;
+}
+
+.o_mobile_discount_preview {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba($mpos-danger, 0.08);
+    color: $mpos-danger;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 8px;
+}

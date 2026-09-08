@@ -33,6 +33,18 @@ class MobileSaleOrder(models.Model):
         string="Items"
     )
 
+    amount_before_discount = fields.Float(
+        string="Subtotal (Before Discount)",
+        compute="_compute_total",
+        store=True
+    )
+
+    total_discount = fields.Float(
+        string="Total Discount",
+        compute="_compute_total",
+        store=True
+    )
+
     total_amount = fields.Float(
         string="Total Amount",
         compute="_compute_total",
@@ -66,10 +78,14 @@ class MobileSaleOrder(models.Model):
                 vals['name'] = self.env['ir.sequence'].next_by_code('mobile.sale.order') or 'New'
         return super().create(vals_list)
 
-    @api.depends('line_ids.subtotal')
+    @api.depends('line_ids.subtotal', 'line_ids.list_price', 'line_ids.quantity', 'line_ids.discount_total')
     def _compute_total(self):
         for sale in self:
             sale.total_amount = sum(line.subtotal for line in sale.line_ids)
+            sale.amount_before_discount = sum(
+                line.list_price * line.quantity for line in sale.line_ids
+            )
+            sale.total_discount = sum(line.discount_total for line in sale.line_ids)
 
     @api.depends('total_amount', 'amount_tendered')
     def _compute_change_due(self):
@@ -146,8 +162,17 @@ class MobileSaleLine(models.Model):
         default=1
     )
 
+    list_price = fields.Float(
+        string="Normal Price",
+        help="Snapshot of the product's normal Selling Price (before any "
+             "discount) at the time of this sale. Always set server-side, "
+             "never trusted from the client, so historical bills stay "
+             "accurate even if the product's price changes later."
+    )
+
     price = fields.Float(
-        string="Unit Price"
+        string="Unit Price",
+        help="The price actually charged for this line (after discount, if any)."
     )
 
     cost_price = fields.Float(
@@ -173,23 +198,42 @@ class MobileSaleLine(models.Model):
         store=True
     )
 
+    discount_percent = fields.Float(
+        string="Discount %",
+        compute="_compute_discount",
+        store=True
+    )
+
+    discount_total = fields.Float(
+        string="Discount Amount",
+        compute="_compute_discount",
+        store=True,
+        help="Total amount saved on this line thanks to the discount."
+    )
+
     @api.model_create_multi
     def create(self, vals_list):
-        # The client (POS Screen) never sends cost_price, and even if it did,
-        # we don't trust it: cashiers create these records too, and cost/
-        # profit numbers must not be client-settable. Always snapshot the
-        # product's current purchase_price at creation time instead.
+        # The client (POS Screen) never sends cost_price or list_price, and
+        # even if it did, we don't trust it: cashiers create these records
+        # too, and cost/profit/discount numbers must not be client-settable.
+        # Always snapshot the product's current purchase_price and
+        # selling_price at creation time instead.
         for vals in vals_list:
             product_id = vals.get('product_id')
             if product_id:
                 product = self.env['mobile.phone.product'].browse(product_id)
                 vals['cost_price'] = product.purchase_price
+                vals['list_price'] = product.selling_price
         return super().create(vals_list)
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
         if self.product_id:
-            self.price = self.product_id.selling_price
+            self.list_price = self.product_id.selling_price
+            if self.product_id.has_discount:
+                self.price = self.product_id.discount_price
+            else:
+                self.price = self.product_id.selling_price
             self.cost_price = self.product_id.purchase_price
 
     @api.depends('quantity', 'price')
@@ -206,3 +250,15 @@ class MobileSaleLine(models.Model):
     def _compute_profit(self):
         for line in self:
             line.profit = line.subtotal - line.cost_total
+
+    @api.depends('list_price', 'price', 'quantity')
+    def _compute_discount(self):
+        for line in self:
+            if line.list_price and line.price < line.list_price:
+                line.discount_percent = (
+                    (line.list_price - line.price) / line.list_price * 100
+                )
+                line.discount_total = (line.list_price - line.price) * line.quantity
+            else:
+                line.discount_percent = 0
+                line.discount_total = 0

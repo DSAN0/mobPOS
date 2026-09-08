@@ -75,6 +75,9 @@ export class MobileShopPOSScreen extends Component {
                     "model_name",
                     "spec_summary",
                     "selling_price",
+                    "discount_price",
+                    "has_discount",
+                    "discount_percent",
                     "stock_quantity",
                     "warranty",
                     "image",
@@ -123,6 +126,12 @@ export class MobileShopPOSScreen extends Component {
             : "/mobile_shop_pos/static/src/img/placeholder.png";
     }
 
+    // The price actually charged for a product right now: its discount
+    // price if it has an active discount, otherwise its normal price.
+    effectivePrice(product) {
+        return product.has_discount ? product.discount_price : product.selling_price;
+    }
+
     cartQtyFor(productId) {
         const line = this.state.cart.find((l) => l.productId === productId);
         return line ? line.qty : 0;
@@ -130,6 +139,19 @@ export class MobileShopPOSScreen extends Component {
 
     get cartCount() {
         return this.state.cart.reduce((sum, l) => sum + l.qty, 0);
+    }
+
+    // Sum of what the bill would be at normal (non-discounted) prices.
+    get subtotalBeforeDiscount() {
+        return this.state.cart.reduce((sum, l) => sum + l.qty * l.listPrice, 0);
+    }
+
+    // Total money saved across the whole bill.
+    get totalDiscount() {
+        return this.state.cart.reduce(
+            (sum, l) => sum + l.qty * (l.listPrice - l.price),
+            0
+        );
     }
 
     get total() {
@@ -199,7 +221,10 @@ export class MobileShopPOSScreen extends Component {
                 productId: product.id,
                 name: product.name,
                 subtitle: this.productSubtitle(product),
-                price: product.selling_price,
+                listPrice: product.selling_price,
+                price: this.effectivePrice(product),
+                hasDiscount: product.has_discount,
+                discountPercent: product.has_discount ? product.discount_percent : 0,
                 qty: 1,
                 stock: product.stock_quantity,
             });
@@ -331,9 +356,10 @@ export class MobileShopPOSScreen extends Component {
         }
         this.state.processing = true;
         try {
-            // cost_price is deliberately omitted here — the server snapshots
-            // it from the product's current purchase_price on creation, so
-            // the browser never needs to know or send it.
+            // cost_price and list_price are deliberately omitted here — the
+            // server snapshots both from the product's current
+            // purchase_price/selling_price on creation, so the browser
+            // never needs to know or send them.
             const lineCommands = this.state.cart.map((l) => [
                 0,
                 0,

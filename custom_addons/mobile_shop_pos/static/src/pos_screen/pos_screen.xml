@@ -26,7 +26,7 @@
                 </div>
 
                 <div class="o_mobile_pos_categories">
-                    <t t-foreach="state.categories" t-as="cat" t-key="cat.id || 'all'">
+                    <t t-foreach="state.categories" t-as="cat" t-key="cat.id">
                         <button type="button"
                                 t-att-class="'o_mobile_pos_cat_btn ' + (state.activeCategory === cat.id ? 'active' : '')"
                                 t-on-click="() => this.setCategory(cat.id)">
@@ -57,6 +57,12 @@
                                           class="o_mobile_pos_card_badge">
                                         <t t-esc="cartQtyFor(product.id)"/>
                                     </span>
+                                    <span t-if="product.is_low_stock &amp;&amp; product.stock_quantity &gt; 0"
+                                          class="o_mobile_pos_card_low_badge">Low</span>
+                                    <span t-if="product.has_discount"
+                                          class="o_mobile_pos_card_sale_badge">
+                                        -<t t-esc="Math.round(product.discount_percent)"/>%
+                                    </span>
                                 </div>
 
                                 <div class="o_mobile_pos_card_body">
@@ -65,7 +71,15 @@
                                          class="o_mobile_pos_card_sub"
                                          t-esc="productSubtitle(product)"/>
                                     <div class="o_mobile_pos_card_footer">
-                                        <span class="o_mobile_pos_card_price">
+                                        <span t-if="product.has_discount" class="o_mobile_pos_card_price_wrap">
+                                            <span class="o_mobile_pos_card_price_old">
+                                                LKR <t t-esc="formatMoney(product.selling_price)"/>
+                                            </span>
+                                            <span class="o_mobile_pos_card_price o_mobile_pos_card_price_sale">
+                                                LKR <t t-esc="formatMoney(product.discount_price)"/>
+                                            </span>
+                                        </span>
+                                        <span t-else="" class="o_mobile_pos_card_price">
                                             LKR <t t-esc="formatMoney(product.selling_price)"/>
                                         </span>
                                         <span class="o_mobile_pos_card_stock">
@@ -97,105 +111,134 @@
                     </button>
                 </div>
 
-                <div class="o_mobile_pos_cart_lines">
-                    <div t-if="!state.cart.length" class="o_mobile_pos_cart_empty">
-                        <i class="fa fa-hand-pointer-o"/>
-                        <div>Tap a product to add it to the bill</div>
-                    </div>
+                <div class="o_mobile_pos_cart_split">
 
-                    <t t-foreach="state.cart" t-as="line" t-key="line.productId">
-                        <div class="o_mobile_pos_line">
-                            <div class="o_mobile_pos_line_info">
-                                <div class="o_mobile_pos_line_name" t-esc="line.name"/>
-                                <div class="o_mobile_pos_line_sub">
-                                    LKR <t t-esc="formatMoney(line.price)"/> x <t t-esc="line.qty"/>
+                    <!-- Items list + total, beside the numpad -->
+                    <div class="o_mobile_pos_cart_left">
+                        <div class="o_mobile_pos_cart_lines">
+                            <div t-if="!state.cart.length" class="o_mobile_pos_cart_empty">
+                                <i class="fa fa-hand-pointer-o"/>
+                                <div>Tap a product to add it to the bill</div>
+                            </div>
+
+                            <t t-foreach="state.cart" t-as="line" t-key="line.productId">
+                                <div class="o_mobile_pos_line">
+                                    <div class="o_mobile_pos_line_info">
+                                        <div class="o_mobile_pos_line_name" t-esc="line.name"/>
+                                        <div t-if="line.hasDiscount" class="o_mobile_pos_line_sub o_mobile_pos_line_discount_sub">
+                                            <span class="o_mobile_pos_line_price_old">
+                                                LKR <t t-esc="formatMoney(line.listPrice)"/>
+                                            </span>
+                                            LKR <t t-esc="formatMoney(line.price)"/> x <t t-esc="line.qty"/>
+                                            <span class="o_mobile_pos_line_discount_chip">
+                                                -<t t-esc="Math.round(line.discountPercent)"/>%
+                                            </span>
+                                        </div>
+                                        <div t-else="" class="o_mobile_pos_line_sub">
+                                            LKR <t t-esc="formatMoney(line.price)"/> x <t t-esc="line.qty"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="o_mobile_pos_line_qty">
+                                        <button type="button" t-on-click="() => this.decrementLine(line)">-</button>
+                                        <input type="number"
+                                               min="1"
+                                               t-att-value="line.qty"
+                                               t-on-change="(ev) => this.onLineQtyInput(line, ev)"/>
+                                        <button type="button" t-on-click="() => this.incrementLine(line)">+</button>
+                                    </div>
+
+                                    <div class="o_mobile_pos_line_amount">
+                                        LKR <t t-esc="formatMoney(line.qty * line.price)"/>
+                                    </div>
+
+                                    <button type="button"
+                                            class="o_mobile_pos_line_remove"
+                                            t-on-click="() => this.removeLine(line)">
+                                        <i class="fa fa-times"/>
+                                    </button>
                                 </div>
-                            </div>
-
-                            <div class="o_mobile_pos_line_qty">
-                                <button type="button" t-on-click="() => this.decrementLine(line)">-</button>
-                                <input type="number"
-                                       min="1"
-                                       t-att-value="line.qty"
-                                       t-on-change="(ev) => this.onLineQtyInput(line, ev)"/>
-                                <button type="button" t-on-click="() => this.incrementLine(line)">+</button>
-                            </div>
-
-                            <div class="o_mobile_pos_line_amount">
-                                LKR <t t-esc="formatMoney(line.qty * line.price)"/>
-                            </div>
-
-                            <button type="button"
-                                    class="o_mobile_pos_line_remove"
-                                    t-on-click="() => this.removeLine(line)">
-                                <i class="fa fa-times"/>
-                            </button>
-                        </div>
-                    </t>
-                </div>
-
-                <div class="o_mobile_pos_totals">
-                    <div class="o_mobile_pos_total_row o_mobile_pos_total_main">
-                        <span>Total</span>
-                        <span>LKR <t t-esc="formatMoney(total)"/></span>
-                    </div>
-                </div>
-
-                <div class="o_mobile_pos_payment">
-                    <div class="o_mobile_pos_payment_methods">
-                        <button type="button"
-                                t-att-class="'o_mobile_pos_pay_btn ' + (state.paymentMethod === 'cash' ? 'active' : '')"
-                                t-on-click="() => this.setPaymentMethod('cash')">
-                            <i class="fa fa-money"/> Cash
-                        </button>
-                        <button type="button"
-                                t-att-class="'o_mobile_pos_pay_btn ' + (state.paymentMethod === 'card' ? 'active' : '')"
-                                t-on-click="() => this.setPaymentMethod('card')">
-                            <i class="fa fa-credit-card"/> Card
-                        </button>
-                        <button type="button"
-                                t-att-class="'o_mobile_pos_pay_btn ' + (state.paymentMethod === 'online' ? 'active' : '')"
-                                t-on-click="() => this.setPaymentMethod('online')">
-                            <i class="fa fa-exchange"/> Online
-                        </button>
-                    </div>
-
-                    <t t-if="state.paymentMethod === 'cash'">
-                        <div class="o_mobile_pos_tendered">
-                            <div class="o_mobile_pos_tendered_display">
-                                <span>Tendered</span>
-                                <span class="o_mobile_pos_tendered_amount">
-                                    LKR <t t-esc="formatMoney(state.amountTendered)"/>
-                                </span>
-                            </div>
-                            <div class="o_mobile_pos_change_display"
-                                 t-att-class="changeDue &lt; 0 ? 'negative' : 'positive'">
-                                <span>Change</span>
-                                <span><t t-esc="formatMoney(changeDue)"/></span>
-                            </div>
-                        </div>
-
-                        <div class="o_mobile_pos_quick_amounts">
-                            <button type="button" t-on-click="() => this.quickAmount(total)">Exact</button>
-                            <button type="button" t-on-click="() => this.quickAmount(1000)">1,000</button>
-                            <button type="button" t-on-click="() => this.quickAmount(2000)">2,000</button>
-                            <button type="button" t-on-click="() => this.quickAmount(5000)">5,000</button>
-                        </div>
-
-                        <div class="o_mobile_pos_numpad">
-                            <t t-foreach="quickKeys" t-as="key" t-key="key">
-                                <button type="button"
-                                        t-att-class="'o_mobile_pos_numkey' + (key === '&lt;' ? ' o_mobile_pos_numkey_back' : '')"
-                                        t-on-click="() => this.pressKey(key)">
-                                    <t t-if="key === '&lt;'"><i class="fa fa-long-arrow-left"/></t>
-                                    <t t-else=""><t t-esc="key"/></t>
-                                </button>
                             </t>
-                            <button type="button"
-                                    class="o_mobile_pos_numkey o_mobile_pos_numkey_clear"
-                                    t-on-click="() => this.pressKey('C')">C</button>
                         </div>
-                    </t>
+
+                        <div class="o_mobile_pos_totals">
+                            <t t-if="totalDiscount &gt; 0">
+                                <div class="o_mobile_pos_total_row o_mobile_pos_total_sub">
+                                    <span>Subtotal</span>
+                                    <span>LKR <t t-esc="formatMoney(subtotalBeforeDiscount)"/></span>
+                                </div>
+                                <div class="o_mobile_pos_total_row o_mobile_pos_total_discount">
+                                    <span>Discount</span>
+                                    <span>- LKR <t t-esc="formatMoney(totalDiscount)"/></span>
+                                </div>
+                            </t>
+                            <div class="o_mobile_pos_total_row o_mobile_pos_total_main">
+                                <span>Total</span>
+                                <span>LKR <t t-esc="formatMoney(total)"/></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment + numpad -->
+                    <div class="o_mobile_pos_cart_right">
+                        <div class="o_mobile_pos_payment">
+                            <div class="o_mobile_pos_payment_methods">
+                                <button type="button"
+                                        t-att-class="'o_mobile_pos_pay_btn ' + (state.paymentMethod === 'cash' ? 'active' : '')"
+                                        t-on-click="() => this.setPaymentMethod('cash')">
+                                    <i class="fa fa-money"/> Cash
+                                </button>
+                                <button type="button"
+                                        t-att-class="'o_mobile_pos_pay_btn ' + (state.paymentMethod === 'card' ? 'active' : '')"
+                                        t-on-click="() => this.setPaymentMethod('card')">
+                                    <i class="fa fa-credit-card"/> Card
+                                </button>
+                                <button type="button"
+                                        t-att-class="'o_mobile_pos_pay_btn ' + (state.paymentMethod === 'online' ? 'active' : '')"
+                                        t-on-click="() => this.setPaymentMethod('online')">
+                                    <i class="fa fa-exchange"/> Online
+                                </button>
+                            </div>
+
+                            <t t-if="state.paymentMethod === 'cash'">
+                                <div class="o_mobile_pos_tendered">
+                                    <div class="o_mobile_pos_tendered_display">
+                                        <span>Tendered</span>
+                                        <span class="o_mobile_pos_tendered_amount">
+                                            LKR <t t-esc="formatMoney(state.amountTendered)"/>
+                                        </span>
+                                    </div>
+                                    <div class="o_mobile_pos_change_display"
+                                         t-att-class="changeDue &lt; 0 ? 'negative' : 'positive'">
+                                        <span>Change</span>
+                                        <span><t t-esc="formatMoney(changeDue)"/></span>
+                                    </div>
+                                </div>
+
+                                <div class="o_mobile_pos_quick_amounts">
+                                    <button type="button" t-on-click="() => this.quickAmount(total)">Exact</button>
+                                    <button type="button" t-on-click="() => this.quickAmount(1000)">1,000</button>
+                                    <button type="button" t-on-click="() => this.quickAmount(2000)">2,000</button>
+                                    <button type="button" t-on-click="() => this.quickAmount(5000)">5,000</button>
+                                </div>
+
+                                <div class="o_mobile_pos_numpad">
+                                    <t t-foreach="quickKeys" t-as="key" t-key="key">
+                                        <button type="button"
+                                                t-att-class="'o_mobile_pos_numkey' + (key === '&lt;' ? ' o_mobile_pos_numkey_back' : '')"
+                                                t-on-click="() => this.pressKey(key)">
+                                            <t t-if="key === '&lt;'"><i class="fa fa-long-arrow-left"/></t>
+                                            <t t-else=""><t t-esc="key"/></t>
+                                        </button>
+                                    </t>
+                                    <button type="button"
+                                            class="o_mobile_pos_numkey o_mobile_pos_numkey_clear"
+                                            t-on-click="() => this.pressKey('C')">C</button>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
                 </div>
 
                 <button type="button"
@@ -256,7 +299,18 @@
                             <span t-esc="state.detailsProduct.stock_quantity"/>
                         </div>
 
-                        <div class="o_mobile_pos_details_price">
+                        <div t-if="state.detailsProduct.has_discount" class="o_mobile_pos_details_price_wrap">
+                            <span class="o_mobile_pos_details_price_old">
+                                LKR <t t-esc="formatMoney(state.detailsProduct.selling_price)"/>
+                            </span>
+                            <span class="o_mobile_pos_details_price o_mobile_pos_details_price_sale">
+                                LKR <t t-esc="formatMoney(state.detailsProduct.discount_price)"/>
+                            </span>
+                            <span class="o_mobile_pos_details_discount_chip">
+                                -<t t-esc="Math.round(state.detailsProduct.discount_percent)"/>%
+                            </span>
+                        </div>
+                        <div t-else="" class="o_mobile_pos_details_price">
                             LKR <t t-esc="formatMoney(state.detailsProduct.selling_price)"/>
                         </div>
 
@@ -270,6 +324,7 @@
 
                 </div>
             </div>
+
         </div>
     </t>
 

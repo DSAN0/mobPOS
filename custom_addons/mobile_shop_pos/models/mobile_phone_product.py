@@ -35,6 +35,30 @@ class MobilePhoneProduct(models.Model):
     purchase_price = fields.Float(string="Purchase Price")
     selling_price = fields.Float(string="Selling Price")
 
+    # ------------------------------------------------------------------
+    # Discounts. Only the Owner/Manager group can write to
+    # mobile.phone.product at all (see ir.model.access.csv — Cashier has
+    # perm_write=0), so restricting discount edits to managers needs no
+    # extra security code here: the existing ACL already covers it.
+    # ------------------------------------------------------------------
+    discount_price = fields.Float(
+        string="Discount Price",
+        help="Special price for this product. Leave at 0, or at/above the "
+             "Selling Price, to indicate there is no active discount."
+    )
+
+    has_discount = fields.Boolean(
+        string="On Sale",
+        compute="_compute_discount",
+        store=True
+    )
+
+    discount_percent = fields.Float(
+        string="Discount %",
+        compute="_compute_discount",
+        store=True
+    )
+
     stock_quantity = fields.Integer(
         string="Stock Quantity",
         default=0
@@ -81,6 +105,23 @@ class MobilePhoneProduct(models.Model):
     def _compute_is_low_stock(self):
         for product in self:
             product.is_low_stock = product.stock_quantity <= product.reorder_level
+
+    @api.depends('selling_price', 'discount_price')
+    def _compute_discount(self):
+        for product in self:
+            valid = (
+                product.discount_price > 0
+                and product.selling_price > 0
+                and product.discount_price < product.selling_price
+            )
+            product.has_discount = valid
+            if valid:
+                product.discount_percent = (
+                    (product.selling_price - product.discount_price)
+                    / product.selling_price * 100
+                )
+            else:
+                product.discount_percent = 0
 
     _sql_constraints = [
         (
