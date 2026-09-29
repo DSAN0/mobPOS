@@ -6,6 +6,7 @@ import { useService } from "@web/core/utils/hooks";
 import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
+import { ensureCheckedIn } from "../utils/attendance";
 
 function emptyForm() {
     return {
@@ -50,6 +51,7 @@ export class MobileShopProductsScreen extends Component {
         });
 
         onWillStart(async () => {
+            ensureCheckedIn(this.orm);
             // This screen shows cost price and lets anyone editing here change
             // prices or delete products, so it's restricted to Owner/Manager
             // even beyond the menu being hidden — opening the client action

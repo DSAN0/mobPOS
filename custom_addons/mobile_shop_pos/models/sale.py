@@ -1,5 +1,5 @@
 from odoo import models, fields, api
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, AccessError
 
 
 class MobileSaleOrder(models.Model):
@@ -71,11 +71,24 @@ class MobileSaleOrder(models.Model):
         store=True
     )
 
+    cashier_id = fields.Many2one(
+        "res.users",
+        string="Served By",
+        readonly=True,
+        help="Automatically set to whoever was logged in when this bill "
+             "was created. Never trusted from the client — see create()."
+    )
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('mobile.sale.order') or 'New'
+            # Always set server-side, ignoring anything the client sends —
+            # the same principle as the cost/list price snapshot on sale
+            # lines below: this is audit data, not something a Cashier's
+            # browser should get to decide.
+            vals['cashier_id'] = self.env.uid
         return super().create(vals_list)
 
     @api.depends('line_ids.subtotal', 'line_ids.list_price', 'line_ids.quantity', 'line_ids.discount_total')
@@ -124,6 +137,13 @@ class MobileSaleOrder(models.Model):
             sale.state = 'confirmed'
 
     def action_cancel(self):
+        # Cashiers have write access to mobile.sale.order (needed for the
+        # POS Screen checkout flow), so the ACL alone won't stop them from
+        # cancelling a bill. Hiding the button in the view is only a UI
+        # convenience — enforce the real restriction here, server-side.
+        if not self.env.user.has_group('mobile_shop_pos.group_mobile_shop_manager'):
+            raise AccessError("Only the Owner/Manager can cancel a bill.")
+
         for sale in self:
             if sale.state != 'confirmed':
                 continue

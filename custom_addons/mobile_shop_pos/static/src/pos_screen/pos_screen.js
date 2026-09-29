@@ -3,7 +3,9 @@
 import { Component, useState, onWillStart, onMounted, onWillUnmount } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
+import { ensureCheckedIn, checkOutAndLogout } from "../utils/attendance";
 
 const QUICK_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "<"];
 
@@ -15,6 +17,8 @@ export class MobileShopPOSScreen extends Component {
         this.orm = useService("orm");
         this.action = useService("action");
         this.notification = useService("notification");
+
+        this.userName = user.name;
 
         this.quickKeys = QUICK_KEYS;
 
@@ -38,6 +42,7 @@ export class MobileShopPOSScreen extends Component {
         });
 
         onWillStart(async () => {
+            ensureCheckedIn(this.orm);
             await this.loadCategories();
             await this.loadProducts();
         });
@@ -330,6 +335,14 @@ export class MobileShopPOSScreen extends Component {
 
     quickAmount(amount) {
         this.state.amountTendered = amount;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Session                                                            */
+    /* ---------------------------------------------------------------- */
+
+    async logOut() {
+        await checkOutAndLogout(this.orm);
     }
 
     /* ---------------------------------------------------------------- */

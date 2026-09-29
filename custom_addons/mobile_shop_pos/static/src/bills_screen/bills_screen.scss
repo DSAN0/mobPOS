@@ -1,0 +1,87 @@
+// ==========================================================================
+// Mobile Shop — See Bills screen
+// Shares $mpos-* variables and .o_mobile_pos_* base classes from
+// pos_screen.scss, .o_mobile_report_* table/summary classes from
+// sales_report_screen.scss, and .o_mobile_products_panel* slide-over
+// classes from products_screen.scss (all loaded earlier in the bundle).
+// ==========================================================================
+
+.o_mobile_bills_screen {
+    .o_mobile_pos_products {
+        flex: 1 1 100%;
+    }
+}
+
+.o_mobile_bills_table tbody tr {
+    cursor: pointer;
+
+    &:hover {
+        background: $mpos-bg;
+    }
+}
+
+.o_mobile_bill_row_cancelled {
+    opacity: 0.55;
+
+    td {
+        text-decoration: line-through;
+    }
+
+    .o_mobile_bill_status {
+        text-decoration: none;
+    }
+}
+
+.o_mobile_bill_status {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+
+.o_mobile_bill_status_draft {
+    background: #fdf3e3;
+    color: $mpos-warning;
+}
+
+.o_mobile_bill_status_confirmed {
+    background: #e6f4ea;
+    color: $mpos-success;
+}
+
+.o_mobile_bill_status_cancelled {
+    background: #fbe8e8;
+    color: $mpos-danger;
+}
+
+.o_mobile_bill_meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid $mpos-border;
+}
+
+.o_mobile_bill_meta_row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    label {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: $mpos-muted;
+        margin: 0;
+    }
+}
+
+.o_mobile_bill_panel .o_mobile_products_panel_footer {
+    flex-direction: column;
+
+    button {
+        width: 100%;
+    }
+}

@@ -14,3 +14,7 @@ access_mobile_sale_order_cashier,mobile.sale.order.cashier,model_mobile_sale_ord
 access_mobile_sale_order_manager,mobile.sale.order.manager,model_mobile_sale_order,group_mobile_shop_manager,1,1,1,1
 access_mobile_sale_line_cashier,mobile.sale.line.cashier,model_mobile_sale_line,group_mobile_shop_cashier,1,1,1,1
 access_mobile_sale_line_manager,mobile.sale.line.manager,model_mobile_sale_line,group_mobile_shop_manager,1,1,1,1
+access_mobile_employee_position_manager,mobile.employee.position.manager,model_mobile_employee_position,group_mobile_shop_manager,1,1,1,1
+access_mobile_employee_manager,mobile.employee.manager,model_mobile_employee,group_mobile_shop_manager,1,1,1,1
+access_mobile_employee_attendance_manager,mobile.employee.attendance.manager,model_mobile_employee_attendance,group_mobile_shop_manager,1,1,1,1
+access_mobile_employee_salary_payment_manager,mobile.employee.salary.payment.manager,model_mobile_employee_salary_payment,group_mobile_shop_manager,1,1,1,1

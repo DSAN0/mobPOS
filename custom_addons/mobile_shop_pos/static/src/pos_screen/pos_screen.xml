@@ -23,6 +23,15 @@
                            class="fa fa-times o_mobile_pos_search_clear"
                            t-on-click="clearSearch"/>
                     </div>
+
+                    <div class="o_mobile_pos_user_chip">
+                        <i class="fa fa-user-circle"/>
+                        <span t-esc="userName"/>
+                    </div>
+
+                    <button type="button" class="o_mobile_pos_logout_btn" t-on-click="logOut">
+                        <i class="fa fa-sign-out"/> Log Out
+                    </button>
                 </div>
 
                 <div class="o_mobile_pos_categories">

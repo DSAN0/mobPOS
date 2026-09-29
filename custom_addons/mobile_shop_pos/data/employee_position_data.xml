@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="position_cashier" model="mobile.employee.position">
+        <field name="name">Cashier</field>
+    </record>
+    <record id="position_manager" model="mobile.employee.position">
+        <field name="name">Owner / Manager</field>
+    </record>
+    <record id="position_sales_assistant" model="mobile.employee.position">
+        <field name="name">Sales Assistant</field>
+    </record>
+</odoo>

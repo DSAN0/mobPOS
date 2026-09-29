@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="mobile_bills_screen_action" model="ir.actions.client">
+        <field name="name">See Bills</field>
+        <field name="tag">mobile_shop_pos.bills_screen</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem
+        id="mobile_bills_screen_menu"
+        name="See Bills"
+        parent="mobile_shop_menu_root"
+        action="mobile_bills_screen_action"
+        groups="mobile_shop_pos.group_mobile_shop_cashier,mobile_shop_pos.group_mobile_shop_manager"
+        sequence="15"/>
+
+</odoo>

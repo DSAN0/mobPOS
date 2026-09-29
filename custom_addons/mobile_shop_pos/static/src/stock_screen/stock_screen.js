@@ -4,6 +4,7 @@ import { Component, useState, onWillStart } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { ensureCheckedIn } from "../utils/attendance";
 
 export class MobileShopStockScreen extends Component {
     static template = "mobile_shop_pos.StockScreen";
@@ -24,6 +25,7 @@ export class MobileShopStockScreen extends Component {
         });
 
         onWillStart(async () => {
+            ensureCheckedIn(this.orm);
             await this.loadCategories();
             await this.loadProducts();
         });

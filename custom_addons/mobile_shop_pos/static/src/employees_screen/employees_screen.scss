@@ -1,0 +1,36 @@
+// ==========================================================================
+// Mobile Shop — Manage Employees screen
+// Shares $mpos-* variables, .o_mobile_pos_* base classes, .o_mobile_report_*
+// table/summary classes, .o_mobile_bill_status* badges, and
+// .o_mobile_products_panel* slide-over classes from earlier files in the
+// bundle.
+// ==========================================================================
+
+.o_mobile_employees_screen {
+    .o_mobile_pos_products {
+        flex: 1 1 100%;
+    }
+}
+
+.o_mobile_employee_filter_select {
+    border: 1px solid $mpos-border;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    background: $mpos-card-bg;
+    min-width: 220px;
+}
+
+.o_mobile_employee_reactivate_btn {
+    margin-left: 8px;
+    border: 1px solid $mpos-primary;
+    background: #fff;
+    color: $mpos-primary;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+
+    &:hover { background: $mpos-primary; color: #fff; }
+}

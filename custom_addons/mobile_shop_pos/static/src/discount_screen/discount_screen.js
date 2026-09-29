@@ -5,6 +5,7 @@ import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
+import { ensureCheckedIn } from "../utils/attendance";
 
 export class MobileShopDiscountScreen extends Component {
     static template = "mobile_shop_pos.DiscountScreen";
@@ -28,6 +29,7 @@ export class MobileShopDiscountScreen extends Component {
         });
 
         onWillStart(async () => {
+            ensureCheckedIn(this.orm);
             // Reading this page is fine for Cashiers (they need to know
             // what's on sale). Writing is still enforced server-side too:
             // Cashier has perm_write=0 on mobile.phone.product in
