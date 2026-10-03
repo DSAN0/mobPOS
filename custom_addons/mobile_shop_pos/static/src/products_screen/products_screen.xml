@@ -25,10 +25,26 @@
                     </div>
 
                     <button type="button"
+                            class="o_mobile_products_add_btn o_mobile_products_backfill_btn"
+                            t-on-click="assignMissingBarcodes">
+                        <i class="fa fa-barcode"/> Assign Missing Barcodes
+                    </button>
+
+                    <button type="button"
                             class="o_mobile_products_add_btn"
                             t-on-click="openNewProduct">
                         <i class="fa fa-plus"/> Add Product
                     </button>
+                </div>
+
+                <div class="o_mobile_scan_bar">
+                    <i class="fa fa-barcode"/>
+                    <input type="text"
+                           t-ref="scanInput"
+                           placeholder="Scan a barcode to open that product..."
+                           t-att-value="state.scanTerm"
+                           t-on-input="onScanInput"
+                           t-on-keydown="onScanKeydown"/>
                 </div>
 
                 <div class="o_mobile_pos_categories">
@@ -63,6 +79,10 @@
                                     <span t-elif="product.is_low_stock"
                                           class="o_mobile_products_badge_out">Low</span>
                                     <i class="fa fa-pencil o_mobile_products_edit_icon"/>
+                                    <i t-if="product.barcode"
+                                       class="fa fa-print o_mobile_products_print_icon"
+                                       title="Print barcode label"
+                                       t-on-click.stop="() => this.printLabelsFor(product)"/>
                                 </div>
 
                                 <div class="o_mobile_pos_card_body">
@@ -112,6 +132,33 @@
                                 <i class="fa fa-trash"/>
                             </button>
                         </div>
+                    </div>
+
+                    <div class="o_mobile_products_field" t-if="!state.isNew">
+                        <label>Barcode</label>
+                        <div class="o_mobile_barcode_box">
+                            <img t-if="state.form.barcode" t-att-src="barcodeImageUrl(state.form.barcode)" alt="barcode"/>
+                            <div class="o_mobile_barcode_actions">
+                                <span class="o_mobile_barcode_value" t-esc="state.form.barcode || '—'"/>
+                                <div class="o_mobile_products_field_row">
+                                    <button type="button"
+                                            class="o_mobile_pos_cat_btn"
+                                            t-att-disabled="state.regenerating"
+                                            t-on-click="regenerateBarcode">
+                                        <i class="fa fa-refresh"/> Regenerate
+                                    </button>
+                                    <button type="button"
+                                            class="o_mobile_pos_cat_btn"
+                                            t-on-click="() => this.printLabelsFor(state.form)">
+                                        <i class="fa fa-print"/> Print Labels
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="o_mobile_products_field" t-else="">
+                        <label>Barcode</label>
+                        <div class="o_mobile_products_hint">Will be generated automatically when you save.</div>
                     </div>
 
                     <div class="o_mobile_products_field">

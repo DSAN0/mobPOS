@@ -1,10 +1,11 @@
 /** @odoo-module **/
 
-import { Component, useState, onWillStart } from "@odoo/owl";
+import { Component, useState, onWillStart, onMounted, useRef } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 import { ensureCheckedIn } from "../utils/attendance";
+import { findProductByBarcode } from "../utils/barcode";
 
 export class MobileShopStockScreen extends Component {
     static template = "mobile_shop_pos.StockScreen";
@@ -19,10 +20,14 @@ export class MobileShopStockScreen extends Component {
             products: [],
             activeCategory: null,
             searchTerm: "",
+            scanTerm: "",
             lines: [],
             loading: true,
             processing: false,
         });
+        this.scanInputRef = useRef("scanInput");
+
+        onMounted(() => this.scanInputRef.el?.focus());
 
         onWillStart(async () => {
             ensureCheckedIn(this.orm);
@@ -61,6 +66,7 @@ export class MobileShopStockScreen extends Component {
                     "purchase_price",
                     "stock_quantity",
                     "image",
+                    "barcode",
                 ],
                 { order: "name asc" }
             );
@@ -142,6 +148,29 @@ export class MobileShopStockScreen extends Component {
         this.state.searchTerm = "";
     }
 
+    /* ---------------------------------------------------------------- */
+    /* Barcode scanning                                                    */
+    /* ---------------------------------------------------------------- */
+
+    onScanInput(ev) {
+        this.state.scanTerm = ev.target.value;
+    }
+
+    onScanKeydown(ev) {
+        if (ev.key !== "Enter") {
+            return;
+        }
+        ev.preventDefault();
+        const code = this.state.scanTerm;
+        this.state.scanTerm = "";
+        const product = findProductByBarcode(this.state.products, code);
+        if (!product) {
+            this.notification.add(_t("No product matches that barcode"), { type: "warning" });
+            return;
+        }
+        this.addToLines(product);
+    }
+
     addToLines(product) {
         const existing = this.state.lines.find((l) => l.productId === product.id);
         if (existing) {
@@ -156,6 +185,7 @@ export class MobileShopStockScreen extends Component {
                 currentStock: product.stock_quantity,
             });
         }
+        this.scanInputRef.el?.focus();
     }
 
     /* ---------------------------------------------------------------- */

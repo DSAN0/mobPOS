@@ -25,6 +25,16 @@
                     </div>
                 </div>
 
+                <div class="o_mobile_scan_bar">
+                    <i class="fa fa-barcode"/>
+                    <input type="text"
+                           t-ref="scanInput"
+                           placeholder="Scan a barcode to add it to this stock-in..."
+                           t-att-value="state.scanTerm"
+                           t-on-input="onScanInput"
+                           t-on-keydown="onScanKeydown"/>
+                </div>
+
                 <div class="o_mobile_pos_categories">
                     <t t-foreach="state.categories" t-as="cat" t-key="cat.id || 'all'">
                         <button type="button"

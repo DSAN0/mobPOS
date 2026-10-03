@@ -5,3 +5,4 @@ from . import mobile_phone_product
 from . import purchase
 from . import sale
 from . import employee
+from . import product_barcode_report

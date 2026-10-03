@@ -35,6 +35,15 @@ class MobilePhoneProduct(models.Model):
     purchase_price = fields.Float(string="Purchase Price")
     selling_price = fields.Float(string="Selling Price")
 
+    barcode = fields.Char(
+        string="Barcode",
+        copy=False,
+        help="Auto-generated EAN-13 barcode, assigned when the product is "
+             "created. Scan it at the POS Screen, Add Stock, or Products "
+             "to quickly find this product. Use 'Regenerate' if it's ever "
+             "duplicated by mistake."
+    )
+
     # ------------------------------------------------------------------
     # Discounts. Only the Owner/Manager group can write to
     # mobile.phone.product at all (see ir.model.access.csv — Cashier has
@@ -129,5 +138,59 @@ class MobilePhoneProduct(models.Model):
             'unique(name)',
             'A product with this exact name already exists — just add '
             'stock to it instead of creating a duplicate.'
-        )
+        ),
+        (
+            'unique_barcode',
+            'unique(barcode)',
+            'This barcode is already used by another product.'
+        ),
     ]
+
+    # ------------------------------------------------------------------
+    # Barcodes are generated in-house (this shop has no manufacturer
+    # barcodes to work from) as valid EAN-13 codes, using the 20-29
+    # prefix range GS1 reserves for internal/in-store use, so any
+    # standard scanner reads them as a normal, valid barcode.
+    # ------------------------------------------------------------------
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('barcode'):
+                vals['barcode'] = self._generate_barcode()
+        return super().create(vals_list)
+
+    def action_regenerate_barcode(self):
+        # No extra group check needed: Cashier already has perm_write=0 on
+        # this model in ir.model.access.csv, so only Managers can reach
+        # this at all — same reasoning as the discount price field above.
+        for product in self:
+            product.barcode = self._generate_barcode()
+
+    @api.model
+    def action_assign_missing_barcodes(self):
+        # Products created before this feature existed have no barcode —
+        # create() only assigns one at creation time, it can't retroactively
+        # touch records that already existed. This is the catch-up step,
+        # meant to be run once after upgrading, and safe to run again any
+        # time (it only ever touches products with no barcode at all).
+        products = self.search([('barcode', '=', False)])
+        for product in products:
+            product.barcode = product._generate_barcode()
+        return len(products)
+
+    @api.model
+    def _generate_barcode(self):
+        seq = self.env['ir.sequence'].sudo().next_by_code('mobile.product.barcode')
+        if not seq:
+            seq = '0000000001'
+        digits12 = '20' + seq
+        return f'{digits12}{self._ean13_check_digit(digits12)}'
+
+    @api.model
+    def _ean13_check_digit(self, digits12):
+        total = 0
+        for i, ch in enumerate(digits12):
+            d = int(ch)
+            total += d if i % 2 == 0 else d * 3
+        return (10 - (total % 10)) % 10

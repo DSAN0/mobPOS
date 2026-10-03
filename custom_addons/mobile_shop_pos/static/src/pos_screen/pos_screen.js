@@ -1,11 +1,12 @@
 /** @odoo-module **/
 
-import { Component, useState, onWillStart, onMounted, onWillUnmount } from "@odoo/owl";
+import { Component, useState, onWillStart, onMounted, onWillUnmount, useRef } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
 import { ensureCheckedIn, checkOutAndLogout } from "../utils/attendance";
+import { findProductByBarcode } from "../utils/barcode";
 
 const QUICK_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "<"];
 
@@ -21,11 +22,19 @@ export class MobileShopPOSScreen extends Component {
         this.userName = user.name;
 
         this.quickKeys = QUICK_KEYS;
+        this.scanInputRef = useRef("scanInput");
 
         // Kiosk look: hide messaging/activities/apps clutter from the navbar
         // while this screen is open. Removed again on unmount so the
         // Owner/Manager gets the normal Odoo UI everywhere else.
-        onMounted(() => document.body.classList.add("o_mobile_shop_kiosk"));
+        onMounted(() => {
+            document.body.classList.add("o_mobile_shop_kiosk");
+            // Most USB/Bluetooth barcode scanners just "type" into
+            // whatever has focus, then send Enter. Auto-focusing this
+            // input means a physical scan works without the cashier
+            // clicking anywhere first.
+            this.scanInputRef.el?.focus();
+        });
         onWillUnmount(() => document.body.classList.remove("o_mobile_shop_kiosk"));
 
         this.state = useState({
@@ -33,6 +42,7 @@ export class MobileShopPOSScreen extends Component {
             products: [],
             activeCategory: null,
             searchTerm: "",
+            scanTerm: "",
             cart: [],
             paymentMethod: "cash",
             amountTendered: 0,
@@ -86,6 +96,7 @@ export class MobileShopPOSScreen extends Component {
                     "stock_quantity",
                     "warranty",
                     "image",
+                    "barcode",
                 ],
                 { order: "name asc" }
             );
@@ -191,6 +202,29 @@ export class MobileShopPOSScreen extends Component {
     }
 
     /* ---------------------------------------------------------------- */
+    /* Barcode scanning                                                   */
+    /* ---------------------------------------------------------------- */
+
+    onScanInput(ev) {
+        this.state.scanTerm = ev.target.value;
+    }
+
+    onScanKeydown(ev) {
+        if (ev.key !== "Enter") {
+            return;
+        }
+        ev.preventDefault();
+        const code = this.state.scanTerm;
+        this.state.scanTerm = "";
+        const product = findProductByBarcode(this.state.products, code);
+        if (!product) {
+            this.notification.add(_t("No in-stock product matches that barcode"), { type: "warning" });
+            return;
+        }
+        this.addToCart(product);
+    }
+
+    /* ---------------------------------------------------------------- */
     /* Product details panel                                             */
     /* ---------------------------------------------------------------- */
 
@@ -237,6 +271,9 @@ export class MobileShopPOSScreen extends Component {
         if (this.state.paymentMethod !== "cash") {
             this.state.amountTendered = this.total;
         }
+        // Keep the scanner "ready": a mouse click on a product card also
+        // steals focus away from the scan input, so pull it back either way.
+        this.scanInputRef.el?.focus();
     }
 
     /* ---------------------------------------------------------------- */

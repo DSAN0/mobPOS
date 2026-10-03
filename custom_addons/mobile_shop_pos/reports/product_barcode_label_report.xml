@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- A real small-label size (56mm x 36mm, a common sticker size),
+         defined here rather than guessing at an existing paperformat_id
+         that may or may not exist in this Odoo version. -->
+    <record id="paperformat_mobile_barcode_label" model="report.paperformat">
+        <field name="name">Mobile Shop Barcode Label</field>
+        <field name="default" eval="False"/>
+        <field name="format">custom</field>
+        <field name="page_height">36</field>
+        <field name="page_width">56</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">2</field>
+        <field name="margin_bottom">2</field>
+        <field name="margin_left">2</field>
+        <field name="margin_right">2</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">96</field>
+    </record>
+
+    <record id="action_report_product_barcode_label" model="ir.actions.report">
+        <field name="name">Barcode Label</field>
+        <field name="model">mobile.phone.product</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">mobile_shop_pos.report_product_barcode_label_document</field>
+        <field name="report_file">mobile_shop_pos.report_product_barcode_label_document</field>
+        <field name="print_report_name">'Barcode Label - %s' % (object.name)</field>
+        <field name="paperformat_id" ref="paperformat_mobile_barcode_label"/>
+        <field name="binding_model_id" ref="model_mobile_phone_product"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- No web.basic_layout here on purpose: that adds the company
+         letterhead/margins meant for full A4 documents, which would
+         swamp a 56mm sticker. html_container alone gives a bare page we
+         fully control. -->
+    <template id="report_product_barcode_label_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-foreach="range(label_qty)" t-as="copy_index">
+                    <div class="page" style="width:52mm; height:32mm; padding:1mm 2mm; font-family: Arial, Helvetica, sans-serif; box-sizing: border-box; display:flex; flex-direction:column; align-items:center; justify-content:space-between; page-break-after: always;">
+
+                        <div style="font-size:8px; font-weight:700; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">
+                            <t t-esc="doc.brand"/> <t t-esc="doc.model_name"/>
+                        </div>
+
+                        <img t-if="doc.barcode"
+                             t-att-src="'/report/barcode/?type=EAN13&amp;value=%s&amp;width=380&amp;height=110&amp;humanreadable=1' % doc.barcode"
+                             style="width:100%; height:auto;"/>
+                        <div t-else="" style="font-size:9px; color:#900;">No barcode assigned</div>
+
+                        <div style="font-size:10px; font-weight:700;">
+                            LKR <t t-esc="'{:,.2f}'.format(doc.selling_price)"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

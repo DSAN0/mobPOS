@@ -870,3 +870,35 @@ $mpos-radius: 12px;
 
     &:hover { background: $mpos-danger; border-color: $mpos-danger; color: #fff; }
 }
+
+// ---------------------------------------------------------------------
+// Barcode scan bar — used on POS Screen, Add Stock, and Products.
+// Visually similar to the search box, but with its own accent color so
+// it reads as a distinct "scan here" affordance, not another filter.
+// ---------------------------------------------------------------------
+
+.o_mobile_scan_bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff7e6;
+    border: 1.5px dashed #d9a441;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin: 0 0 14px;
+
+    i.fa-barcode {
+        color: #b3781c;
+        font-size: 16px;
+    }
+
+    input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        font-size: 14px;
+        outline: none;
+
+        &::placeholder { color: #a3855a; }
+    }
+}

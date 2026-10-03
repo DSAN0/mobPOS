@@ -1,12 +1,13 @@
 /** @odoo-module **/
 
-import { Component, useState, onWillStart } from "@odoo/owl";
+import { Component, useState, onWillStart, onMounted, useRef } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { ensureCheckedIn } from "../utils/attendance";
+import { findProductByBarcode } from "../utils/barcode";
 
 function emptyForm() {
     return {
@@ -22,6 +23,7 @@ function emptyForm() {
         warranty: "",
         image: false,
         notes: "",
+        barcode: false,
         specs: [], // [{ attribute_id, attribute_name, value }]
     };
 }
@@ -43,12 +45,17 @@ export class MobileShopProductsScreen extends Component {
             products: [],
             activeCategory: null,
             searchTerm: "",
+            scanTerm: "",
             loading: true,
             panelOpen: false,
             isNew: true,
             saving: false,
+            regenerating: false,
             form: emptyForm(),
         });
+        this.scanInputRef = useRef("scanInput");
+
+        onMounted(() => this.scanInputRef.el?.focus());
 
         onWillStart(async () => {
             ensureCheckedIn(this.orm);
@@ -117,6 +124,7 @@ export class MobileShopProductsScreen extends Component {
                     "reorder_level",
                     "is_low_stock",
                     "image",
+                    "barcode",
                 ],
                 { order: "name asc" }
             );
@@ -195,6 +203,53 @@ export class MobileShopProductsScreen extends Component {
         this.state.searchTerm = "";
     }
 
+    async assignMissingBarcodes() {
+        try {
+            const count = await this.orm.call("mobile.phone.product", "action_assign_missing_barcodes", []);
+            if (count > 0) {
+                this.notification.add(_t("Assigned barcodes to %s product(s)", count), { type: "success" });
+                await this.loadProducts();
+            } else {
+                this.notification.add(_t("Every product already has a barcode"), { type: "info" });
+            }
+        } catch (error) {
+            const message =
+                (error && error.data && error.data.message) ||
+                _t("Could not assign barcodes.");
+            this.notification.add(message, { type: "danger" });
+        }
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Barcode scanning                                                   */
+    /* ---------------------------------------------------------------- */
+
+    onScanInput(ev) {
+        this.state.scanTerm = ev.target.value;
+    }
+
+    onScanKeydown(ev) {
+        if (ev.key !== "Enter") {
+            return;
+        }
+        ev.preventDefault();
+        const code = this.state.scanTerm;
+        this.state.scanTerm = "";
+        const product = findProductByBarcode(this.state.products, code);
+        if (!product) {
+            this.notification.add(_t("No product matches that barcode"), { type: "warning" });
+            return;
+        }
+        this.openEditProduct(product);
+    }
+
+    // Odoo's own barcode-image endpoint, stable since very old versions —
+    // used here for a live on-screen preview and reused as-is in the
+    // printed label report.
+    barcodeImageUrl(code) {
+        return `/report/barcode/?type=EAN13&value=${encodeURIComponent(code)}&width=380&height=110&humanreadable=1`;
+    }
+
     /* ---------------------------------------------------------------- */
     /* Panel / form                                                       */
     /* ---------------------------------------------------------------- */
@@ -225,6 +280,7 @@ export class MobileShopProductsScreen extends Component {
                 "warranty",
                 "image",
                 "notes",
+                "barcode",
             ]
         );
         const specLines = await this.orm.searchRead(
@@ -377,15 +433,24 @@ export class MobileShopProductsScreen extends Component {
                 spec_ids: specCommands,
             };
 
+            let newId = false;
             if (this.state.isNew) {
-                await this.orm.create("mobile.phone.product", [vals]);
+                const result = await this.orm.create("mobile.phone.product", [vals]);
+                newId = Array.isArray(result) ? result[0] : result;
                 this.notification.add(_t("Product created"), { type: "success" });
             } else {
                 await this.orm.write("mobile.phone.product", [form.id], vals);
                 this.notification.add(_t("Product updated"), { type: "success" });
             }
-            this.state.panelOpen = false;
             await this.loadProducts();
+            if (newId) {
+                // Reopen in edit mode instead of closing: the barcode was
+                // just generated server-side and the owner will usually
+                // want to print its label right away.
+                await this.openEditProduct({ id: newId });
+            } else {
+                this.state.panelOpen = false;
+            }
         } catch (error) {
             const message =
                 (error && error.data && error.data.message) ||
@@ -419,6 +484,51 @@ export class MobileShopProductsScreen extends Component {
                 }
             },
             cancel: () => {},
+        });
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Barcode label printing                                             */
+    /* ---------------------------------------------------------------- */
+
+    async regenerateBarcode() {
+        const form = this.state.form;
+        if (!form.id || this.state.regenerating) {
+            return;
+        }
+        this.state.regenerating = true;
+        try {
+            await this.orm.call("mobile.phone.product", "action_regenerate_barcode", [[form.id]]);
+            const [record] = await this.orm.read("mobile.phone.product", [form.id], ["barcode"]);
+            this.state.form.barcode = record.barcode;
+            this.notification.add(_t("Barcode regenerated"), { type: "success" });
+            await this.loadProducts();
+        } catch (error) {
+            const message =
+                (error && error.data && error.data.message) ||
+                _t("Could not regenerate the barcode.");
+            this.notification.add(message, { type: "danger" });
+        } finally {
+            this.state.regenerating = false;
+        }
+    }
+
+    async printLabelsFor(product) {
+        if (!product || !product.id || !product.barcode) {
+            this.notification.add(_t("This product has no barcode yet — try Regenerate/Save first"), { type: "warning" });
+            return;
+        }
+        const qtyStr = window.prompt(_t("How many labels to print?"), "1");
+        if (qtyStr === null) {
+            return;
+        }
+        const qty = parseInt(qtyStr, 10);
+        if (!qty || qty < 1) {
+            this.notification.add(_t("Enter a valid quantity"), { type: "danger" });
+            return;
+        }
+        await this.action.doAction("mobile_shop_pos.action_report_product_barcode_label", {
+            additionalContext: { active_ids: [product.id], label_qty: qty },
         });
     }
 }

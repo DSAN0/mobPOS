@@ -22,6 +22,7 @@
         "views/employees_screen_views.xml",
         "views/purchase_views.xml",
         "reports/sale_report.xml",
+        "reports/product_barcode_label_report.xml",
         "views/bills_screen_views.xml",
         "views/sales_report_screen_views.xml",
         "views/sales_report_views.xml",
@@ -29,6 +30,7 @@
     "assets": {
         "web.assets_backend": [
             "mobile_shop_pos/static/src/utils/attendance.js",
+            "mobile_shop_pos/static/src/utils/barcode.js",
             "mobile_shop_pos/static/src/pos_screen/pos_screen.js",
             "mobile_shop_pos/static/src/pos_screen/pos_screen.xml",
             "mobile_shop_pos/static/src/pos_screen/pos_screen.scss",

@@ -260,3 +260,67 @@
         max-width: 100vw;
     }
 }
+
+// ---------------------------------------------------------------------
+// Barcode display box in the product edit panel
+// ---------------------------------------------------------------------
+
+.o_mobile_barcode_box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid $mpos-border;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #fff;
+
+    img {
+        height: 42px;
+        max-width: 140px;
+        object-fit: contain;
+        flex: 0 0 auto;
+    }
+}
+
+.o_mobile_barcode_actions {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.o_mobile_barcode_value {
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+// Secondary variant for the barcode backfill button - same shape as Add
+// Product, but visually secondary so Add Product stays the obvious
+// primary action.
+.o_mobile_products_backfill_btn {
+    background: #fff;
+    color: #b3781c;
+    border: 1.5px solid #d9a441;
+
+    &:hover { background: #fff7e6; }
+}
+
+// Print-label icon on each product card, mirrors the edit-pencil icon but
+// sits to its left so both stay reachable without overlapping.
+.o_mobile_products_print_icon {
+    position: absolute;
+    bottom: 6px;
+    right: 38px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #b3781c;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+}
