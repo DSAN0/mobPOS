@@ -47,6 +47,12 @@ export class MobileShopSalesReportScreen extends Component {
         });
     }
 
+    openScreen(actionXmlId) {
+        if (actionXmlId) {
+            this.action.doAction(actionXmlId);
+        }
+    }
+
     /* ---------------------------------------------------------------- */
     /* Data loading                                                       */
     /* ---------------------------------------------------------------- */
@@ -118,6 +124,36 @@ export class MobileShopSalesReportScreen extends Component {
 
     setCategory(id) {
         this.state.activeCategory = id;
+    }
+
+    get categoryList() {
+        return this.state.categories.map((cat) => {
+            const count = cat.id === null
+                ? this.state.lines.length
+                : this.state.lines.filter((l) => l.category_id && l.category_id[0] === cat.id).length;
+            return {
+                ...cat,
+                count,
+                icon: this.getCategoryIcon(cat.name),
+            };
+        });
+    }
+
+    getCategoryIcon(name) {
+        if (!name) return "fa-th-large";
+        const n = name.toLowerCase();
+        if (n.includes("phone") || n.includes("mobile") || n.includes("smartphone")) return "fa-mobile";
+        if (n.includes("access")) return "fa-headphones";
+        if (n.includes("cable") || n.includes("charger") || n.includes("wire")) return "fa-usb";
+        if (n.includes("case") || n.includes("cover") || n.includes("glass")) return "fa-shield";
+        if (n.includes("battery") || n.includes("power")) return "fa-bolt";
+        if (n.includes("repair") || n.includes("tool") || n.includes("service")) return "fa-wrench";
+        return "fa-folder-open";
+    }
+
+    get activeCategoryName() {
+        const cat = this.state.categories.find((c) => c.id === this.state.activeCategory);
+        return cat ? cat.name : "All Categories";
     }
 
     setSortMode(key) {

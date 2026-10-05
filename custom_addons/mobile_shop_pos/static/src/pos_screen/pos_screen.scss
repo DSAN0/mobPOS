@@ -1,75 +1,146 @@
 // ==========================================================================
-// Mobile Shop POS Screen
+// Mobile Shop POS — Ultra Modern POS Screen & Design Tokens
 // ==========================================================================
 
-$mpos-primary: #3B5BFE;
-$mpos-primary-dark: #2A44D6;
-$mpos-bg: #F4F6FB;
-$mpos-card-bg: #FFFFFF;
-$mpos-border: #E4E7F0;
-$mpos-text: #1F2430;
-$mpos-muted: #8A90A3;
-$mpos-danger: #E13B3B;
-$mpos-success: #2FAE60;
-$mpos-warning: #E08A1E;
-$mpos-radius: 12px;
+$mpos-primary: #4F46E5;
+$mpos-primary-hover: #4338CA;
+$mpos-primary-light: #EEF2FF;
+$mpos-primary-gradient: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+$mpos-primary-glow: rgba(79, 70, 229, 0.35);
 
+$mpos-bg: #F8FAFC;
+$mpos-card-bg: #FFFFFF;
+$mpos-border: #E2E8F0;
+$mpos-border-light: #F1F5F9;
+
+$mpos-text: #0F172A;
+$mpos-text-secondary: #334155;
+$mpos-muted: #64748B;
+
+$mpos-danger: #EF4444;
+$mpos-danger-light: #FEE2E2;
+$mpos-success: #10B981;
+$mpos-success-light: #D1FAE5;
+$mpos-teal: #0D9488;
+$mpos-warning: #F59E0B;
+$mpos-warning-light: #FEF3C7;
+
+$mpos-radius-sm: 8px;
+$mpos-radius: 12px;
+$mpos-radius-lg: 16px;
+$mpos-radius-xl: 20px;
+$mpos-radius-full: 9999px;
+
+$mpos-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+$mpos-shadow: 0 4px 12px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+$mpos-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 0.05);
+
+// ---------------------------------------------------------------
+// Root Container
+// ---------------------------------------------------------------
 .o_mobile_pos {
     display: flex;
+    position: relative;
     height: 100%;
     width: 100%;
+    max-height: 100%;
+    flex: 1 1 100%;
     background: $mpos-bg;
     color: $mpos-text;
-    font-family: "Segoe UI", Roboto, -apple-system, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     overflow: hidden;
+    letter-spacing: -0.01em;
 
     * {
         box-sizing: border-box;
     }
 
+
     // ---------------------------------------------------------------
-    // Products (left column)
+    // Left: Products Catalog & Multi-level Side Navigation
     // ---------------------------------------------------------------
     &_products {
-        flex: 1 1 55%;
+        flex: 1 1 60%;
         display: flex;
         flex-direction: column;
         min-width: 0;
-        padding: 16px;
+        min-height: 0;
+        height: 100%;
+        max-height: 100%;
+        padding: 16px 20px;
         overflow: hidden;
+        background: $mpos-bg;
     }
 
     &_topbar {
         display: flex;
         align-items: center;
-        gap: 16px;
-        margin-bottom: 14px;
+        gap: 14px;
+        margin-bottom: 12px;
         flex-wrap: wrap;
+        flex: 0 0 auto;
     }
 
     &_brand {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-weight: 700;
-        font-size: 18px;
-        color: $mpos-primary;
-        white-space: nowrap;
+        gap: 10px;
+
+        &_icon {
+            width: 38px;
+            height: 38px;
+            border-radius: $mpos-radius;
+            background: $mpos-primary-gradient;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+            box-shadow: 0 4px 10px $mpos-primary-glow;
+        }
+
+        &_text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &_title {
+            font-weight: 800;
+            font-size: 16px;
+            color: $mpos-text;
+            line-height: 1.2;
+        }
+
+        &_sub {
+            font-size: 11px;
+            font-weight: 600;
+            color: $mpos-muted;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
     }
 
     &_search {
         flex: 1;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         background: $mpos-card-bg;
         border: 1px solid $mpos-border;
-        border-radius: 999px;
-        padding: 8px 16px;
-        min-width: 220px;
+        border-radius: $mpos-radius-full;
+        padding: 8px 18px;
+        min-width: 240px;
+        box-shadow: $mpos-shadow-sm;
+        transition: all 0.2s ease;
+
+        &:focus-within {
+            border-color: $mpos-primary;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
 
         i.fa-search {
             color: $mpos-muted;
+            font-size: 14px;
         }
 
         input {
@@ -77,88 +148,512 @@ $mpos-radius: 12px;
             outline: none;
             flex: 1;
             background: transparent;
-            font-size: 14px;
+            font-size: 13.5px;
+            color: $mpos-text;
+
+            &::placeholder {
+                color: lighten($mpos-muted, 10%);
+            }
         }
 
         &_clear {
             cursor: pointer;
             color: $mpos-muted;
+            padding: 2px 6px;
+            border-radius: $mpos-radius-full;
+            transition: all 0.15s ease;
 
             &:hover {
                 color: $mpos-danger;
+                background: $mpos-danger-light;
             }
         }
     }
 
-    &_categories {
+    &_user_chip {
         display: flex;
+        align-items: center;
         gap: 8px;
-        overflow-x: auto;
-        padding-bottom: 10px;
-        margin-bottom: 6px;
+        background: $mpos-card-bg;
+        border: 1px solid $mpos-border;
+        border-radius: $mpos-radius-full;
+        padding: 6px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        color: $mpos-text;
+        box-shadow: $mpos-shadow-sm;
 
-        &::-webkit-scrollbar {
-            height: 4px;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: $mpos-border;
-            border-radius: 4px;
+        i {
+            color: $mpos-primary;
+            font-size: 16px;
         }
     }
 
-    &_cat_btn {
-        flex: 0 0 auto;
-        border: 1px solid $mpos-border;
+    &_logout_btn {
+        border: 1px solid rgba(239, 68, 68, 0.2);
         background: $mpos-card-bg;
-        color: $mpos-text;
-        padding: 8px 18px;
-        border-radius: 999px;
+        color: $mpos-danger;
+        font-weight: 700;
+        font-size: 12.5px;
+        padding: 7px 16px;
+        border-radius: $mpos-radius-full;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+        box-shadow: $mpos-shadow-sm;
+
+        &:hover {
+            background: $mpos-danger;
+            border-color: $mpos-danger;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Barcode Scan Bar — Modern High-Tech Pill Design
+    // ---------------------------------------------------------------
+    .o_mobile_scan_bar,
+    &_scan_bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #FFFFFF;
+        border: 1.5px solid $mpos-border;
+        border-radius: $mpos-radius-full;
+        padding: 5px 14px 5px 7px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+        flex: 0 0 auto;
+        position: relative;
+        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+
+        &:hover {
+            border-color: #CBD5E1;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+        }
+
+        &:focus-within {
+            border-color: $mpos-primary;
+            background: #FFFFFF;
+            box-shadow: 0 0 0 3.5px rgba(79, 70, 229, 0.15), 0 8px 20px rgba(79, 70, 229, 0.08);
+            transform: translateY(-1px);
+
+            .o_mobile_scan_icon {
+                transform: scale(1.05);
+                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.45);
+            }
+        }
+
+        .o_mobile_scan_icon {
+            width: 36px;
+            height: 36px;
+            border-radius: $mpos-radius-full;
+            background: $mpos-primary-gradient;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-size: 15px;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: $mpos-text;
+            outline: none;
+            padding: 6px 4px;
+            min-width: 140px;
+
+            &::placeholder {
+                color: $mpos-muted;
+                font-weight: 400;
+                font-size: 13px;
+                opacity: 0.85;
+            }
+        }
+
+        .o_mobile_scan_badge_group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .o_mobile_scan_kbd_hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: $mpos-muted;
+            background: #F8FAFC;
+            border: 1px solid $mpos-border;
+            padding: 3px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.02em;
+            user-select: none;
+
+            i {
+                font-size: 9.5px;
+            }
+        }
+
+        .o_mobile_scan_badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 4px 12px;
+            border-radius: $mpos-radius-full;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .o_mobile_scan_dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10B981;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: mposScanDotPulse 1.8s infinite;
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Hierarchical Catalog Layout (Category -> Brand -> Model Panels)
+    // ---------------------------------------------------------------
+    &_catalog_layout {
+        flex: 1 1 auto;
+        display: flex;
+        gap: 12px;
+        min-height: 0;
+        height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+    }
+
+    .o_mobile_nav_pane {
+        display: flex;
+        flex-direction: column;
+        background: $mpos-card-bg;
+        border: 1px solid $mpos-border;
+        border-radius: $mpos-radius-lg;
+        box-shadow: $mpos-shadow-sm;
+        overflow: hidden;
+        height: 100%;
+        min-height: 0;
+        max-height: 100%;
+        flex-shrink: 0;
+        animation: mposSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+        &_header,
+        .o_mobile_pane_header {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: #FAFAFC;
+            border-bottom: 1px solid $mpos-border-light;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: $mpos-muted;
+        }
+
+        .o_mobile_pane_clear_btn {
+            border: none;
+            background: none;
+            color: $mpos-primary;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+
+            &:hover {
+                background: $mpos-primary-light;
+            }
+        }
+
+        &_list,
+        .o_mobile_pane_list {
+            flex: 1 1 0px;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            min-height: 0;
+            max-height: 100%;
+            height: auto;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            scrollbar-width: thin;
+            scrollbar-color: #CBD5E1 transparent;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: #CBD5E1;
+                border-radius: 4px;
+            }
+            &::-webkit-scrollbar-thumb:hover {
+                background: #94A3B8;
+            }
+        }
+    }
+
+    .o_mobile_pane_categories {
+        flex: 0 0 175px;
+        min-width: 175px;
+        max-width: 175px;
+    }
+
+    .o_mobile_pane_brands {
+        flex: 0 0 165px;
+        min-width: 165px;
+        max-width: 165px;
+    }
+
+    .o_mobile_pane_models {
+        flex: 0 0 165px;
+        min-width: 165px;
+        max-width: 165px;
+    }
+
+    .o_mobile_nav_item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 10px;
+        border-radius: $mpos-radius-sm;
+        border: 1px solid transparent;
+        background: transparent;
+        color: $mpos-text-secondary;
         font-size: 13px;
         font-weight: 600;
         cursor: pointer;
-        transition: all .15s ease;
-        white-space: nowrap;
+        text-align: left;
+        transition: all 0.16s ease;
+        position: relative;
+        width: 100%;
+        flex-shrink: 0;
+
+        &_icon {
+            width: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: $mpos-muted;
+            font-size: 14px;
+        }
+
+        &_name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        &_count {
+            font-size: 11px;
+            font-weight: 700;
+            background: $mpos-bg;
+            color: $mpos-muted;
+            padding: 1px 7px;
+            border-radius: $mpos-radius-full;
+        }
+
+        &_arrow {
+            font-size: 10px;
+            color: lighten($mpos-muted, 15%);
+            margin-left: 2px;
+        }
 
         &:hover {
-            border-color: $mpos-primary;
+            background: $mpos-bg;
+            color: $mpos-text;
+
+            .o_mobile_nav_item_icon {
+                color: $mpos-primary;
+            }
         }
 
         &.active {
-            background: $mpos-primary;
-            border-color: $mpos-primary;
-            color: #fff;
+            background: $mpos-primary-light;
+            color: $mpos-primary;
+            border-color: rgba(79, 70, 229, 0.2);
+            font-weight: 700;
+
+            .o_mobile_nav_item_icon {
+                color: $mpos-primary;
+            }
+
+            .o_mobile_nav_item_count {
+                background: $mpos-primary;
+                color: #fff;
+            }
+
+            .o_mobile_nav_item_arrow {
+                color: $mpos-primary;
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Catalog Grid & Filter Breadcrumbs
+    // ---------------------------------------------------------------
+    .o_mobile_catalog_content {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 0;
+        height: 100%;
+        max-height: 100%;
+        background: $mpos-card-bg;
+        border: 1px solid $mpos-border;
+        border-radius: $mpos-radius-lg;
+        padding: 12px 14px;
+        box-shadow: $mpos-shadow-sm;
+        overflow: hidden;
+    }
+
+    .o_mobile_filter_breadcrumb {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid $mpos-border-light;
+        flex-wrap: wrap;
+        flex: 0 0 auto;
+
+        .o_mobile_breadcrumb_trail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .o_mobile_crumb {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: $mpos-muted;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+
+            &:hover {
+                background: $mpos-bg;
+                color: $mpos-primary;
+            }
+
+            &.active {
+                background: $mpos-primary-light;
+                color: $mpos-primary;
+                font-weight: 700;
+            }
+
+            &_sep {
+                font-size: 12px;
+                color: lighten($mpos-muted, 20%);
+            }
+
+            &_remove {
+                margin-left: 2px;
+                font-size: 11px;
+                opacity: 0.7;
+
+                &:hover {
+                    opacity: 1;
+                    color: $mpos-danger;
+                }
+            }
+        }
+
+        .o_mobile_catalog_count {
+            font-size: 12px;
+            font-weight: 600;
+            color: $mpos-muted;
         }
     }
 
     &_grid_wrapper {
-        flex: 1;
+        flex: 1 1 auto;
         overflow-y: auto;
+        min-height: 0;
         padding-right: 4px;
+        scrollbar-width: thin;
+        scrollbar-color: #CBD5E1 transparent;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 6px;
+        }
+        &::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
     }
 
     &_grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: 12px;
-        padding-bottom: 20px;
+        padding-bottom: 12px;
     }
 
     &_card {
-        background: $mpos-card-bg;
+        background: #FFFFFF;
         border: 1px solid $mpos-border;
         border-radius: $mpos-radius;
         cursor: pointer;
         overflow: hidden;
-        transition: transform .12s ease, box-shadow .12s ease;
+        transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease, border-color 0.18s ease;
         display: flex;
         flex-direction: column;
         user-select: none;
+        position: relative;
 
         &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(31, 36, 48, 0.08);
-            border-color: $mpos-primary;
+            transform: translateY(-3px);
+            box-shadow: $mpos-shadow;
+            border-color: rgba(79, 70, 229, 0.4);
+
+            .o_mobile_pos_card_quick_info {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         &:active {
@@ -166,23 +661,30 @@ $mpos-radius: 12px;
         }
 
         &.out_of_stock {
-            opacity: .45;
+            opacity: 0.45;
             pointer-events: none;
+            filter: grayscale(0.8);
         }
 
         &_img {
             position: relative;
             width: 100%;
-            aspect-ratio: 1 / 1;
-            background: #F0F2F8;
+            aspect-ratio: 1.1 / 1;
+            background: #F1F5F9;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
 
             img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                transition: transform 0.25s ease;
+            }
+
+            &:hover img {
+                transform: scale(1.04);
             }
         }
 
@@ -192,15 +694,17 @@ $mpos-radius: 12px;
             right: 6px;
             background: $mpos-primary;
             color: #fff;
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 11px;
+            font-weight: 800;
             min-width: 22px;
             height: 22px;
-            border-radius: 999px;
+            border-radius: $mpos-radius-full;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 0 6px;
+            box-shadow: 0 2px 6px rgba(79, 70, 229, 0.4);
+            z-index: 2;
         }
 
         &_low_badge {
@@ -209,10 +713,13 @@ $mpos-radius: 12px;
             left: 6px;
             background: $mpos-warning;
             color: #fff;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 999px;
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: $mpos-radius-full;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            z-index: 2;
         }
 
         &_sale_badge {
@@ -221,23 +728,54 @@ $mpos-radius: 12px;
             left: 6px;
             background: $mpos-danger;
             color: #fff;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 800;
-            padding: 2px 8px;
-            border-radius: 999px;
+            padding: 2px 7px;
+            border-radius: $mpos-radius-full;
+            letter-spacing: 0.02em;
+            z-index: 2;
+        }
+
+        &_quick_info {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            width: 26px;
+            height: 26px;
+            border-radius: $mpos-radius-full;
+            border: none;
+            background: rgba(255, 255, 255, 0.92);
+            color: $mpos-primary;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            opacity: 0;
+            transform: scale(0.85);
+            transition: all 0.18s ease;
+            z-index: 2;
+
+            &:hover {
+                background: $mpos-primary;
+                color: #fff;
+            }
         }
 
         &_body {
-            padding: 10px;
+            padding: 10px 12px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
+            flex: 1;
         }
 
         &_name {
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 700;
-            line-height: 1.25;
+            color: $mpos-text;
+            line-height: 1.3;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -245,7 +783,7 @@ $mpos-radius: 12px;
         }
 
         &_sub {
-            font-size: 11.5px;
+            font-size: 11px;
             color: $mpos-muted;
             white-space: nowrap;
             overflow: hidden;
@@ -255,55 +793,43 @@ $mpos-radius: 12px;
         &_footer {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-top: 4px;
+            align-items: flex-end;
+            margin-top: auto;
+            padding-top: 6px;
+        }
+
+        &_price_box {
+            display: flex;
+            flex-direction: column;
         }
 
         &_price {
-            font-size: 13px;
-            font-weight: 700;
-            color: $mpos-primary-dark;
+            font-size: 13.5px;
+            font-weight: 800;
+            color: $mpos-primary;
         }
 
         &_price_wrap {
             display: flex;
-            align-items: baseline;
-            gap: 6px;
+            flex-direction: column;
+            gap: 1px;
         }
 
         &_price_old {
             font-size: 11px;
-            color: $mpos-muted;
+            color: lighten($mpos-muted, 10%);
             text-decoration: line-through;
         }
 
         &_price_sale {
             color: $mpos-danger !important;
+            font-weight: 800;
         }
 
         &_stock {
             font-size: 10.5px;
-            color: $mpos-muted;
-        }
-
-        &_details_btn {
-            margin-top: 6px;
-            width: 100%;
-            border: 1px solid $mpos-border;
-            background: $mpos-bg;
-            color: $mpos-text;
-            font-size: 11.5px;
             font-weight: 600;
-            border-radius: 8px;
-            padding: 6px 0;
-            cursor: pointer;
-            transition: all .15s ease;
-
-            &:hover {
-                border-color: $mpos-primary;
-                color: $mpos-primary;
-                background: #fff;
-            }
+            color: $mpos-muted;
         }
     }
 
@@ -313,107 +839,150 @@ $mpos-radius: 12px;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 10px;
         height: 100%;
+        min-height: 240px;
         color: $mpos-muted;
-        font-size: 14px;
+        text-align: center;
+        padding: 30px 20px;
 
         i {
-            font-size: 28px;
+            font-size: 32px;
+            color: $mpos-primary;
+        }
+
+        &_icon {
+            width: 56px;
+            height: 56px;
+            border-radius: $mpos-radius-xl;
+            background: $mpos-primary-light;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4px;
+
+            i {
+                font-size: 24px;
+                color: $mpos-primary;
+            }
+        }
+
+        &_title {
+            font-size: 15px;
+            font-weight: 700;
+            color: $mpos-text;
+        }
+
+        &_desc {
+            font-size: 12.5px;
+            color: $mpos-muted;
+            max-width: 260px;
+        }
+
+        &_btn {
+            margin-top: 8px;
+            border: 1px solid $mpos-border;
+            background: $mpos-bg;
+            color: $mpos-primary;
+            font-size: 12.5px;
+            font-weight: 700;
+            padding: 7px 16px;
+            border-radius: $mpos-radius-full;
+            cursor: pointer;
+
+            &:hover {
+                background: $mpos-primary-light;
+            }
         }
     }
 
     // ---------------------------------------------------------------
-    // Cart (right column) — now wider, split into items-list | numpad
+    // Right: Current Order / Checkout (Matching Screenshot Design)
     // ---------------------------------------------------------------
     &_cart {
-        flex: 0 0 660px;
-        max-width: 660px;
+        flex: 0 0 400px;
+        max-width: 400px;
+        min-width: 360px;
         display: flex;
         flex-direction: column;
-        background: $mpos-card-bg;
+        background: #FFFFFF;
         border-left: 1px solid $mpos-border;
-        padding: 16px;
-        overflow: hidden;
+        padding: 24px 22px 20px;
+        overflow-y: auto;
+        box-shadow: -4px 0 20px rgba(15, 23, 42, 0.03);
     }
 
     &_cart_header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-weight: 700;
-        font-size: 15px;
-        margin-bottom: 10px;
+        margin-bottom: 18px;
         flex: 0 0 auto;
 
-        i {
-            margin-right: 6px;
-            color: $mpos-primary;
+        .o_mobile_pos_order_title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0F172A;
+            letter-spacing: -0.02em;
+        }
+
+        .o_mobile_pos_items_badge {
+            background: #E6FFFA;
+            color: #0D9488;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: $mpos-radius-full;
         }
     }
 
-    &_clear_btn {
-        border: none;
-        background: none;
-        color: $mpos-danger;
-        font-size: 12.5px;
-        font-weight: 600;
-        cursor: pointer;
+    &_order_content {
+        flex: 1 1 auto;
         display: flex;
-        align-items: center;
-        gap: 4px;
-
-        &:hover {
-            text-decoration: underline;
-        }
-    }
-
-    &_cart_split {
-        flex: 1;
-        display: flex;
-        gap: 14px;
-        min-height: 0;
+        flex-direction: column;
+        min-height: 180px;
         margin-bottom: 12px;
     }
 
-    &_cart_left {
-        flex: 1 1 auto;
-        min-width: 0;
+    // Empty order card matching the screenshot:
+    // Soft lilac container with rounded corners and centered text
+    &_order_empty_card {
+        background: #EEF2FF;
+        border-radius: 16px;
+        padding: 32px 20px;
         display: flex;
-        flex-direction: column;
-    }
-
-    &_cart_right {
-        flex: 0 0 268px;
-        display: flex;
-        flex-direction: column;
-        border-left: 1px dashed $mpos-border;
-        padding-left: 14px;
-        overflow-y: auto;
-    }
-
-    &_cart_lines {
-        flex: 1;
-        overflow-y: auto;
-        border-top: 1px dashed $mpos-border;
-        border-bottom: 1px dashed $mpos-border;
-        padding: 6px 4px 6px 0;
-        min-height: 120px;
-    }
-
-    &_cart_empty {
-        display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100%;
-        color: $mpos-muted;
-        font-size: 13px;
-        gap: 8px;
-        padding: 20px 0;
+        text-align: center;
+        min-height: 130px;
+        margin-top: 4px;
 
-        i {
-            font-size: 22px;
+        p {
+            margin: 0;
+            font-size: 14.5px;
+            font-weight: 500;
+            color: #6366F1;
+            line-height: 1.4;
+        }
+    }
+
+    &_cart_lines_list {
+        flex: 1 1 auto;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-right: 2px;
+        max-height: 320px;
+        scrollbar-width: thin;
+        scrollbar-color: #CBD5E1 transparent;
+
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
         }
     }
 
@@ -421,318 +990,391 @@ $mpos-radius: 12px;
         display: grid;
         grid-template-columns: 1fr auto auto auto;
         align-items: center;
-        gap: 8px;
-        padding: 9px 4px;
-        border-bottom: 1px solid $mpos-border;
-
-        &:last-child {
-            border-bottom: none;
-        }
-    }
-
-    &_line_info {
-        min-width: 0;
-    }
-
-    &_line_name {
-        font-size: 13.5px;
-        font-weight: 600;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    &_line_sub {
-        font-size: 11.5px;
-        color: $mpos-muted;
-    }
-
-    &_line_discount_sub {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
-    }
-
-    &_line_price_old {
-        font-size: 11px;
-        color: $mpos-muted;
-        text-decoration: line-through;
-    }
-
-    &_line_discount_chip {
-        background: $mpos-danger;
-        color: #fff;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 1px 6px;
-        border-radius: 999px;
-    }
-
-    &_line_qty {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-
-        button {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
-            border: 1px solid $mpos-border;
-            background: $mpos-bg;
-            cursor: pointer;
-            font-weight: 700;
-            line-height: 1;
-        }
-
-        input {
-            width: 38px;
-            text-align: center;
-            border: 1px solid $mpos-border;
-            border-radius: 6px;
-            font-size: 12.5px;
-            padding: 3px 0;
-        }
-    }
-
-    &_line_amount {
-        font-size: 13px;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    &_line_remove {
-        border: none;
-        background: none;
-        color: $mpos-muted;
-        cursor: pointer;
+        gap: 10px;
+        padding: 10px 12px;
+        background: #F8FAFC;
+        border: 1px solid $mpos-border-light;
+        border-radius: $mpos-radius;
+        transition: all 0.15s ease;
 
         &:hover {
-            color: $mpos-danger;
+            background: #F1F5F9;
+        }
+
+        &_info {
+            min-width: 0;
+        }
+
+        &_name {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: $mpos-text;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        &_sub {
+            font-size: 11.5px;
+            color: $mpos-muted;
+            margin-top: 1px;
+        }
+
+        &_discount_sub {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        &_price_old {
+            font-size: 11px;
+            color: lighten($mpos-muted, 10%);
+            text-decoration: line-through;
+        }
+
+        &_discount_chip {
+            background: $mpos-danger;
+            color: #fff;
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: 1px 5px;
+            border-radius: $mpos-radius-full;
+        }
+
+        &_qty {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #fff;
+            border: 1px solid $mpos-border;
+            border-radius: 8px;
+            padding: 2px;
+
+            .o_mobile_qty_btn {
+                width: 22px;
+                height: 22px;
+                border: none;
+                background: transparent;
+                color: $mpos-text;
+                cursor: pointer;
+                font-weight: 700;
+                font-size: 13px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+
+                &:hover {
+                    background: $mpos-bg;
+                    color: $mpos-primary;
+                }
+            }
+
+            .o_mobile_qty_input {
+                width: 28px;
+                border: none;
+                background: transparent;
+                text-align: center;
+                font-size: 12.5px;
+                font-weight: 700;
+                color: $mpos-text;
+                outline: none;
+                padding: 0;
+            }
+        }
+
+        &_amount {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: $mpos-text;
+            white-space: nowrap;
+        }
+
+        &_remove {
+            border: none;
+            background: none;
+            color: lighten($mpos-muted, 10%);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.15s ease;
+
+            &:hover {
+                color: $mpos-danger;
+                background: $mpos-danger-light;
+            }
         }
     }
 
-    &_totals {
-        flex: 0 0 auto;
-        padding-top: 10px;
+    // Dotted separator line
+    &_order_divider {
+        border-top: 1.5px dashed #E2E8F0;
+        margin: 16px 0 14px;
+    }
+
+    // Totals Section
+    &_totals_block {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 20px;
     }
 
     &_total_row {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: baseline;
     }
 
-    &_total_sub {
-        font-size: 12.5px;
-        color: $mpos-muted;
-        margin-bottom: 2px;
+    &_subtotal_row {
+        font-size: 14.5px;
+        font-weight: 600;
+        color: #64748B;
     }
 
-    &_total_discount {
-        font-size: 13px;
-        font-weight: 700;
-        color: $mpos-danger;
-        margin-bottom: 6px;
+    &_discount_row {
+        font-size: 14.5px;
+        font-weight: 600;
+        color: #64748B;
     }
 
-    &_total_main {
+    &_grand_total_row {
         font-size: 22px;
         font-weight: 800;
-        color: $mpos-primary-dark;
+        color: #0F172A;
+        margin-top: 4px;
     }
 
-    &_payment {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
-
-    &_payment_methods {
+    // Payment Segmented Control (Pill Tabs)
+    &_payment_segmented {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-        margin-bottom: 10px;
-    }
-
-    &_pay_btn {
-        border: 1px solid $mpos-border;
-        background: $mpos-bg;
-        border-radius: 8px;
-        padding: 8px 2px;
-        font-size: 11px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        background: #EEF2FF;
+        border-radius: 14px;
+        padding: 4px;
         gap: 4px;
+        margin-bottom: 16px;
 
-        i {
+        .o_mobile_pos_segment_btn {
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            padding: 10px 4px;
             font-size: 14px;
-        }
-
-        &.active {
-            background: $mpos-primary;
-            border-color: $mpos-primary;
-            color: #fff;
-        }
-    }
-
-    &_tendered {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        background: $mpos-bg;
-        border-radius: 8px;
-        padding: 8px 10px;
-        margin-bottom: 8px;
-        font-size: 12px;
-    }
-
-    &_tendered_display,
-    &_change_display {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    &_tendered_amount {
-        font-weight: 700;
-    }
-
-    &_change_display {
-        font-weight: 700;
-
-        &.negative {
-            color: $mpos-danger;
-        }
-
-        &.positive {
-            color: $mpos-success;
-        }
-    }
-
-    &_quick_amounts {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 5px;
-        margin-bottom: 8px;
-
-        button {
-            border: 1px solid $mpos-border;
-            background: $mpos-card-bg;
-            border-radius: 6px;
-            padding: 6px 1px;
-            font-size: 10.5px;
             font-weight: 600;
+            color: #64748B;
             cursor: pointer;
+            transition: all 0.18s ease;
 
             &:hover {
-                border-color: $mpos-primary;
+                color: $mpos-text;
+            }
+
+            &.active {
+                background: #FFFFFF;
+                color: #4F46E5;
+                font-weight: 700;
+                box-shadow: 0 2px 8px rgba(79, 70, 229, 0.12);
             }
         }
     }
 
-    &_numpad {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
+    // Tendered & Change Row
+    &_tendered_row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        gap: 12px;
+
+        .o_mobile_pos_tendered_input_group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            label {
+                font-size: 14px;
+                font-weight: 600;
+                color: #64748B;
+                margin: 0;
+            }
+
+            .o_mobile_tendered_field {
+                width: 96px;
+                border: 1px solid #CBD5E1;
+                border-radius: 10px;
+                padding: 7px 10px;
+                font-size: 14.5px;
+                font-weight: 700;
+                color: #0F172A;
+                text-align: center;
+                background: #FFFFFF;
+                outline: none;
+                transition: all 0.2s ease;
+
+                &:focus {
+                    border-color: #4F46E5;
+                    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+                }
+
+                &:disabled {
+                    background: #F8FAFC;
+                    color: $mpos-muted;
+                    cursor: not-allowed;
+                }
+            }
+
+            .o_mobile_exact_btn {
+                border: 1px solid #E2E8F0;
+                background: #F8FAFC;
+                color: #4F46E5;
+                font-size: 11px;
+                font-weight: 700;
+                padding: 5px 8px;
+                border-radius: 6px;
+                cursor: pointer;
+
+                &:hover {
+                    background: #EEF2FF;
+                }
+            }
+        }
+
+        .o_mobile_pos_change_group {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #0D9488;
+            white-space: nowrap;
+
+            &.negative {
+                color: #EF4444;
+            }
+        }
     }
 
-    &_numkey {
-        border: 1px solid $mpos-border;
-        background: $mpos-bg;
-        border-radius: 8px;
-        padding: 10px 0;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
+    // Bottom Action Buttons (Clear + Charge)
+    &_cart_actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
 
-        &:hover {
-            background: darken($mpos-bg, 4%);
+        .o_mobile_pos_clear_order_btn {
+            border: none;
+            background: #EEF2FF;
+            color: #4F46E5;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 14px;
+            padding: 14px 22px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+
+            &:hover:not(:disabled) {
+                background: #E0E7FF;
+                transform: translateY(-1px);
+            }
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
         }
 
-        &_back {
-            color: $mpos-primary;
-        }
+        .o_mobile_pos_charge_btn {
+            flex: 1;
+            border: none;
+            background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+            color: #FFFFFF;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 14px;
+            padding: 14px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(79, 70, 229, 0.35);
+            transition: all 0.2s ease;
 
-        &_clear {
-            grid-column: span 3;
-            color: $mpos-danger;
-        }
-    }
+            &:hover:not(:disabled) {
+                box-shadow: 0 6px 22px rgba(79, 70, 229, 0.45);
+                transform: translateY(-2px);
+                filter: brightness(1.05);
+            }
 
-    &_checkout_btn {
-        flex: 0 0 auto;
-        border: none;
-        background: $mpos-primary;
-        color: #fff;
-        font-size: 15px;
-        font-weight: 700;
-        border-radius: $mpos-radius;
-        padding: 14px;
-        cursor: pointer;
-        transition: background .15s ease;
+            &:active:not(:disabled) {
+                transform: translateY(0);
+            }
 
-        &:hover:not(:disabled) {
-            background: $mpos-primary-dark;
-        }
-
-        &:disabled {
-            background: $mpos-border;
-            color: $mpos-muted;
-            cursor: not-allowed;
+            &:disabled {
+                background: #E2E8F0;
+                color: #94A3B8;
+                box-shadow: none;
+                cursor: not-allowed;
+            }
         }
     }
 
     // ---------------------------------------------------------------
-    // Product details overlay
+    // Product Details Overlay Modal
     // ---------------------------------------------------------------
     &_details_overlay {
         position: fixed;
         inset: 0;
-        background: rgba(20, 22, 30, 0.55);
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(6px);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 1000;
+        z-index: 1050;
         padding: 20px;
+        animation: mposFadeIn 0.2s ease forwards;
     }
 
     &_details_panel {
         position: relative;
-        background: $mpos-card-bg;
-        border-radius: $mpos-radius;
+        background: #FFFFFF;
+        border-radius: $mpos-radius-xl;
         width: 100%;
-        max-width: 380px;
+        max-width: 400px;
         max-height: 90vh;
         overflow-y: auto;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 24px 50px rgba(15, 23, 42, 0.25);
+        animation: mposScaleUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     &_details_close {
         position: absolute;
-        top: 10px;
-        right: 10px;
-        width: 30px;
-        height: 30px;
-        border-radius: 999px;
+        top: 12px;
+        right: 12px;
+        width: 32px;
+        height: 32px;
+        border-radius: $mpos-radius-full;
         border: none;
-        background: $mpos-bg;
+        background: rgba(255, 255, 255, 0.9);
         color: $mpos-text;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         cursor: pointer;
-        z-index: 1;
+        z-index: 2;
+        box-shadow: $mpos-shadow-sm;
+        transition: all 0.15s ease;
 
         &:hover {
-            background: $mpos-border;
+            background: $mpos-danger;
+            color: #fff;
         }
     }
 
     &_details_img {
         width: 100%;
-        aspect-ratio: 1 / 1;
-        background: #F0F2F8;
-        border-radius: $mpos-radius $mpos-radius 0 0;
+        aspect-ratio: 1.2 / 1;
+        background: #F1F5F9;
         overflow: hidden;
 
         img {
@@ -743,13 +1385,14 @@ $mpos-radius: 12px;
     }
 
     &_details_body {
-        padding: 16px 18px 20px;
+        padding: 18px 22px 22px;
     }
 
     &_details_name {
-        font-size: 17px;
+        font-size: 18px;
         font-weight: 800;
-        margin-bottom: 12px;
+        color: #0F172A;
+        margin-bottom: 14px;
         line-height: 1.3;
     }
 
@@ -757,9 +1400,9 @@ $mpos-radius: 12px;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 10px;
+        gap: 12px;
         padding: 8px 0;
-        border-bottom: 1px solid $mpos-border;
+        border-bottom: 1px solid $mpos-border-light;
         font-size: 13px;
 
         &:last-of-type {
@@ -773,16 +1416,27 @@ $mpos-radius: 12px;
         white-space: nowrap;
     }
 
+    &_details_val {
+        font-weight: 600;
+        color: $mpos-text;
+        text-align: right;
+    }
+
     &_details_none {
         color: $mpos-muted;
         font-style: italic;
+    }
+
+    &_stock_tag {
+        color: $mpos-success !important;
+        font-weight: 700;
     }
 
     &_details_price {
         margin-top: 14px;
         font-size: 22px;
         font-weight: 800;
-        color: $mpos-primary-dark;
+        color: $mpos-primary;
         text-align: right;
     }
 
@@ -797,65 +1451,125 @@ $mpos-radius: 12px;
 
     &_details_price_old {
         font-size: 14px;
-        color: $mpos-muted;
+        color: lighten($mpos-muted, 10%);
         text-decoration: line-through;
     }
 
     &_details_price_sale {
         color: $mpos-danger !important;
+        font-size: 22px;
+        font-weight: 800;
     }
 
     &_details_discount_chip {
         background: $mpos-danger;
         color: #fff;
         font-size: 11px;
-        font-weight: 700;
+        font-weight: 800;
         padding: 2px 8px;
-        border-radius: 999px;
+        border-radius: $mpos-radius-full;
     }
 
     &_details_add_btn {
         width: 100%;
-        margin-top: 14px;
+        margin-top: 16px;
         border: none;
-        background: $mpos-primary;
+        background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
         color: #fff;
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 700;
-        border-radius: $mpos-radius;
-        padding: 12px;
+        border-radius: 12px;
+        padding: 13px;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        transition: background .15s ease;
+        box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+        transition: all 0.2s ease;
 
         &:hover:not(:disabled) {
-            background: $mpos-primary-dark;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(79, 70, 229, 0.4);
         }
 
         &:disabled {
-            background: $mpos-border;
+            background: #E2E8F0;
             color: $mpos-muted;
+            box-shadow: none;
             cursor: not-allowed;
         }
     }
 }
 
-// Responsive: stack cart below products on narrow / tablet screens
-@media (max-width: 1200px) {
-    .o_mobile_pos_cart {
-        flex-basis: 520px;
-        max-width: 520px;
+// ---------------------------------------------------------------
+// Keyframe Animations
+// ---------------------------------------------------------------
+@keyframes mposSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
     }
-
-    .o_mobile_pos_cart_right {
-        flex-basis: 230px;
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 
-@media (max-width: 992px) {
+@keyframes mposFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes mposScaleUp {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes mposScanDotPulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+// ---------------------------------------------------------------
+// Responsive Design
+// ---------------------------------------------------------------
+@media (max-width: 1180px) {
+    .o_mobile_pos {
+        .o_mobile_pane_categories {
+            flex-basis: 140px;
+            min-width: 140px;
+        }
+        .o_mobile_pane_brands,
+        .o_mobile_pane_models {
+            flex-basis: 130px;
+            min-width: 130px;
+        }
+        &_cart {
+            flex-basis: 360px;
+            max-width: 360px;
+            padding: 18px 16px;
+        }
+    }
+}
+
+@media (max-width: 960px) {
     .o_mobile_pos {
         flex-direction: column;
         overflow-y: auto;
@@ -869,95 +1583,6 @@ $mpos-radius: 12px;
             max-width: none;
             border-left: none;
             border-top: 1px solid $mpos-border;
-        }
-    }
-}
-
-@media (max-width: 640px) {
-    .o_mobile_pos_cart_split {
-        flex-direction: column;
-    }
-
-    .o_mobile_pos_cart_right {
-        flex-basis: auto;
-        border-left: none;
-        border-top: 1px dashed $mpos-border;
-        padding-left: 0;
-        padding-top: 12px;
-    }
-}
-
-// ---------------------------------------------------------------------
-// Logged-in user chip + Log Out button (topbar)
-// ---------------------------------------------------------------------
-
-.o_mobile_pos_user_chip {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    font-weight: 600;
-    color: $mpos-text;
-    white-space: nowrap;
-
-    i {
-        color: $mpos-primary;
-    }
-}
-
-.o_mobile_pos_logout_btn {
-    flex: 0 0 auto;
-    border: 1px solid $mpos-border;
-    background: $mpos-card-bg;
-    color: $mpos-danger;
-    font-weight: 700;
-    font-size: 12.5px;
-    padding: 8px 14px;
-    border-radius: 999px;
-    cursor: pointer;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    &:hover {
-        background: $mpos-danger;
-        border-color: $mpos-danger;
-        color: #fff;
-    }
-}
-
-// ---------------------------------------------------------------------
-// Barcode scan bar — used on POS Screen, Add Stock, and Products.
-// Visually similar to the search box, but with its own accent color so
-// it reads as a distinct "scan here" affordance, not another filter.
-// ---------------------------------------------------------------------
-
-.o_mobile_scan_bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #fff7e6;
-    border: 1.5px dashed #d9a441;
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin: 0 0 14px;
-
-    i.fa-barcode {
-        color: #b3781c;
-        font-size: 16px;
-    }
-
-    input {
-        flex: 1;
-        border: none;
-        background: transparent;
-        font-size: 14px;
-        outline: none;
-
-        &::placeholder {
-            color: #a3855a;
         }
     }
 }

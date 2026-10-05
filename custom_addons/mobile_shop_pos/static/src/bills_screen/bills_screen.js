@@ -82,6 +82,12 @@ export class MobileShopBillsScreen extends Component {
         });
     }
 
+    openScreen(actionXmlId) {
+        if (actionXmlId) {
+            this.action.doAction(actionXmlId);
+        }
+    }
+
     /* ---------------------------------------------------------------- */
     /* Data loading                                                      */
     /* ---------------------------------------------------------------- */

@@ -1,33 +1,64 @@
 // ==========================================================================
-// Mobile Shop — Products management screen
-// Shares $mpos-* variables and .o_mobile_pos_* base classes from
-// pos_screen.scss (loaded earlier in the same assets bundle).
+// Mobile Shop — Products Management Screen Styles
 // ==========================================================================
 
 .o_mobile_products_screen {
     position: relative;
+    height: 100%;
+    width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    flex: 1 1 100%;
 
     .o_mobile_pos_products {
         flex: 1 1 100%;
+        max-width: 100%;
     }
 }
 
 .o_mobile_products_add_btn {
     flex: 0 0 auto;
     border: none;
-    background: $mpos-primary;
+    background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
     color: #fff;
     font-weight: 700;
     font-size: 13px;
-    padding: 10px 18px;
-    border-radius: 999px;
+    padding: 8px 18px;
+    border-radius: $mpos-radius-full;
     cursor: pointer;
     white-space: nowrap;
     display: flex;
     align-items: center;
     gap: 6px;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    transition: all 0.2s ease;
 
-    &:hover { background: $mpos-primary-dark; }
+    &:hover {
+        box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+        transform: translateY(-1px);
+    }
+}
+
+.o_mobile_products_backfill_btn {
+    flex: 0 0 auto;
+    border: 1.5px solid #F59E0B;
+    background: #FFFBEB;
+    color: #B45309;
+    font-weight: 700;
+    font-size: 12.5px;
+    padding: 7px 16px;
+    border-radius: $mpos-radius-full;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: #FEF3C7;
+        transform: translateY(-1px);
+    }
 }
 
 .o_mobile_products_badge_out {
@@ -36,36 +67,70 @@
     left: 6px;
     background: $mpos-danger;
     color: #fff;
-    font-size: 10.5px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 999px;
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: $mpos-radius-full;
+    z-index: 2;
 }
 
-.o_mobile_products_edit_icon {
+.o_mobile_cost_caption {
+    font-size: 11px;
+    font-weight: 600;
+    color: $mpos-muted;
+}
+
+.o_mobile_card_actions_overlay {
     position: absolute;
     bottom: 6px;
     right: 6px;
-    background: rgba(255, 255, 255, 0.92);
+    display: flex;
+    gap: 6px;
+    z-index: 2;
+}
+
+.o_mobile_card_action_btn {
+    width: 28px;
+    height: 28px;
+    border-radius: $mpos-radius-full;
+    border: 1px solid $mpos-border;
+    background: rgba(255, 255, 255, 0.94);
     color: $mpos-primary;
-    width: 26px;
-    height: 26px;
-    border-radius: 999px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 11.5px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: all 0.15s ease;
+
+    &:hover {
+        background: $mpos-primary;
+        color: #fff;
+        transform: scale(1.08);
+    }
+}
+
+.o_mobile_print_action_btn {
+    color: #B45309;
+
+    &:hover {
+        background: #F59E0B;
+        color: #fff;
+    }
 }
 
 // ---------------------------------------------------------------------
-// Slide-over panel
+// Slide-over Drawer Form
 // ---------------------------------------------------------------------
 
 .o_mobile_products_overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 18, 28, 0.35);
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
     z-index: 1049;
+    animation: mposFadeIn 0.2s ease forwards;
 }
 
 .o_mobile_products_panel {
@@ -73,14 +138,14 @@
     top: 0;
     right: 0;
     bottom: 0;
-    width: 420px;
+    width: 440px;
     max-width: 92vw;
-    background: $mpos-card-bg;
-    box-shadow: -8px 0 24px rgba(15, 18, 28, 0.18);
+    background: #FFFFFF;
+    box-shadow: -10px 0 32px rgba(15, 23, 42, 0.2);
     display: flex;
     flex-direction: column;
     transform: translateX(100%);
-    transition: transform .22s ease;
+    transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 1050;
 
     &.open {
@@ -91,76 +156,126 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 16px 20px;
+        padding: 18px 22px;
         border-bottom: 1px solid $mpos-border;
-        font-weight: 700;
-        font-size: 16px;
+        background: #FAFAFC;
+
+        .o_mobile_drawer_title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 16px;
+            color: #0F172A;
+
+            i {
+                color: $mpos-primary;
+                font-size: 18px;
+            }
+        }
     }
 
     &_close {
+        width: 30px;
+        height: 30px;
+        border-radius: $mpos-radius-full;
         border: none;
-        background: none;
-        font-size: 16px;
+        background: $mpos-bg;
         color: $mpos-muted;
+        font-size: 14px;
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s ease;
 
-        &:hover { color: $mpos-danger; }
+        &:hover {
+            background: $mpos-danger-light;
+            color: $mpos-danger;
+        }
     }
 
     &_body {
         flex: 1;
         overflow-y: auto;
-        padding: 18px 20px;
+        padding: 20px 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: $mpos-border;
+            border-radius: 4px;
+        }
     }
 
     &_footer {
         display: flex;
-        gap: 10px;
-        padding: 14px 20px;
+        gap: 12px;
+        padding: 16px 22px;
         border-top: 1px solid $mpos-border;
+        background: #FAFAFC;
     }
 }
 
 .o_mobile_products_image_upload {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 18px;
+    gap: 16px;
+    background: #F8FAFC;
+    border: 1px dashed $mpos-border;
+    border-radius: $mpos-radius;
+    padding: 14px;
 
-    img {
-        width: 84px;
-        height: 84px;
-        object-fit: cover;
+    .o_mobile_image_preview_box {
+        width: 80px;
+        height: 80px;
         border-radius: 10px;
+        overflow: hidden;
         border: 1px solid $mpos-border;
-        background: $mpos-bg;
+        background: #FFFFFF;
+        flex: 0 0 auto;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     }
 }
 
 .o_mobile_products_image_actions {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .o_mobile_products_upload_btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    border: 1px solid $mpos-border;
-    background: $mpos-bg;
+    border: 1px solid $mpos-primary;
+    background: #FFFFFF;
+    color: $mpos-primary;
     padding: 7px 14px;
     border-radius: 8px;
     font-size: 12.5px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     width: fit-content;
+    box-shadow: $mpos-shadow-sm;
+    transition: all 0.15s ease;
 
     input[type="file"] {
         display: none;
     }
 
-    &:hover { border-color: $mpos-primary; }
+    &:hover {
+        background: $mpos-primary-light;
+    }
 }
 
 .o_mobile_products_remove_img_btn {
@@ -168,39 +283,170 @@
     background: none;
     color: $mpos-danger;
     font-size: 12px;
+    font-weight: 600;
     text-align: left;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 6px;
+    padding: 0;
 
-    &:hover { text-decoration: underline; }
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.o_mobile_barcode_box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid $mpos-border;
+    border-radius: $mpos-radius;
+    padding: 10px 14px;
+    background: #F8FAFC;
+
+    img {
+        height: 44px;
+        max-width: 130px;
+        object-fit: contain;
+        flex: 0 0 auto;
+        background: #fff;
+        padding: 2px;
+        border-radius: 4px;
+    }
+}
+
+.o_mobile_barcode_actions {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.o_mobile_barcode_value {
+    font-family: monospace;
+    font-size: 13px;
+    font-weight: 800;
+    color: #0F172A;
+    letter-spacing: 0.04em;
+}
+
+.o_mobile_barcode_buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.o_mobile_mini_btn {
+    border: 1px solid $mpos-border;
+    background: #FFFFFF;
+    color: $mpos-text-secondary;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.15s ease;
+
+    &:hover {
+        border-color: $mpos-primary;
+        color: $mpos-primary;
+    }
+
+    &.primary {
+        background: #FFFBEB;
+        border-color: #F59E0B;
+        color: #B45309;
+
+        &:hover {
+            background: #FEF3C7;
+        }
+    }
+}
+
+.o_mobile_products_hint_box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: $mpos-muted;
+    background: #F8FAFC;
+    border: 1px dashed $mpos-border;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.o_mobile_products_cat_pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.o_mobile_form_cat_pill {
+    border: 1px solid $mpos-border;
+    background: #F8FAFC;
+    color: $mpos-text-secondary;
+    padding: 6px 14px;
+    border-radius: $mpos-radius-full;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+        border-color: $mpos-primary;
+        color: $mpos-primary;
+    }
+
+    &.active {
+        background: $mpos-primary;
+        border-color: $mpos-primary;
+        color: #FFFFFF;
+        font-weight: 700;
+    }
 }
 
 .o_mobile_products_field {
-    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 
     label {
-        display: block;
         font-size: 12.5px;
         font-weight: 700;
-        color: $mpos-text;
-        margin-bottom: 5px;
+        color: #0F172A;
+        margin: 0;
     }
 
-    input, textarea {
+    input, textarea, select {
         width: 100%;
         border: 1px solid $mpos-border;
+        background: #FFFFFF;
         border-radius: 8px;
         padding: 9px 12px;
         font-size: 13.5px;
+        color: $mpos-text;
         outline: none;
         font-family: inherit;
+        transition: all 0.18s ease;
 
-        &:focus { border-color: $mpos-primary; }
+        &:focus {
+            border-color: $mpos-primary;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+        }
+
+        &:disabled {
+            background: #F8FAFC;
+            color: $mpos-muted;
+        }
     }
 
-    textarea { resize: vertical; }
+    textarea {
+        resize: vertical;
+    }
 }
 
 .o_mobile_products_hint {
@@ -215,112 +461,94 @@
     gap: 12px;
 }
 
-.o_mobile_products_cat_pills {
+.o_mobile_specs_list {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 6px;
+    margin-bottom: 8px;
+}
+
+.o_mobile_spec_row {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    gap: 6px;
+    align-items: center;
+
+    .o_mobile_spec_select {
+        border: 1px solid $mpos-border;
+        border-radius: 6px;
+        padding: 7px 8px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .o_mobile_spec_val_input {
+        border: 1px solid $mpos-border;
+        border-radius: 6px;
+        padding: 7px 10px;
+        font-size: 12.5px;
+    }
+
+    .o_mobile_spec_remove_btn {
+        border: none;
+        background: none;
+        color: $mpos-muted;
+        cursor: pointer;
+        padding: 6px;
+        border-radius: 4px;
+
+        &:hover {
+            color: $mpos-danger;
+            background: $mpos-danger-light;
+        }
+    }
+}
+
+.o_mobile_spec_actions {
+    display: flex;
+    gap: 8px;
 }
 
 .o_mobile_products_delete_btn {
-    border: 1px solid $mpos-danger;
-    background: #fff;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: #FFFFFF;
     color: $mpos-danger;
     font-weight: 700;
     font-size: 13px;
     border-radius: 10px;
-    padding: 12px 16px;
+    padding: 12px 18px;
     cursor: pointer;
+    transition: all 0.18s ease;
 
-    &:hover { background: $mpos-danger; color: #fff; }
+    &:hover {
+        background: $mpos-danger;
+        border-color: $mpos-danger;
+        color: #fff;
+    }
 }
 
 .o_mobile_products_save_btn {
     flex: 1;
     border: none;
-    background: $mpos-primary;
+    background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
     color: #fff;
     font-weight: 700;
     font-size: 14px;
     border-radius: 10px;
-    padding: 12px 16px;
+    padding: 12px 20px;
     cursor: pointer;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    transition: all 0.2s ease;
 
-    &:hover:not(:disabled) { background: $mpos-primary-dark; }
+    &:hover:not(:disabled) {
+        box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
+        transform: translateY(-1px);
+    }
 
     &:disabled {
-        background: $mpos-border;
+        background: #E2E8F0;
         color: $mpos-muted;
+        box-shadow: none;
         cursor: not-allowed;
     }
-}
-
-@media (max-width: 992px) {
-    .o_mobile_products_panel {
-        width: 100vw;
-        max-width: 100vw;
-    }
-}
-
-// ---------------------------------------------------------------------
-// Barcode display box in the product edit panel
-// ---------------------------------------------------------------------
-
-.o_mobile_barcode_box {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    border: 1px solid $mpos-border;
-    border-radius: 10px;
-    padding: 10px 12px;
-    background: #fff;
-
-    img {
-        height: 42px;
-        max-width: 140px;
-        object-fit: contain;
-        flex: 0 0 auto;
-    }
-}
-
-.o_mobile_barcode_actions {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.o_mobile_barcode_value {
-    font-family: "Courier New", monospace;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
-
-// Secondary variant for the barcode backfill button - same shape as Add
-// Product, but visually secondary so Add Product stays the obvious
-// primary action.
-.o_mobile_products_backfill_btn {
-    background: #fff;
-    color: #b3781c;
-    border: 1.5px solid #d9a441;
-
-    &:hover { background: #fff7e6; }
-}
-
-// Print-label icon on each product card, mirrors the edit-pencil icon but
-// sits to its left so both stay reachable without overlapping.
-.o_mobile_products_print_icon {
-    position: absolute;
-    bottom: 6px;
-    right: 38px;
-    background: rgba(255, 255, 255, 0.92);
-    color: #b3781c;
-    width: 26px;
-    height: 26px;
-    border-radius: 999px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    cursor: pointer;
 }

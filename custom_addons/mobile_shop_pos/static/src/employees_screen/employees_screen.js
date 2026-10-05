@@ -144,6 +144,12 @@ export class MobileShopEmployeesScreen extends Component {
         });
     }
 
+    openScreen(actionXmlId) {
+        if (actionXmlId) {
+            this.action.doAction(actionXmlId);
+        }
+    }
+
     /* ---------------------------------------------------------------- */
     /* Tabs                                                               */
     /* ---------------------------------------------------------------- */

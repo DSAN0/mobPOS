@@ -6,90 +6,149 @@
 
             <div class="o_mobile_pos_products">
 
+                <!-- Topbar -->
                 <div class="o_mobile_pos_topbar">
                     <div class="o_mobile_pos_brand">
-                        <i class="fa fa-file-text-o" role="img"/>
-                        <span>See Bills</span>
+                        <div class="o_mobile_pos_brand_icon o_mobile_brand_icon_bills">
+                            <i class="fa fa-file-text-o" role="img"/>
+                        </div>
+                        <div class="o_mobile_pos_brand_text">
+                            <span class="o_mobile_pos_brand_title">Order Bills History</span>
+                            <span class="o_mobile_pos_brand_sub">Past Receipts &amp; Transactions</span>
+                        </div>
                     </div>
+
 
                     <div class="o_mobile_pos_search">
                         <i class="fa fa-search"/>
                         <input type="text"
-                               placeholder="Search bill no..."
+                               placeholder="Search by bill number (e.g. POS/2026/0001)..."
                                t-att-value="state.searchTerm"
                                t-on-input="onSearchInput"/>
                         <i t-if="state.searchTerm"
                            class="fa fa-times o_mobile_pos_search_clear"
+                           title="Clear search"
                            t-on-click="clearSearch"/>
                     </div>
                 </div>
 
-                <div class="o_mobile_pos_categories">
-                    <t t-foreach="dateFilters" t-as="df" t-key="df.key">
-                        <button type="button"
-                                t-att-class="'o_mobile_pos_cat_btn ' + (state.dateFilter === df.key ? 'active' : '')"
-                                t-on-click="() => this.setDateFilter(df.key)">
-                            <t t-esc="df.label"/>
-                        </button>
-                    </t>
-                </div>
-
-                <div class="o_mobile_pos_categories">
-                    <t t-foreach="statusFilters" t-as="sf" t-key="sf.key">
-                        <button type="button"
-                                t-att-class="'o_mobile_pos_cat_btn ' + (state.statusFilter === sf.key ? 'active' : '')"
-                                t-on-click="() => this.setStatusFilter(sf.key)">
-                            <t t-esc="sf.label"/>
-                        </button>
-                    </t>
-                </div>
-
+                <!-- KPI Metric Cards -->
                 <div class="o_mobile_report_summary">
-                    <div class="o_mobile_report_card">
-                        <span class="o_mobile_report_card_label">Bills</span>
-                        <span class="o_mobile_report_card_value"><t t-esc="summary.count"/></span>
+                    <div class="o_mobile_kpi_card">
+                        <div class="o_mobile_kpi_icon o_mobile_kpi_blue">
+                            <i class="fa fa-receipt"/>
+                        </div>
+                        <div class="o_mobile_kpi_info">
+                            <span class="o_mobile_kpi_label">Total Bills</span>
+                            <span class="o_mobile_kpi_val"><t t-esc="summary.count"/></span>
+                        </div>
                     </div>
-                    <div class="o_mobile_report_card">
-                        <span class="o_mobile_report_card_label">Revenue</span>
-                        <span class="o_mobile_report_card_value">LKR <t t-esc="formatMoney(summary.revenue)"/></span>
+
+                    <div class="o_mobile_kpi_card">
+                        <div class="o_mobile_kpi_icon o_mobile_kpi_green">
+                            <i class="fa fa-money"/>
+                        </div>
+                        <div class="o_mobile_kpi_info">
+                            <span class="o_mobile_kpi_label">Total Revenue</span>
+                            <span class="o_mobile_kpi_val">LKR <t t-esc="formatMoney(summary.revenue)"/></span>
+                        </div>
                     </div>
-                    <div class="o_mobile_report_card o_mobile_report_card_profit">
-                        <span class="o_mobile_report_card_label">Discount Given</span>
-                        <span class="o_mobile_report_card_value">LKR <t t-esc="formatMoney(summary.discount)"/></span>
+
+                    <div class="o_mobile_kpi_card">
+                        <div class="o_mobile_kpi_icon o_mobile_kpi_purple">
+                            <i class="fa fa-tag"/>
+                        </div>
+                        <div class="o_mobile_kpi_info">
+                            <span class="o_mobile_kpi_label">Discount Given</span>
+                            <span class="o_mobile_kpi_val">LKR <t t-esc="formatMoney(summary.discount)"/></span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="o_mobile_pos_grid_wrapper">
+                <!-- Date & Status Filter Bar -->
+                <div class="o_mobile_filter_controls_row">
+                    <div class="o_mobile_date_filters_bar">
+                        <div class="o_mobile_filter_bar_label">
+                            <i class="fa fa-calendar"/>
+                            <span>Filter:</span>
+                        </div>
+                        <div class="o_mobile_date_pills_group">
+                            <t t-foreach="dateFilters" t-as="df" t-key="df.key">
+                                <button type="button"
+                                        t-att-class="'o_mobile_date_filter_btn ' + (state.dateFilter === df.key ? 'active' : '')"
+                                        t-on-click="() => this.setDateFilter(df.key)">
+                                    <t t-esc="df.label"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_status_filters_bar">
+                        <div class="o_mobile_filter_bar_label">
+                            <i class="fa fa-sliders"/>
+                            <span>Status:</span>
+                        </div>
+                        <div class="o_mobile_status_tabs">
+                            <t t-foreach="statusFilters" t-as="sf" t-key="sf.key">
+                                <button type="button"
+                                        t-att-class="'o_mobile_status_tab o_mobile_status_tab_' + sf.key + ' ' + (state.statusFilter === sf.key ? 'active' : '')"
+                                        t-on-click="() => this.setStatusFilter(sf.key)">
+                                    <span t-if="sf.key === 'confirmed'" class="o_mobile_status_dot dot_confirmed"/>
+                                    <span t-elif="sf.key === 'cancelled'" class="o_mobile_status_dot dot_cancelled"/>
+                                    <t t-esc="sf.label"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bills Table -->
+                <div class="o_mobile_pos_grid_wrapper o_mobile_table_container">
                     <div t-if="state.loading" class="o_mobile_pos_loading">
-                        <i class="fa fa-circle-o-notch fa-spin"/> Loading bills...
+                        <i class="fa fa-circle-o-notch fa-spin"/>
+                        <span>Loading sales bills...</span>
                     </div>
 
                     <div t-elif="!filteredBills.length" class="o_mobile_pos_empty">
-                        <i class="fa fa-inbox"/>
-                        <div>No bills found</div>
+                        <div class="o_mobile_pos_empty_icon">
+                            <i class="fa fa-inbox"/>
+                        </div>
+                        <div class="o_mobile_pos_empty_title">No bills found</div>
+                        <div class="o_mobile_pos_empty_desc">No transactions match your current date and status filters.</div>
                     </div>
 
-                    <table t-else="" class="o_mobile_report_table o_mobile_bills_table">
+                    <table t-else="" class="o_mobile_modern_table o_mobile_bills_table">
                         <thead>
                             <tr>
-                                <th>Bill No</th>
-                                <th>Date</th>
-                                <th>Payment</th>
+                                <th>Bill Number</th>
+                                <th>Date &amp; Time</th>
+                                <th>Payment Method</th>
                                 <th>Served By</th>
-                                <th class="text-end">Total</th>
-                                <th>Status</th>
+                                <th class="text-end">Total Amount</th>
+                                <th class="text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <t t-foreach="filteredBills" t-as="bill" t-key="bill.id">
                                 <tr t-att-class="bill.state === 'cancelled' ? 'o_mobile_bill_row_cancelled' : ''"
                                     t-on-click="() => this.openBill(bill)">
-                                    <td class="o_mobile_report_row_name"><t t-esc="bill.name"/></td>
-                                    <td><t t-esc="bill.sale_date"/></td>
-                                    <td><t t-esc="paymentLabel(bill.payment_method)"/></td>
-                                    <td><t t-esc="bill.cashier_id ? bill.cashier_id[1] : '—'"/></td>
-                                    <td class="text-end">LKR <t t-esc="formatMoney(bill.total_amount)"/></td>
                                     <td>
+                                        <div class="o_mobile_bill_name_cell">
+                                            <i class="fa fa-file-text-o"/>
+                                            <span t-esc="bill.name"/>
+                                        </div>
+                                    </td>
+                                    <td><span class="o_mobile_date_text" t-esc="bill.sale_date"/></td>
+                                    <td>
+                                        <span class="o_mobile_payment_chip" t-esc="paymentLabel(bill.payment_method)"/>
+                                    </td>
+                                    <td>
+                                        <span class="o_mobile_served_chip" t-esc="bill.cashier_id ? bill.cashier_id[1] : '—'"/>
+                                    </td>
+                                    <td class="text-end fw-bold o_mobile_amount_col">
+                                        LKR <t t-esc="formatMoney(bill.total_amount)"/>
+                                    </td>
+                                    <td class="text-center">
                                         <span t-att-class="'o_mobile_bill_status o_mobile_bill_status_' + bill.state">
                                             <t t-esc="statusLabel(bill.state)"/>
                                         </span>
@@ -101,84 +160,92 @@
                 </div>
             </div>
 
-            <!-- Bill Detail Panel -->
+            <!-- ============ SLIDE-OVER: BILL RECEIPT DETAIL DRAWER ============ -->
             <div t-if="state.panelOpen" class="o_mobile_products_overlay" t-on-click="closePanel"/>
 
             <div t-att-class="'o_mobile_products_panel o_mobile_bill_panel ' + (state.panelOpen ? 'open' : '')">
                 <div class="o_mobile_products_panel_header">
-                    <span>Bill <t t-if="state.detail" t-esc="state.detail.name"/></span>
+                    <div class="o_mobile_drawer_title">
+                        <i class="fa fa-receipt"/>
+                        <span>Bill <t t-if="state.detail" t-esc="state.detail.name"/></span>
+                    </div>
                     <button type="button" class="o_mobile_products_panel_close" t-on-click="closePanel">
                         <i class="fa fa-times"/>
                     </button>
                 </div>
 
                 <div class="o_mobile_products_panel_body" t-if="state.detail">
-                    <div class="o_mobile_bill_meta">
+                    <div class="o_mobile_bill_meta_card">
                         <div class="o_mobile_bill_meta_row">
-                            <label>Date</label>
-                            <span t-esc="state.detail.sale_date"/>
+                            <label>Date &amp; Time</label>
+                            <span class="fw-bold" t-esc="state.detail.sale_date"/>
                         </div>
                         <div class="o_mobile_bill_meta_row">
-                            <label>Payment</label>
-                            <span t-esc="paymentLabel(state.detail.payment_method)"/>
+                            <label>Payment Method</label>
+                            <span class="o_mobile_payment_chip" t-esc="paymentLabel(state.detail.payment_method)"/>
                         </div>
                         <div class="o_mobile_bill_meta_row" t-if="state.detail.cashier_id">
                             <label>Served By</label>
-                            <span t-esc="state.detail.cashier_id[1]"/>
+                            <span class="o_mobile_served_chip" t-esc="state.detail.cashier_id[1]"/>
                         </div>
                         <div class="o_mobile_bill_meta_row">
-                            <label>Status</label>
+                            <label>Order Status</label>
                             <span t-att-class="'o_mobile_bill_status o_mobile_bill_status_' + state.detail.state"
                                   t-esc="statusLabel(state.detail.state)"/>
                         </div>
                     </div>
 
                     <div t-if="state.detailLoading" class="o_mobile_pos_loading">
-                        <i class="fa fa-circle-o-notch fa-spin"/> Loading items...
+                        <i class="fa fa-circle-o-notch fa-spin"/>
+                        <span>Loading item details...</span>
                     </div>
 
-                    <table t-else="" class="o_mobile_report_table">
-                        <thead>
-                            <tr>
-                                <th>Item</th>
-                                <th class="text-end">Qty</th>
-                                <th class="text-end">Price</th>
-                                <th class="text-end">Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="state.detailLines" t-as="line" t-key="line.id">
+                    <div t-else="" class="o_mobile_bill_items_wrap">
+                        <div class="o_mobile_section_caption">Purchased Items</div>
+                        <table class="o_mobile_modern_table o_mobile_nested_table">
+                            <thead>
                                 <tr>
-                                    <td><t t-esc="line.product_id[1]"/></td>
-                                    <td class="text-end"><t t-esc="line.quantity"/></td>
-                                    <td class="text-end">LKR <t t-esc="formatMoney(line.price)"/></td>
-                                    <td class="text-end">LKR <t t-esc="formatMoney(line.subtotal)"/></td>
+                                    <th>Item</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="text-end">Price</th>
+                                    <th class="text-end">Subtotal</th>
                                 </tr>
-                            </t>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="state.detailLines" t-as="line" t-key="line.id">
+                                    <tr>
+                                        <td class="fw-bold"><t t-esc="line.product_id[1]"/></td>
+                                        <td class="text-center"><t t-esc="line.quantity"/></td>
+                                        <td class="text-end">LKR <t t-esc="formatMoney(line.price)"/></td>
+                                        <td class="text-end fw-bold">LKR <t t-esc="formatMoney(line.subtotal)"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
 
-                    <div class="o_mobile_pos_totals">
-                        <div class="o_mobile_pos_total_row">
+                    <div class="o_mobile_bill_totals_card">
+                        <div class="o_mobile_pos_total_row o_mobile_pos_subtotal_row">
                             <span>Subtotal</span>
                             <span>LKR <t t-esc="formatMoney(state.detail.amount_before_discount)"/></span>
                         </div>
-                        <div class="o_mobile_pos_total_row" t-if="state.detail.total_discount">
-                            <span>Discount</span>
-                            <span>-LKR <t t-esc="formatMoney(state.detail.total_discount)"/></span>
+                        <div class="o_mobile_pos_total_row o_mobile_pos_discount_row" t-if="state.detail.total_discount">
+                            <span>Total Savings / Discount</span>
+                            <span class="text-danger">- LKR <t t-esc="formatMoney(state.detail.total_discount)"/></span>
                         </div>
-                        <div class="o_mobile_pos_total_row o_mobile_pos_total_main">
-                            <span>Total</span>
+                        <div class="o_mobile_pos_total_row o_mobile_pos_grand_total_row">
+                            <span>Final Total</span>
                             <span>LKR <t t-esc="formatMoney(state.detail.total_amount)"/></span>
                         </div>
                         <t t-if="state.detail.payment_method === 'cash'">
-                            <div class="o_mobile_pos_total_row">
-                                <span>Tendered</span>
+                            <div class="o_mobile_pos_order_divider" style="margin: 8px 0;"/>
+                            <div class="o_mobile_pos_total_row o_mobile_pos_subtotal_row">
+                                <span>Amount Tendered</span>
                                 <span>LKR <t t-esc="formatMoney(state.detail.amount_tendered)"/></span>
                             </div>
-                            <div class="o_mobile_pos_total_row">
-                                <span>Change</span>
-                                <span>LKR <t t-esc="formatMoney(state.detail.change_due)"/></span>
+                            <div class="o_mobile_pos_total_row o_mobile_pos_subtotal_row">
+                                <span>Change Returned</span>
+                                <span class="text-success fw-bold">LKR <t t-esc="formatMoney(state.detail.change_due)"/></span>
                             </div>
                         </t>
                     </div>
@@ -189,14 +256,14 @@
                             class="o_mobile_products_save_btn"
                             t-if="state.detail.state === 'confirmed'"
                             t-on-click="printReceipt">
-                        <i class="fa fa-print"/> Print Receipt
+                        <i class="fa fa-print"/> Print Receipt Copy
                     </button>
                     <button type="button"
                             class="o_mobile_products_delete_btn"
                             t-if="state.isManager and state.detail.state === 'confirmed'"
                             t-att-disabled="state.cancelling"
                             t-on-click="cancelBill">
-                        <i class="fa fa-ban"/> Cancel Bill
+                        <i class="fa fa-ban"/> Cancel Bill &amp; Return Stock
                     </button>
                 </div>
             </div>

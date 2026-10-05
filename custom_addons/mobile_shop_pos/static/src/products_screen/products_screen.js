@@ -44,6 +44,8 @@ export class MobileShopProductsScreen extends Component {
             specAttributes: [],
             products: [],
             activeCategory: null,
+            activeBrand: null,
+            activeModel: null,
             searchTerm: "",
             scanTerm: "",
             loading: true,
@@ -59,10 +61,6 @@ export class MobileShopProductsScreen extends Component {
 
         onWillStart(async () => {
             ensureCheckedIn(this.orm);
-            // This screen shows cost price and lets anyone editing here change
-            // prices or delete products, so it's restricted to Owner/Manager
-            // even beyond the menu being hidden — opening the client action
-            // directly by URL must not bypass this.
             const isManager = await user.hasGroup("mobile_shop_pos.group_mobile_shop_manager");
             if (!isManager) {
                 this.notification.add(
@@ -79,6 +77,12 @@ export class MobileShopProductsScreen extends Component {
             await this.loadSpecAttributes();
             await this.loadProducts();
         });
+    }
+
+    openScreen(actionXmlId) {
+        if (actionXmlId) {
+            this.action.doAction(actionXmlId);
+        }
     }
 
     /* ---------------------------------------------------------------- */
@@ -135,6 +139,84 @@ export class MobileShopProductsScreen extends Component {
     }
 
     /* ---------------------------------------------------------------- */
+    /* Hierarchy: Categories, Brands, Models                             */
+    /* ---------------------------------------------------------------- */
+
+    get categoryList() {
+        return this.state.categories.map((cat) => {
+            const count = cat.id === null
+                ? this.state.products.length
+                : this.state.products.filter(p => p.category_id && p.category_id[0] === cat.id).length;
+            return {
+                ...cat,
+                count,
+                icon: this.getCategoryIcon(cat.name),
+            };
+        });
+    }
+
+    getCategoryIcon(name) {
+        if (!name) return "fa-th-large";
+        const n = name.toLowerCase();
+        if (n.includes("phone") || n.includes("mobile") || n.includes("smartphone")) return "fa-mobile";
+        if (n.includes("access")) return "fa-headphones";
+        if (n.includes("cable") || n.includes("charger") || n.includes("wire")) return "fa-usb";
+        if (n.includes("case") || n.includes("cover") || n.includes("glass")) return "fa-shield";
+        if (n.includes("battery") || n.includes("power")) return "fa-bolt";
+        if (n.includes("repair") || n.includes("tool") || n.includes("service")) return "fa-wrench";
+        return "fa-folder-open";
+    }
+
+    get availableBrands() {
+        if (this.state.activeCategory === null) {
+            return [];
+        }
+        const inCat = this.state.products.filter(
+            (p) => p.category_id && p.category_id[0] === this.state.activeCategory
+        );
+        const brandMap = new Map();
+        for (const p of inCat) {
+            const b = (p.brand || "").trim();
+            if (b) {
+                brandMap.set(b, (brandMap.get(b) || 0) + 1);
+            }
+        }
+        return Array.from(brandMap.entries())
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    get availableModels() {
+        if (!this.state.activeBrand) {
+            return [];
+        }
+        let list = this.state.products;
+        if (this.state.activeCategory !== null) {
+            list = list.filter(
+                (p) => p.category_id && p.category_id[0] === this.state.activeCategory
+            );
+        }
+        list = list.filter((p) => (p.brand || "").trim().toLowerCase() === this.state.activeBrand.toLowerCase());
+
+        const modelMap = new Map();
+        for (const p of list) {
+            const m = (p.model_name || "").trim();
+            if (m) {
+                modelMap.set(m, (modelMap.get(m) || 0) + 1);
+            }
+        }
+        return Array.from(modelMap.entries())
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    get activeCategoryName() {
+        if (this.state.activeCategory === null) return "All";
+        const cat = this.state.categories.find(c => c.id === this.state.activeCategory);
+        return cat ? cat.name : "Category";
+    }
+
+    /* ---------------------------------------------------------------- */
     /* Computed helpers                                                   */
     /* ---------------------------------------------------------------- */
 
@@ -143,6 +225,16 @@ export class MobileShopProductsScreen extends Component {
         if (this.state.activeCategory !== null) {
             list = list.filter(
                 (p) => p.category_id && p.category_id[0] === this.state.activeCategory
+            );
+        }
+        if (this.state.activeBrand !== null) {
+            list = list.filter(
+                (p) => (p.brand || "").trim().toLowerCase() === this.state.activeBrand.toLowerCase()
+            );
+        }
+        if (this.state.activeModel !== null) {
+            list = list.filter(
+                (p) => (p.model_name || "").trim().toLowerCase() === this.state.activeModel.toLowerCase()
             );
         }
         const term = this.state.searchTerm.trim().toLowerCase();
@@ -188,11 +280,47 @@ export class MobileShopProductsScreen extends Component {
     }
 
     /* ---------------------------------------------------------------- */
-    /* Grid actions                                                       */
+    /* Hierarchy Selection Actions                                       */
     /* ---------------------------------------------------------------- */
 
     setCategory(id) {
         this.state.activeCategory = id;
+        this.state.activeBrand = null;
+        this.state.activeModel = null;
+    }
+
+    setBrand(brandName) {
+        if (this.state.activeBrand === brandName) {
+            this.state.activeBrand = null;
+            this.state.activeModel = null;
+        } else {
+            this.state.activeBrand = brandName;
+            this.state.activeModel = null;
+        }
+    }
+
+    setModel(modelName) {
+        if (this.state.activeModel === modelName) {
+            this.state.activeModel = null;
+        } else {
+            this.state.activeModel = modelName;
+        }
+    }
+
+    clearBrand() {
+        this.state.activeBrand = null;
+        this.state.activeModel = null;
+    }
+
+    clearModel() {
+        this.state.activeModel = null;
+    }
+
+    resetAllFilters() {
+        this.state.activeCategory = null;
+        this.state.activeBrand = null;
+        this.state.activeModel = null;
+        this.state.searchTerm = "";
     }
 
     onSearchInput(ev) {
@@ -243,9 +371,6 @@ export class MobileShopProductsScreen extends Component {
         this.openEditProduct(product);
     }
 
-    // Odoo's own barcode-image endpoint, stable since very old versions —
-    // used here for a live on-screen preview and reused as-is in the
-    // printed label report.
     barcodeImageUrl(code) {
         return `/report/barcode/?type=EAN13&value=${encodeURIComponent(code)}&width=380&height=110&humanreadable=1`;
     }
@@ -444,9 +569,6 @@ export class MobileShopProductsScreen extends Component {
             }
             await this.loadProducts();
             if (newId) {
-                // Reopen in edit mode instead of closing: the barcode was
-                // just generated server-side and the owner will usually
-                // want to print its label right away.
                 await this.openEditProduct({ id: newId });
             } else {
                 this.state.panelOpen = false;

@@ -1,23 +1,331 @@
 // ==========================================================================
-// Mobile Shop — See Bills screen
-// Shares $mpos-* variables and .o_mobile_pos_* base classes from
-// pos_screen.scss, .o_mobile_report_* table/summary classes from
-// sales_report_screen.scss, and .o_mobile_products_panel* slide-over
-// classes from products_screen.scss (all loaded earlier in the bundle).
+// Mobile Shop — See Bills Screen Styles & Modern Tables
 // ==========================================================================
+
+.o_mobile_brand_icon_bills {
+    background: linear-gradient(135deg, #0284C7 0%, #38BDF8 100%) !important;
+    box-shadow: 0 4px 10px rgba(2, 132, 199, 0.35) !important;
+}
 
 .o_mobile_bills_screen {
     .o_mobile_pos_products {
         flex: 1 1 100%;
+        max-width: 100%;
     }
 }
 
-.o_mobile_bills_table tbody tr {
-    cursor: pointer;
+.o_mobile_report_summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.o_mobile_kpi_card {
+    background: #FFFFFF;
+    border: 1px solid $mpos-border;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: $mpos-shadow-sm;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
 
     &:hover {
-        background: $mpos-bg;
+        transform: translateY(-2px);
+        box-shadow: $mpos-shadow;
     }
+
+    .o_mobile_kpi_icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex: 0 0 auto;
+
+        &.o_mobile_kpi_blue {
+            background: #E0F2FE;
+            color: #0284C7;
+        }
+
+        &.o_mobile_kpi_green {
+            background: #DCFCE7;
+            color: #16A34A;
+        }
+
+        &.o_mobile_kpi_purple {
+            background: #EDE9FE;
+            color: #7C3AED;
+        }
+
+        &.o_mobile_kpi_amber {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+    }
+
+    .o_mobile_kpi_info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .o_mobile_kpi_label {
+        font-size: 11.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: $mpos-muted;
+    }
+
+    .o_mobile_kpi_val {
+        font-size: 18px;
+        font-weight: 800;
+        color: #0F172A;
+    }
+}
+
+.o_mobile_filter_controls_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+    background: #FFFFFF;
+    border: 1px solid $mpos-border;
+    border-radius: 16px;
+    padding: 10px 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+    flex-wrap: wrap;
+}
+
+.o_mobile_date_filters_bar,
+.o_mobile_status_filters_bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.o_mobile_filter_bar_label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $mpos-muted;
+    user-select: none;
+
+    i {
+        font-size: 13px;
+        color: #0284C7;
+    }
+}
+
+.o_mobile_date_pills_group {
+    display: inline-flex;
+    align-items: center;
+    background: #F1F5F9;
+    border-radius: $mpos-radius-full;
+    padding: 3px;
+    gap: 3px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.o_mobile_date_filter_btn {
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    border-radius: $mpos-radius-full;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #64748B;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+
+    &:hover {
+        color: #0F172A;
+        background: rgba(255, 255, 255, 0.6);
+    }
+
+    &.active {
+        background: #FFFFFF;
+        color: #0284C7;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.18), 0 1px 2px rgba(15, 23, 42, 0.04);
+        transform: translateY(-0.5px);
+    }
+}
+
+.o_mobile_status_tabs {
+    display: inline-flex;
+    align-items: center;
+    background: #F1F5F9;
+    border-radius: $mpos-radius-full;
+    padding: 3px;
+    gap: 3px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.o_mobile_status_tab {
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    border-radius: $mpos-radius-full;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #64748B;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+
+    &:hover {
+        color: #0F172A;
+        background: rgba(255, 255, 255, 0.6);
+    }
+
+    &.active {
+        background: #FFFFFF;
+        color: #0F172A;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+        transform: translateY(-0.5px);
+    }
+
+    &_confirmed.active {
+        color: #15803D;
+        box-shadow: 0 2px 8px rgba(22, 163, 74, 0.18), 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    &_cancelled.active {
+        color: #B91C1C;
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.18), 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .o_mobile_status_dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        display: inline-block;
+
+        &.dot_confirmed {
+            background: #16A34A;
+            box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+        }
+
+        &.dot_cancelled {
+            background: #DC2626;
+            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+        }
+    }
+}
+
+.o_mobile_table_container {
+    background: #FFFFFF;
+    border: 1px solid $mpos-border;
+    border-radius: 14px;
+    padding: 6px 12px;
+    box-shadow: $mpos-shadow-sm;
+}
+
+.o_mobile_modern_table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+
+    thead th {
+        padding: 10px 14px;
+        font-size: 11.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $mpos-muted;
+        border-bottom: 1px solid $mpos-border;
+    }
+
+    tbody tr {
+        background: #FFFFFF;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.15s ease, transform 0.15s ease;
+
+        td {
+            padding: 12px 14px;
+            font-size: 13.5px;
+            color: #1E293B;
+            border-top: 1px solid transparent;
+            border-bottom: 1px solid #F1F5F9;
+
+            &:first-child {
+                border-top-left-radius: 8px;
+                border-bottom-left-radius: 8px;
+            }
+            &:last-child {
+                border-top-right-radius: 8px;
+                border-bottom-right-radius: 8px;
+            }
+        }
+
+        &:hover {
+            background: #F8FAFC;
+
+            td {
+                border-bottom-color: #E2E8F0;
+            }
+        }
+    }
+}
+
+.o_mobile_bill_name_cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: #4F46E5;
+
+    i {
+        font-size: 13px;
+        color: $mpos-muted;
+    }
+}
+
+.o_mobile_date_text {
+    color: $mpos-muted;
+    font-size: 12.5px;
+    font-weight: 500;
+}
+
+.o_mobile_payment_chip {
+    display: inline-block;
+    background: #F1F5F9;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+}
+
+.o_mobile_served_chip {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: $mpos-text;
+}
+
+.o_mobile_amount_col {
+    color: #0F172A;
+    font-size: 14px;
 }
 
 .o_mobile_bill_row_cancelled {
@@ -35,51 +343,92 @@
 .o_mobile_bill_status {
     display: inline-block;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
     padding: 3px 10px;
-    border-radius: 999px;
+    border-radius: $mpos-radius-full;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .o_mobile_bill_status_draft {
-    background: #fdf3e3;
-    color: $mpos-warning;
+    background: #FEF3C7;
+    color: #B45309;
 }
 
 .o_mobile_bill_status_confirmed {
-    background: #e6f4ea;
-    color: $mpos-success;
+    background: #DCFCE7;
+    color: #15803D;
 }
 
 .o_mobile_bill_status_cancelled {
-    background: #fbe8e8;
-    color: $mpos-danger;
+    background: #FEE2E2;
+    color: #B91C1C;
 }
 
-.o_mobile_bill_meta {
+// Drawer Bill Metadata Card
+.o_mobile_bill_meta_card {
+    background: #F8FAFC;
+    border: 1px solid $mpos-border;
+    border-radius: 12px;
+    padding: 12px 16px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid $mpos-border;
 }
 
 .o_mobile_bill_meta_row {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    font-size: 13px;
 
     label {
-        font-size: 12.5px;
+        font-size: 12px;
         font-weight: 700;
         color: $mpos-muted;
         margin: 0;
     }
 }
 
-.o_mobile_bill_panel .o_mobile_products_panel_footer {
+.o_mobile_section_caption {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $mpos-muted;
+    margin-bottom: 6px;
+}
+
+.o_mobile_nested_table {
+    border: 1px solid $mpos-border-light;
+    border-radius: 10px;
+    overflow: hidden;
+
+    thead th {
+        background: #F8FAFC;
+        padding: 8px 10px;
+    }
+
+    tbody td {
+        padding: 8px 10px;
+        font-size: 12.5px;
+    }
+}
+
+.o_mobile_bill_totals_card {
+    background: #F8FAFC;
+    border: 1px solid $mpos-border;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
     flex-direction: column;
+    gap: 6px;
+}
+
+.o_mobile_bill_panel .o_mobile_products_panel_footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 
     button {
         width: 100%;

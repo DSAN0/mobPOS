@@ -6,120 +6,231 @@
 
             <div class="o_mobile_pos_products">
 
+                <!-- Topbar -->
                 <div class="o_mobile_pos_topbar">
                     <div class="o_mobile_pos_brand">
-                        <i class="fa fa-bar-chart" role="img"/>
-                        <span>Sales Report</span>
+                        <div class="o_mobile_pos_brand_icon o_mobile_brand_icon_report">
+                            <i class="fa fa-bar-chart" role="img"/>
+                        </div>
+                        <div class="o_mobile_pos_brand_text">
+                            <span class="o_mobile_pos_brand_title">Sales &amp; Profit Analytics</span>
+                            <span class="o_mobile_pos_brand_sub">Real-Time Financial Dashboard</span>
+                        </div>
                     </div>
+
 
                     <div class="o_mobile_pos_search">
                         <i class="fa fa-search"/>
                         <input type="text"
-                               placeholder="Search product, brand, model..."
+                               placeholder="Filter report by product, brand, model..."
                                t-att-value="state.searchTerm"
                                t-on-input="onSearchInput"/>
                         <i t-if="state.searchTerm"
                            class="fa fa-times o_mobile_pos_search_clear"
+                           title="Clear search"
                            t-on-click="clearSearch"/>
                     </div>
 
                     <button type="button"
                             class="o_mobile_products_add_btn"
+                            title="Open interactive pivot and chart views"
                             t-on-click="openAdvancedReport">
-                        <i class="fa fa-table"/> Advanced View
+                        <i class="fa fa-table"/> Pivot / Graph View
                     </button>
                 </div>
 
-                <div class="o_mobile_pos_categories">
-                    <t t-foreach="dateFilters" t-as="df" t-key="df.key">
-                        <button type="button"
-                                t-att-class="'o_mobile_pos_cat_btn ' + (state.dateFilter === df.key ? 'active' : '')"
-                                t-on-click="() => this.setDateFilter(df.key)">
-                            <t t-esc="df.label"/>
-                        </button>
-                    </t>
+                <!-- KPI Metric Cards Grid -->
+                <div class="o_mobile_report_summary o_mobile_report_grid_4">
+                    <div class="o_mobile_kpi_card">
+                        <div class="o_mobile_kpi_icon o_mobile_kpi_blue">
+                            <i class="fa fa-cubes"/>
+                        </div>
+                        <div class="o_mobile_kpi_info">
+                            <span class="o_mobile_kpi_label">Units Sold</span>
+                            <span class="o_mobile_kpi_val"><t t-esc="summary.quantity"/> units</span>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_kpi_card">
+                        <div class="o_mobile_kpi_icon o_mobile_kpi_purple">
+                            <i class="fa fa-credit-card"/>
+                        </div>
+                        <div class="o_mobile_kpi_info">
+                            <span class="o_mobile_kpi_label">Gross Revenue</span>
+                            <span class="o_mobile_kpi_val">LKR <t t-esc="formatMoney(summary.revenue)"/></span>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_kpi_card">
+                        <div class="o_mobile_kpi_icon o_mobile_kpi_amber">
+                            <i class="fa fa-truck"/>
+                        </div>
+                        <div class="o_mobile_kpi_info">
+                            <span class="o_mobile_kpi_label">Total Cost</span>
+                            <span class="o_mobile_kpi_val">LKR <t t-esc="formatMoney(summary.cost)"/></span>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_kpi_card o_mobile_kpi_card_highlight">
+                        <div class="o_mobile_kpi_icon o_mobile_kpi_green">
+                            <i class="fa fa-line-chart"/>
+                        </div>
+                        <div class="o_mobile_kpi_info">
+                            <span class="o_mobile_kpi_label">Net Profit</span>
+                            <span class="o_mobile_kpi_val text-success">LKR <t t-esc="formatMoney(summary.profit)"/></span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="o_mobile_pos_categories">
-                    <t t-foreach="state.categories" t-as="cat" t-key="cat.id || 'all'">
-                        <button type="button"
-                                t-att-class="'o_mobile_pos_cat_btn ' + (state.activeCategory === cat.id ? 'active' : '')"
-                                t-on-click="() => this.setCategory(cat.id)">
-                            <t t-esc="cat.name"/>
-                        </button>
-                    </t>
-                </div>
-
-                <div class="o_mobile_report_summary">
-                    <div class="o_mobile_report_card">
-                        <span class="o_mobile_report_card_label">Quantity Sold</span>
-                        <span class="o_mobile_report_card_value"><t t-esc="summary.quantity"/></span>
-                    </div>
-                    <div class="o_mobile_report_card">
-                        <span class="o_mobile_report_card_label">Revenue</span>
-                        <span class="o_mobile_report_card_value">LKR <t t-esc="formatMoney(summary.revenue)"/></span>
-                    </div>
-                    <div class="o_mobile_report_card">
-                        <span class="o_mobile_report_card_label">Cost</span>
-                        <span class="o_mobile_report_card_value">LKR <t t-esc="formatMoney(summary.cost)"/></span>
-                    </div>
-                    <div class="o_mobile_report_card o_mobile_report_card_profit">
-                        <span class="o_mobile_report_card_label">Profit</span>
-                        <span class="o_mobile_report_card_value">LKR <t t-esc="formatMoney(summary.profit)"/></span>
-                    </div>
-                </div>
-
-                <div class="o_mobile_report_sort">
-                    <t t-foreach="sortModes" t-as="sm" t-key="sm.key">
-                        <button type="button"
-                                t-att-class="'o_mobile_pos_cat_btn ' + (state.sortMode === sm.key ? 'active' : '')"
-                                t-on-click="() => this.setSortMode(sm.key)">
-                            <t t-esc="sm.label"/>
-                        </button>
-                    </t>
-                </div>
-
-                <div class="o_mobile_pos_grid_wrapper">
-                    <div t-if="state.loading" class="o_mobile_pos_loading">
-                        <i class="fa fa-circle-o-notch fa-spin"/> Loading report...
-                    </div>
-
-                    <div t-elif="!groupedRows.length" class="o_mobile_pos_empty">
-                        <i class="fa fa-inbox"/>
-                        <div>No sales in this period</div>
-                    </div>
-
-                    <table t-else="" class="o_mobile_report_table">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Category</th>
-                                <th class="text-end">Qty</th>
-                                <th class="text-end">Revenue</th>
-                                <th class="text-end">Cost</th>
-                                <th class="text-end">Profit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="groupedRows" t-as="row" t-key="row.productId">
-                                <tr>
-                                    <td>
-                                        <div class="o_mobile_report_row_name" t-esc="row.name"/>
-                                        <div class="o_mobile_report_row_sub">
-                                            <t t-esc="row.brand"/> <t t-esc="row.model"/>
-                                        </div>
-                                    </td>
-                                    <td><t t-esc="row.categoryName"/></td>
-                                    <td class="text-end"><t t-esc="row.quantity"/></td>
-                                    <td class="text-end">LKR <t t-esc="formatMoney(row.revenue)"/></td>
-                                    <td class="text-end">LKR <t t-esc="formatMoney(row.cost)"/></td>
-                                    <td class="text-end o_mobile_report_profit_cell">
-                                        LKR <t t-esc="formatMoney(row.profit)"/>
-                                    </td>
-                                </tr>
+                <!-- Filters & Sorting Bar -->
+                <div class="o_mobile_filter_controls_row">
+                    <div class="o_mobile_date_filters_bar">
+                        <div class="o_mobile_filter_bar_label">
+                            <i class="fa fa-calendar"/>
+                            <span>Period:</span>
+                        </div>
+                        <div class="o_mobile_date_pills_group">
+                            <t t-foreach="dateFilters" t-as="df" t-key="df.key">
+                                <button type="button"
+                                        t-att-class="'o_mobile_date_filter_btn ' + (state.dateFilter === df.key ? 'active' : '')"
+                                        t-on-click="() => this.setDateFilter(df.key)">
+                                    <t t-esc="df.label"/>
+                                </button>
                             </t>
-                        </tbody>
-                    </table>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_sort_filters_bar">
+                        <div class="o_mobile_filter_bar_label">
+                            <i class="fa fa-sort-amount-desc"/>
+                            <span>Sort By:</span>
+                        </div>
+                        <div class="o_mobile_sort_tabs">
+                            <t t-foreach="sortModes" t-as="sm" t-key="sm.key">
+                                <button type="button"
+                                        t-att-class="'o_mobile_sort_tab ' + (state.sortMode === sm.key ? 'active' : '')"
+                                        t-on-click="() => this.setSortMode(sm.key)">
+                                    <t t-esc="sm.label"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Analytics Layout with Categories Side Panel & Analytics Table -->
+                <div class="o_mobile_pos_catalog_layout o_mobile_report_catalog_layout">
+
+                    <!-- Panel: Categories Side Navigation -->
+                    <div class="o_mobile_nav_pane o_mobile_pane_categories">
+                        <div class="o_mobile_pane_header o_mobile_nav_pane_header">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa fa-tags text-primary"/>
+                                <span>Categories</span>
+                            </div>
+                            <button t-if="state.activeCategory !== null"
+                                    type="button"
+                                    class="o_mobile_pane_clear_btn"
+                                    t-on-click="() => this.setCategory(null)">All</button>
+                        </div>
+                        <div class="o_mobile_pane_list o_mobile_nav_pane_list">
+                            <t t-foreach="categoryList" t-as="cat" t-key="cat.id || 'all'">
+                                <button type="button"
+                                        t-att-class="'o_mobile_nav_item ' + (state.activeCategory === cat.id ? 'active' : '')"
+                                        t-on-click="() => this.setCategory(cat.id)">
+                                    <div class="o_mobile_nav_item_icon">
+                                        <i t-att-class="'fa ' + cat.icon"/>
+                                    </div>
+                                    <span class="o_mobile_nav_item_name" t-esc="cat.name"/>
+                                    <span class="o_mobile_nav_item_count" t-esc="cat.count"/>
+                                    <i t-if="cat.id !== null" class="fa fa-chevron-right o_mobile_nav_item_arrow"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Main Content: Analytics Table Area -->
+                    <div class="o_mobile_catalog_content o_mobile_report_catalog_content">
+
+                        <!-- Breadcrumbs & Item Count Bar -->
+                        <div class="o_mobile_filter_breadcrumb">
+                            <div class="o_mobile_breadcrumb_trail">
+                                <span class="o_mobile_crumb" t-on-click="() => this.setCategory(null)">
+                                    <i class="fa fa-bar-chart"/> Analytics
+                                </span>
+                                <t t-if="state.activeCategory !== null">
+                                    <i class="fa fa-angle-right o_mobile_crumb_sep"/>
+                                    <span class="o_mobile_crumb active">
+                                        <t t-esc="activeCategoryName"/>
+                                        <i class="fa fa-times o_mobile_crumb_remove" t-on-click.stop="() => this.setCategory(null)"/>
+                                    </span>
+                                </t>
+                            </div>
+
+                            <div class="o_mobile_catalog_count">
+                                <span><t t-esc="groupedRows.length"/> items analyzed</span>
+                            </div>
+                        </div>
+
+                        <!-- Analytics Table Container -->
+                        <div class="o_mobile_pos_grid_wrapper o_mobile_table_container">
+                            <div t-if="state.loading" class="o_mobile_pos_loading">
+                                <i class="fa fa-circle-o-notch fa-spin"/>
+                                <span>Generating profit report...</span>
+                            </div>
+
+                            <div t-elif="!groupedRows.length" class="o_mobile_pos_empty">
+                                <div class="o_mobile_pos_empty_icon">
+                                    <i class="fa fa-bar-chart"/>
+                                </div>
+                                <div class="o_mobile_pos_empty_title">No sales recorded</div>
+                                <div class="o_mobile_pos_empty_desc">No confirmed transactions found for the selected time range or category.</div>
+                                <button t-if="state.activeCategory !== null"
+                                        type="button"
+                                        class="o_mobile_pos_empty_btn"
+                                        t-on-click="() => this.setCategory(null)">
+                                    Show All Categories
+                                </button>
+                            </div>
+
+                            <table t-else="" class="o_mobile_modern_table">
+                                <thead>
+                                    <tr>
+                                        <th>Product Item</th>
+                                        <th>Category</th>
+                                        <th class="text-center">Qty Sold</th>
+                                        <th class="text-end">Revenue</th>
+                                        <th class="text-end">Product Cost</th>
+                                        <th class="text-end">Net Profit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="groupedRows" t-as="row" t-key="row.productId">
+                                        <tr>
+                                            <td>
+                                                <div class="o_mobile_bill_name_cell">
+                                                    <i class="fa fa-cube text-muted"/>
+                                                    <span t-esc="row.name"/>
+                                                </div>
+                                                <div class="o_mobile_report_row_sub">
+                                                    <t t-esc="row.brand"/> · <t t-esc="row.model"/>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="o_mobile_payment_chip" t-esc="row.categoryName || 'General'"/>
+                                            </td>
+                                            <td class="text-center fw-bold"><t t-esc="row.quantity"/></td>
+                                            <td class="text-end fw-bold">LKR <t t-esc="formatMoney(row.revenue)"/></td>
+                                            <td class="text-end text-muted">LKR <t t-esc="formatMoney(row.cost)"/></td>
+                                            <td class="text-end fw-bold o_mobile_amount_col text-success">
+                                                LKR <t t-esc="formatMoney(row.profit)"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 

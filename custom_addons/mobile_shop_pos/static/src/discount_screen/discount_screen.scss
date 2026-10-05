@@ -1,32 +1,48 @@
 // ==========================================================================
-// Mobile Shop — Discount Items screen
-// New file — safe to drop in as-is. Reuses $mpos-* variables and the
-// .o_mobile_pos_* / .o_mobile_products_panel* base classes already defined
-// in pos_screen.scss and products_screen.scss (both load earlier in the
-// same web.assets_backend bundle — see __manifest__.py ordering).
+// Mobile Shop — Discount Items Screen Styles
 // ==========================================================================
+
+.o_mobile_discount_screen {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    flex: 1 1 100%;
+}
+
+.o_mobile_brand_icon_discount {
+    background: linear-gradient(135deg, #EF4444 0%, #F59E0B 100%) !important;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.35) !important;
+}
 
 .o_mobile_discount_toggle_btn {
     flex: 0 0 auto;
     border: 1px solid $mpos-border;
-    background: $mpos-card-bg;
-    color: $mpos-text;
-    font-weight: 600;
+    background: #FFFFFF;
+    color: $mpos-text-secondary;
+    font-weight: 700;
     font-size: 12.5px;
-    padding: 9px 16px;
-    border-radius: 999px;
+    padding: 8px 16px;
+    border-radius: $mpos-radius-full;
     cursor: pointer;
     white-space: nowrap;
     display: flex;
     align-items: center;
     gap: 6px;
+    box-shadow: $mpos-shadow-sm;
+    transition: all 0.2s ease;
 
-    &:hover { border-color: $mpos-primary; }
+    &:hover {
+        border-color: $mpos-danger;
+        color: $mpos-danger;
+    }
 
     &.active {
-        background: $mpos-danger;
-        border-color: $mpos-danger;
-        color: #fff;
+        background: linear-gradient(135deg, #EF4444 0%, #F97316 100%);
+        border-color: transparent;
+        color: #FFFFFF;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
     }
 }
 
@@ -34,46 +50,107 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background: $mpos-bg;
-    border: 1px dashed $mpos-border;
-    color: $mpos-muted;
+    background: #F0FDF4;
+    border: 1px dashed #86EFAC;
+    color: #166534;
     font-size: 12.5px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    font-weight: 600;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 12px;
 
-    i { color: $mpos-primary; }
+    i {
+        color: #16A34A;
+        font-size: 14px;
+    }
 }
 
-// Cashier view: cards aren't clickable, so drop the hover/pointer affordance
+.o_mobile_no_discount_badge {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    background: rgba(100, 116, 139, 0.85);
+    color: #fff;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: $mpos-radius-full;
+}
+
 .o_mobile_discount_card_static {
     cursor: default;
 
     &:hover {
         transform: none;
-        box-shadow: none;
+        box-shadow: $mpos-shadow-sm;
         border-color: $mpos-border;
     }
 }
 
 .o_mobile_discount_panel {
-    width: 380px;
+    width: 400px;
+}
+
+.o_mobile_discount_product_card {
+    background: #F8FAFC;
+    border: 1px solid $mpos-border;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.o_mobile_discount_label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $mpos-muted;
+    letter-spacing: 0.05em;
 }
 
 .o_mobile_discount_product_name {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 15px;
-    margin-bottom: 16px;
+    color: #0F172A;
 }
 
-.o_mobile_discount_preview {
+.o_mobile_discount_preview_card {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: rgba($mpos-danger, 0.08);
-    color: $mpos-danger;
-    font-weight: 700;
-    font-size: 13px;
-    padding: 10px 12px;
-    border-radius: 8px;
+    gap: 12px;
+    background: linear-gradient(135deg, #FEF2F2 0%, #FFF7ED 100%);
+    border: 1px solid #FECACA;
+    padding: 12px 14px;
+    border-radius: 12px;
+
+    .o_mobile_preview_icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #FEE2E2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #EF4444;
+        font-size: 16px;
+        flex: 0 0 auto;
+    }
+
+    .o_mobile_preview_text {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .o_mobile_preview_title {
+        font-weight: 800;
+        font-size: 14px;
+        color: #B91C1C;
+    }
+
+    .o_mobile_preview_saving {
+        font-size: 12px;
+        font-weight: 600;
+        color: #EA580C;
+    }
 }

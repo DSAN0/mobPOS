@@ -9,8 +9,6 @@ import { ensureCheckedIn, checkOutAndLogout } from "../utils/attendance";
 import { findProductByBarcode } from "../utils/barcode";
 import { printReceiptReport } from "../utils/print_receipt";
 
-const QUICK_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "<"];
-
 export class MobileShopPOSScreen extends Component {
     static template = "mobile_shop_pos.POSScreen";
     static props = ["*"];
@@ -21,19 +19,15 @@ export class MobileShopPOSScreen extends Component {
         this.notification = useService("notification");
 
         this.userName = user.name;
-
-        this.quickKeys = QUICK_KEYS;
         this.scanInputRef = useRef("scanInput");
+        this.tenderedInputRef = useRef("tenderedInput");
 
         // Kiosk look: hide messaging/activities/apps clutter from the navbar
         // while this screen is open. Removed again on unmount so the
         // Owner/Manager gets the normal Odoo UI everywhere else.
         onMounted(() => {
             document.body.classList.add("o_mobile_shop_kiosk");
-            // Most USB/Bluetooth barcode scanners just "type" into
-            // whatever has focus, then send Enter. Auto-focusing this
-            // input means a physical scan works without the cashier
-            // clicking anywhere first.
+            // Auto-focus barcode scan input for immediate physical scanning
             this.scanInputRef.el?.focus();
         });
         onWillUnmount(() => document.body.classList.remove("o_mobile_shop_kiosk"));
@@ -42,11 +36,14 @@ export class MobileShopPOSScreen extends Component {
             categories: [{ id: null, name: "All" }],
             products: [],
             activeCategory: null,
+            activeBrand: null,
+            activeModel: null,
             searchTerm: "",
             scanTerm: "",
             cart: [],
             paymentMethod: "cash",
             amountTendered: 0,
+            tenderedInputStr: "0",
             loading: true,
             processing: false,
             detailsProduct: null,
@@ -76,10 +73,6 @@ export class MobileShopPOSScreen extends Component {
     async loadProducts() {
         this.state.loading = true;
         try {
-            // NOTE: purchase_price is intentionally NOT fetched here. This
-            // screen is used by Cashiers too, and cost/profit data should
-            // never reach their browser. The sale line's cost snapshot is
-            // computed server-side at creation time instead (see sale.py).
             const products = await this.orm.searchRead(
                 "mobile.phone.product",
                 [["stock_quantity", ">", 0]],
@@ -107,6 +100,91 @@ export class MobileShopPOSScreen extends Component {
         }
     }
 
+    openScreen(actionXmlId) {
+        if (actionXmlId) {
+            this.action.doAction(actionXmlId);
+        }
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Hierarchy: Categories, Brands, Models                             */
+    /* ---------------------------------------------------------------- */
+
+    get categoryList() {
+        return this.state.categories.map((cat) => {
+            const count = cat.id === null
+                ? this.state.products.length
+                : this.state.products.filter(p => p.category_id && p.category_id[0] === cat.id).length;
+            return {
+                ...cat,
+                count,
+                icon: this.getCategoryIcon(cat.name),
+            };
+        });
+    }
+
+    getCategoryIcon(name) {
+        if (!name) return "fa-th-large";
+        const n = name.toLowerCase();
+        if (n.includes("phone") || n.includes("mobile") || n.includes("smartphone")) return "fa-mobile";
+        if (n.includes("access")) return "fa-headphones";
+        if (n.includes("cable") || n.includes("charger") || n.includes("wire")) return "fa-usb";
+        if (n.includes("case") || n.includes("cover") || n.includes("glass")) return "fa-shield";
+        if (n.includes("battery") || n.includes("power")) return "fa-bolt";
+        if (n.includes("repair") || n.includes("tool") || n.includes("service")) return "fa-wrench";
+        return "fa-folder-open";
+    }
+
+    get availableBrands() {
+        if (this.state.activeCategory === null) {
+            return [];
+        }
+        const inCat = this.state.products.filter(
+            (p) => p.category_id && p.category_id[0] === this.state.activeCategory
+        );
+        const brandMap = new Map();
+        for (const p of inCat) {
+            const b = (p.brand || "").trim();
+            if (b) {
+                brandMap.set(b, (brandMap.get(b) || 0) + 1);
+            }
+        }
+        const list = Array.from(brandMap.entries())
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+        return list;
+    }
+
+    get availableModels() {
+        if (!this.state.activeBrand) {
+            return [];
+        }
+        let list = this.state.products;
+        if (this.state.activeCategory !== null) {
+            list = list.filter(
+                (p) => p.category_id && p.category_id[0] === this.state.activeCategory
+            );
+        }
+        list = list.filter((p) => (p.brand || "").trim().toLowerCase() === this.state.activeBrand.toLowerCase());
+
+        const modelMap = new Map();
+        for (const p of list) {
+            const m = (p.model_name || "").trim();
+            if (m) {
+                modelMap.set(m, (modelMap.get(m) || 0) + 1);
+            }
+        }
+        return Array.from(modelMap.entries())
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    get activeCategoryName() {
+        if (this.state.activeCategory === null) return "All";
+        const cat = this.state.categories.find(c => c.id === this.state.activeCategory);
+        return cat ? cat.name : "Category";
+    }
+
     /* ---------------------------------------------------------------- */
     /* Computed helpers                                                   */
     /* ---------------------------------------------------------------- */
@@ -116,6 +194,16 @@ export class MobileShopPOSScreen extends Component {
         if (this.state.activeCategory !== null) {
             list = list.filter(
                 (p) => p.category_id && p.category_id[0] === this.state.activeCategory
+            );
+        }
+        if (this.state.activeBrand !== null) {
+            list = list.filter(
+                (p) => (p.brand || "").trim().toLowerCase() === this.state.activeBrand.toLowerCase()
+            );
+        }
+        if (this.state.activeModel !== null) {
+            list = list.filter(
+                (p) => (p.model_name || "").trim().toLowerCase() === this.state.activeModel.toLowerCase()
             );
         }
         const term = this.state.searchTerm.trim().toLowerCase();
@@ -143,8 +231,6 @@ export class MobileShopPOSScreen extends Component {
             : "/mobile_shop_pos/static/src/img/placeholder.png";
     }
 
-    // The price actually charged for a product right now: its discount
-    // price if it has an active discount, otherwise its normal price.
     effectivePrice(product) {
         return product.has_discount ? product.discount_price : product.selling_price;
     }
@@ -158,12 +244,10 @@ export class MobileShopPOSScreen extends Component {
         return this.state.cart.reduce((sum, l) => sum + l.qty, 0);
     }
 
-    // Sum of what the bill would be at normal (non-discounted) prices.
     get subtotalBeforeDiscount() {
         return this.state.cart.reduce((sum, l) => sum + l.qty * l.listPrice, 0);
     }
 
-    // Total money saved across the whole bill.
     get totalDiscount() {
         return this.state.cart.reduce(
             (sum, l) => sum + l.qty * (l.listPrice - l.price),
@@ -176,7 +260,11 @@ export class MobileShopPOSScreen extends Component {
     }
 
     get changeDue() {
-        return (this.state.amountTendered || 0) - this.total;
+        if (this.state.paymentMethod !== "cash") {
+            return 0;
+        }
+        const tendered = parseFloat(this.state.amountTendered) || 0;
+        return tendered - this.total;
     }
 
     formatMoney(value) {
@@ -187,11 +275,47 @@ export class MobileShopPOSScreen extends Component {
     }
 
     /* ---------------------------------------------------------------- */
-    /* Product grid actions                                              */
+    /* Hierarchy Selection Actions                                       */
     /* ---------------------------------------------------------------- */
 
     setCategory(id) {
         this.state.activeCategory = id;
+        this.state.activeBrand = null;
+        this.state.activeModel = null;
+    }
+
+    setBrand(brandName) {
+        if (this.state.activeBrand === brandName) {
+            this.state.activeBrand = null;
+            this.state.activeModel = null;
+        } else {
+            this.state.activeBrand = brandName;
+            this.state.activeModel = null;
+        }
+    }
+
+    setModel(modelName) {
+        if (this.state.activeModel === modelName) {
+            this.state.activeModel = null;
+        } else {
+            this.state.activeModel = modelName;
+        }
+    }
+
+    clearBrand() {
+        this.state.activeBrand = null;
+        this.state.activeModel = null;
+    }
+
+    clearModel() {
+        this.state.activeModel = null;
+    }
+
+    resetAllFilters() {
+        this.state.activeCategory = null;
+        this.state.activeBrand = null;
+        this.state.activeModel = null;
+        this.state.searchTerm = "";
     }
 
     onSearchInput(ev) {
@@ -267,13 +391,13 @@ export class MobileShopPOSScreen extends Component {
                 discountPercent: product.has_discount ? product.discount_percent : 0,
                 qty: 1,
                 stock: product.stock_quantity,
+                image: product.image,
             });
         }
         if (this.state.paymentMethod !== "cash") {
             this.state.amountTendered = this.total;
+            this.state.tenderedInputStr = String(this.total);
         }
-        // Keep the scanner "ready": a mouse click on a product card also
-        // steals focus away from the scan input, so pull it back either way.
         this.scanInputRef.el?.focus();
     }
 
@@ -305,6 +429,7 @@ export class MobileShopPOSScreen extends Component {
         line.qty = newQty;
         if (this.state.paymentMethod !== "cash") {
             this.state.amountTendered = this.total;
+            this.state.tenderedInputStr = String(this.total);
         }
     }
 
@@ -323,6 +448,7 @@ export class MobileShopPOSScreen extends Component {
         line.qty = qty;
         if (this.state.paymentMethod !== "cash") {
             this.state.amountTendered = this.total;
+            this.state.tenderedInputStr = String(this.total);
         }
     }
 
@@ -333,46 +459,56 @@ export class MobileShopPOSScreen extends Component {
         }
         if (this.state.paymentMethod !== "cash") {
             this.state.amountTendered = this.total;
+            this.state.tenderedInputStr = String(this.total);
         }
     }
 
     clearCart() {
         this.state.cart = [];
         this.state.amountTendered = 0;
+        this.state.tenderedInputStr = "0";
         this.state.paymentMethod = "cash";
     }
 
     /* ---------------------------------------------------------------- */
-    /* Payment                                                            */
+    /* Payment & Tendered Input                                          */
     /* ---------------------------------------------------------------- */
 
     setPaymentMethod(method) {
         this.state.paymentMethod = method;
         if (method !== "cash") {
             this.state.amountTendered = this.total;
+            this.state.tenderedInputStr = String(this.total);
         } else {
             this.state.amountTendered = 0;
+            this.state.tenderedInputStr = "0";
         }
     }
 
-    pressKey(key) {
-        let current = this.state.amountTendered ? String(this.state.amountTendered) : "";
-        if (key === "C") {
-            current = "";
-        } else if (key === "<") {
-            current = current.slice(0, -1);
-        } else if (key === ".") {
-            if (!current.includes(".")) {
-                current = current === "" ? "0." : current + ".";
-            }
-        } else {
-            current += key;
-        }
-        this.state.amountTendered = current === "" ? 0 : parseFloat(current) || 0;
+    onTenderedInput(ev) {
+        const val = ev.target.value;
+        this.state.tenderedInputStr = val;
+        const num = parseFloat(val);
+        this.state.amountTendered = isNaN(num) ? 0 : num;
     }
 
-    quickAmount(amount) {
-        this.state.amountTendered = amount;
+    onTenderedFocus(ev) {
+        if (this.state.tenderedInputStr === "0") {
+            this.state.tenderedInputStr = "";
+        }
+        ev.target.select();
+    }
+
+    onTenderedBlur(ev) {
+        if (this.state.tenderedInputStr === "" || isNaN(parseFloat(this.state.tenderedInputStr))) {
+            this.state.amountTendered = 0;
+            this.state.tenderedInputStr = "0";
+        }
+    }
+
+    setExactTendered() {
+        this.state.amountTendered = this.total;
+        this.state.tenderedInputStr = String(this.total);
     }
 
     /* ---------------------------------------------------------------- */
@@ -407,10 +543,6 @@ export class MobileShopPOSScreen extends Component {
         }
         this.state.processing = true;
         try {
-            // cost_price and list_price are deliberately omitted here — the
-            // server snapshots both from the product's current
-            // purchase_price/selling_price on creation, so the browser
-            // never needs to know or send them.
             const lineCommands = this.state.cart.map((l) => [
                 0,
                 0,

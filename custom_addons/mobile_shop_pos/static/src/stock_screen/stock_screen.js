@@ -19,6 +19,8 @@ export class MobileShopStockScreen extends Component {
             categories: [{ id: null, name: "All" }],
             products: [],
             activeCategory: null,
+            activeBrand: null,
+            activeModel: null,
             searchTerm: "",
             scanTerm: "",
             lines: [],
@@ -34,6 +36,12 @@ export class MobileShopStockScreen extends Component {
             await this.loadCategories();
             await this.loadProducts();
         });
+    }
+
+    openScreen(actionXmlId) {
+        if (actionXmlId) {
+            this.action.doAction(actionXmlId);
+        }
     }
 
     /* ---------------------------------------------------------------- */
@@ -77,6 +85,84 @@ export class MobileShopStockScreen extends Component {
     }
 
     /* ---------------------------------------------------------------- */
+    /* Hierarchy: Categories, Brands, Models                             */
+    /* ---------------------------------------------------------------- */
+
+    get categoryList() {
+        return this.state.categories.map((cat) => {
+            const count = cat.id === null
+                ? this.state.products.length
+                : this.state.products.filter(p => p.category_id && p.category_id[0] === cat.id).length;
+            return {
+                ...cat,
+                count,
+                icon: this.getCategoryIcon(cat.name),
+            };
+        });
+    }
+
+    getCategoryIcon(name) {
+        if (!name) return "fa-th-large";
+        const n = name.toLowerCase();
+        if (n.includes("phone") || n.includes("mobile") || n.includes("smartphone")) return "fa-mobile";
+        if (n.includes("access")) return "fa-headphones";
+        if (n.includes("cable") || n.includes("charger") || n.includes("wire")) return "fa-usb";
+        if (n.includes("case") || n.includes("cover") || n.includes("glass")) return "fa-shield";
+        if (n.includes("battery") || n.includes("power")) return "fa-bolt";
+        if (n.includes("repair") || n.includes("tool") || n.includes("service")) return "fa-wrench";
+        return "fa-folder-open";
+    }
+
+    get availableBrands() {
+        if (this.state.activeCategory === null) {
+            return [];
+        }
+        const inCat = this.state.products.filter(
+            (p) => p.category_id && p.category_id[0] === this.state.activeCategory
+        );
+        const brandMap = new Map();
+        for (const p of inCat) {
+            const b = (p.brand || "").trim();
+            if (b) {
+                brandMap.set(b, (brandMap.get(b) || 0) + 1);
+            }
+        }
+        return Array.from(brandMap.entries())
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    get availableModels() {
+        if (!this.state.activeBrand) {
+            return [];
+        }
+        let list = this.state.products;
+        if (this.state.activeCategory !== null) {
+            list = list.filter(
+                (p) => p.category_id && p.category_id[0] === this.state.activeCategory
+            );
+        }
+        list = list.filter((p) => (p.brand || "").trim().toLowerCase() === this.state.activeBrand.toLowerCase());
+
+        const modelMap = new Map();
+        for (const p of list) {
+            const m = (p.model_name || "").trim();
+            if (m) {
+                modelMap.set(m, (modelMap.get(m) || 0) + 1);
+            }
+        }
+        return Array.from(modelMap.entries())
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    get activeCategoryName() {
+        if (this.state.activeCategory === null) return "All";
+        const cat = this.state.categories.find(c => c.id === this.state.activeCategory);
+        return cat ? cat.name : "Category";
+    }
+
+    /* ---------------------------------------------------------------- */
     /* Computed helpers                                                    */
     /* ---------------------------------------------------------------- */
 
@@ -85,6 +171,16 @@ export class MobileShopStockScreen extends Component {
         if (this.state.activeCategory !== null) {
             list = list.filter(
                 (p) => p.category_id && p.category_id[0] === this.state.activeCategory
+            );
+        }
+        if (this.state.activeBrand !== null) {
+            list = list.filter(
+                (p) => (p.brand || "").trim().toLowerCase() === this.state.activeBrand.toLowerCase()
+            );
+        }
+        if (this.state.activeModel !== null) {
+            list = list.filter(
+                (p) => (p.model_name || "").trim().toLowerCase() === this.state.activeModel.toLowerCase()
             );
         }
         const term = this.state.searchTerm.trim().toLowerCase();
@@ -133,11 +229,47 @@ export class MobileShopStockScreen extends Component {
     }
 
     /* ---------------------------------------------------------------- */
-    /* Grid actions                                                        */
+    /* Hierarchy Selection Actions                                       */
     /* ---------------------------------------------------------------- */
 
     setCategory(id) {
         this.state.activeCategory = id;
+        this.state.activeBrand = null;
+        this.state.activeModel = null;
+    }
+
+    setBrand(brandName) {
+        if (this.state.activeBrand === brandName) {
+            this.state.activeBrand = null;
+            this.state.activeModel = null;
+        } else {
+            this.state.activeBrand = brandName;
+            this.state.activeModel = null;
+        }
+    }
+
+    setModel(modelName) {
+        if (this.state.activeModel === modelName) {
+            this.state.activeModel = null;
+        } else {
+            this.state.activeModel = modelName;
+        }
+    }
+
+    clearBrand() {
+        this.state.activeBrand = null;
+        this.state.activeModel = null;
+    }
+
+    clearModel() {
+        this.state.activeModel = null;
+    }
+
+    resetAllFilters() {
+        this.state.activeCategory = null;
+        this.state.activeBrand = null;
+        this.state.activeModel = null;
+        this.state.searchTerm = "";
     }
 
     onSearchInput(ev) {

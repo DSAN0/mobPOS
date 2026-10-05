@@ -6,96 +6,116 @@
 
             <div class="o_mobile_pos_products">
 
+                <!-- Topbar -->
                 <div class="o_mobile_pos_topbar">
                     <div class="o_mobile_pos_brand">
-                        <i class="fa fa-users" role="img"/>
-                        <span>Manage Employees</span>
+                        <div class="o_mobile_pos_brand_icon o_mobile_brand_icon_emp">
+                            <i class="fa fa-users" role="img"/>
+                        </div>
+                        <div class="o_mobile_pos_brand_text">
+                            <span class="o_mobile_pos_brand_title">Employee Management</span>
+                            <span class="o_mobile_pos_brand_sub">Staff, Attendance, Payroll &amp; Performance</span>
+                        </div>
                     </div>
+
 
                     <button type="button"
                             class="o_mobile_products_add_btn"
                             t-if="state.activeTab === 'employees'"
                             t-on-click="openNewEmployee">
-                        <i class="fa fa-plus"/> Add Employee
+                        <i class="fa fa-user-plus"/> Add Employee
                     </button>
 
                     <button type="button"
                             class="o_mobile_products_add_btn"
                             t-if="state.activeTab === 'salary'"
                             t-on-click="openNewPayment">
-                        <i class="fa fa-plus"/> Log Payment
+                        <i class="fa fa-credit-card"/> Log Salary Payment
                     </button>
                 </div>
 
-                <div class="o_mobile_pos_categories">
+                <!-- Navigation Tabs Bar -->
+                <div class="o_mobile_tab_bar">
                     <button type="button"
-                            t-att-class="'o_mobile_pos_cat_btn ' + (state.activeTab === 'employees' ? 'active' : '')"
+                            t-att-class="'o_mobile_tab_btn ' + (state.activeTab === 'employees' ? 'active' : '')"
                             t-on-click="() => this.setTab('employees')">
-                        <i class="fa fa-id-badge"/> Employees
+                        <i class="fa fa-id-badge"/> Staff Directory
                     </button>
                     <button type="button"
-                            t-att-class="'o_mobile_pos_cat_btn ' + (state.activeTab === 'attendance' ? 'active' : '')"
+                            t-att-class="'o_mobile_tab_btn ' + (state.activeTab === 'attendance' ? 'active' : '')"
                             t-on-click="() => this.setTab('attendance')">
-                        <i class="fa fa-clock-o"/> Attendance
+                        <i class="fa fa-clock-o"/> Attendance Logs
                     </button>
                     <button type="button"
-                            t-att-class="'o_mobile_pos_cat_btn ' + (state.activeTab === 'salary' ? 'active' : '')"
+                            t-att-class="'o_mobile_tab_btn ' + (state.activeTab === 'salary' ? 'active' : '')"
                             t-on-click="() => this.setTab('salary')">
-                        <i class="fa fa-money"/> Salary
+                        <i class="fa fa-money"/> Salary &amp; Payroll
                     </button>
                     <button type="button"
-                            t-att-class="'o_mobile_pos_cat_btn ' + (state.activeTab === 'sales' ? 'active' : '')"
+                            t-att-class="'o_mobile_tab_btn ' + (state.activeTab === 'sales' ? 'active' : '')"
                             t-on-click="() => this.setTab('sales')">
-                        <i class="fa fa-bar-chart"/> Sales by Employee
+                        <i class="fa fa-trophy"/> Sales Performance
                     </button>
                 </div>
 
-                <!-- Employees Tab -->
+                <!-- 1. Employees Tab -->
                 <t t-if="state.activeTab === 'employees'">
-                    <div class="o_mobile_pos_topbar">
-                        <div class="o_mobile_pos_search">
+                    <div class="o_mobile_filter_controls_row">
+                        <div class="o_mobile_pos_search" style="max-width: 400px;">
                             <i class="fa fa-search"/>
                             <input type="text"
-                                   placeholder="Search employees..."
+                                   placeholder="Search employees by name..."
                                    t-att-value="state.empSearchTerm"
                                    t-on-input="onEmpSearchInput"/>
                         </div>
+
                         <button type="button"
-                                t-att-class="'o_mobile_pos_cat_btn ' + (state.showArchived ? 'active' : '')"
+                                t-att-class="'o_mobile_category_pill ' + (state.showArchived ? 'active' : '')"
                                 t-on-click="toggleShowArchived">
-                            <i class="fa fa-archive"/> Show Archived
+                            <i class="fa fa-archive"/> Show Archived Staff
                         </button>
                     </div>
 
-                    <div class="o_mobile_pos_grid_wrapper">
+                    <div class="o_mobile_pos_grid_wrapper o_mobile_table_container">
                         <div t-if="state.empLoading" class="o_mobile_pos_loading">
-                            <i class="fa fa-circle-o-notch fa-spin"/> Loading employees...
+                            <i class="fa fa-circle-o-notch fa-spin"/>
+                            <span>Loading employees...</span>
                         </div>
+
                         <div t-elif="!filteredEmployees.length" class="o_mobile_pos_empty">
-                            <i class="fa fa-inbox"/>
-                            <div>No employees found</div>
+                            <div class="o_mobile_pos_empty_icon">
+                                <i class="fa fa-user-times"/>
+                            </div>
+                            <div class="o_mobile_pos_empty_title">No employees found</div>
+                            <div class="o_mobile_pos_empty_desc">Try searching for a different name.</div>
                         </div>
-                        <table t-else="" class="o_mobile_report_table">
+
+                        <table t-else="" class="o_mobile_modern_table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Phone</th>
-                                    <th>Joined</th>
-                                    <th class="text-end">Salary</th>
-                                    <th>Status</th>
+                                    <th>Employee Name</th>
+                                    <th>Designation / Position</th>
+                                    <th>Phone Number</th>
+                                    <th>Joined On</th>
+                                    <th class="text-end">Basic Salary</th>
+                                    <th class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <t t-foreach="filteredEmployees" t-as="emp" t-key="emp.id">
                                     <tr t-att-class="!emp.active ? 'o_mobile_bill_row_cancelled' : ''"
                                         t-on-click="() => this.openEditEmployee(emp)">
-                                        <td class="o_mobile_report_row_name"><t t-esc="emp.name"/></td>
-                                        <td><t t-esc="emp.position_id ? emp.position_id[1] : '—'"/></td>
-                                        <td><t t-esc="emp.phone || '—'"/></td>
-                                        <td><t t-esc="emp.join_date || '—'"/></td>
-                                        <td class="text-end">LKR <t t-esc="formatMoney(emp.basic_salary)"/></td>
                                         <td>
+                                            <div class="o_mobile_bill_name_cell">
+                                                <i class="fa fa-user"/>
+                                                <span t-esc="emp.name"/>
+                                            </div>
+                                        </td>
+                                        <td><span class="o_mobile_payment_chip" t-esc="emp.position_id ? emp.position_id[1] : '—'"/></td>
+                                        <td><span class="o_mobile_date_text" t-esc="emp.phone || '—'"/></td>
+                                        <td><span class="o_mobile_date_text" t-esc="emp.join_date || '—'"/></td>
+                                        <td class="text-end fw-bold o_mobile_amount_col">LKR <t t-esc="formatMoney(emp.basic_salary)"/></td>
+                                        <td class="text-center">
                                             <span t-if="emp.active" class="o_mobile_bill_status o_mobile_bill_status_confirmed">Active</span>
                                             <span t-else="" class="o_mobile_bill_status o_mobile_bill_status_cancelled">Archived</span>
                                             <button t-if="!emp.active"
@@ -112,19 +132,19 @@
                     </div>
                 </t>
 
-                <!-- Attendance Tab -->
+                <!-- 2. Attendance Tab -->
                 <t t-if="state.activeTab === 'attendance'">
-                    <div class="o_mobile_pos_categories">
-                        <t t-foreach="attDateFilters" t-as="df" t-key="df.key">
-                            <button type="button"
-                                    t-att-class="'o_mobile_pos_cat_btn ' + (state.attDateFilter === df.key ? 'active' : '')"
-                                    t-on-click="() => this.setAttDateFilter(df.key)">
-                                <t t-esc="df.label"/>
-                            </button>
-                        </t>
-                    </div>
+                    <div class="o_mobile_filter_controls_row">
+                        <div class="o_mobile_pos_categories_bar o_mobile_filter_group">
+                            <t t-foreach="attDateFilters" t-as="df" t-key="df.key">
+                                <button type="button"
+                                        t-att-class="'o_mobile_category_pill ' + (state.attDateFilter === df.key ? 'active' : '')"
+                                        t-on-click="() => this.setAttDateFilter(df.key)">
+                                    <t t-esc="df.label"/>
+                                </button>
+                            </t>
+                        </div>
 
-                    <div class="o_mobile_pos_topbar">
                         <select class="o_mobile_employee_filter_select" t-on-change="setAttEmployeeFilter">
                             <option value="">All Employees</option>
                             <t t-foreach="state.employees" t-as="emp" t-key="emp.id">
@@ -133,36 +153,45 @@
                         </select>
                     </div>
 
-                    <div class="o_mobile_pos_grid_wrapper">
+                    <div class="o_mobile_pos_grid_wrapper o_mobile_table_container">
                         <div t-if="state.attendanceLoading" class="o_mobile_pos_loading">
-                            <i class="fa fa-circle-o-notch fa-spin"/> Loading attendance...
+                            <i class="fa fa-circle-o-notch fa-spin"/>
+                            <span>Loading attendance history...</span>
                         </div>
+
                         <div t-elif="!filteredAttendance.length" class="o_mobile_pos_empty">
-                            <i class="fa fa-inbox"/>
-                            <div>No attendance records found</div>
+                            <div class="o_mobile_pos_empty_icon">
+                                <i class="fa fa-clock-o"/>
+                            </div>
+                            <div class="o_mobile_pos_empty_title">No attendance records found</div>
+                            <div class="o_mobile_pos_empty_desc">No check-ins recorded for this time period.</div>
                         </div>
-                        <table t-else="" class="o_mobile_report_table">
+
+                        <table t-else="" class="o_mobile_modern_table">
                             <thead>
                                 <tr>
                                     <th>Employee</th>
-                                    <th>Login</th>
-                                    <th>Logout</th>
-                                    <th class="text-end">Hours</th>
+                                    <th>Check-in Time</th>
+                                    <th>Check-out Time</th>
+                                    <th class="text-end">Worked Hours</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <t t-foreach="filteredAttendance" t-as="att" t-key="att.id">
                                     <tr>
-                                        <td class="o_mobile_report_row_name">
-                                            <t t-esc="att.employee_id ? att.employee_id[1] : '—'"/>
-                                        </td>
-                                        <td><t t-esc="formatDateTime(att.login_time)"/></td>
                                         <td>
-                                            <t t-if="att.logout_time" t-esc="formatDateTime(att.logout_time)"/>
-                                            <span t-else="" class="o_mobile_bill_status o_mobile_bill_status_draft">Still In</span>
+                                            <div class="o_mobile_bill_name_cell">
+                                                <i class="fa fa-user-circle"/>
+                                                <span t-esc="att.employee_id ? att.employee_id[1] : '—'"/>
+                                            </div>
                                         </td>
-                                        <td class="text-end">
-                                            <t t-if="att.logout_time" t-esc="att.duration_hours.toFixed(1)"/>
+                                        <td><span class="o_mobile_date_text" t-esc="formatDateTime(att.login_time)"/></td>
+                                        <td>
+                                            <span t-if="att.logout_time" class="o_mobile_date_text" t-esc="formatDateTime(att.logout_time)"/>
+                                            <span t-else="" class="o_mobile_bill_status o_mobile_bill_status_draft">Still On Shift</span>
+                                        </td>
+                                        <td class="text-end fw-bold o_mobile_amount_col">
+                                            <t t-if="att.logout_time" t-esc="att.duration_hours.toFixed(1) + ' hrs'"/>
                                             <t t-else="">—</t>
                                         </td>
                                     </tr>
@@ -172,9 +201,9 @@
                     </div>
                 </t>
 
-                <!-- Salary Tab -->
+                <!-- 3. Salary Tab -->
                 <t t-if="state.activeTab === 'salary'">
-                    <div class="o_mobile_pos_topbar">
+                    <div class="o_mobile_filter_controls_row">
                         <select class="o_mobile_employee_filter_select" t-on-change="setPaymentEmployeeFilter">
                             <option value="">All Employees</option>
                             <t t-foreach="state.employees" t-as="emp" t-key="emp.id">
@@ -184,44 +213,64 @@
                     </div>
 
                     <div class="o_mobile_report_summary">
-                        <div class="o_mobile_report_card">
-                            <span class="o_mobile_report_card_label">Payments</span>
-                            <span class="o_mobile_report_card_value"><t t-esc="filteredPayments.length"/></span>
+                        <div class="o_mobile_kpi_card">
+                            <div class="o_mobile_kpi_icon o_mobile_kpi_blue">
+                                <i class="fa fa-money"/>
+                            </div>
+                            <div class="o_mobile_kpi_info">
+                                <span class="o_mobile_kpi_label">Disbursements</span>
+                                <span class="o_mobile_kpi_val"><t t-esc="filteredPayments.length"/> payments</span>
+                            </div>
                         </div>
-                        <div class="o_mobile_report_card o_mobile_report_card_profit">
-                            <span class="o_mobile_report_card_label">Total Paid</span>
-                            <span class="o_mobile_report_card_value">LKR <t t-esc="formatMoney(paymentsTotal)"/></span>
+
+                        <div class="o_mobile_kpi_card">
+                            <div class="o_mobile_kpi_icon o_mobile_kpi_green">
+                                <i class="fa fa-check-circle"/>
+                            </div>
+                            <div class="o_mobile_kpi_info">
+                                <span class="o_mobile_kpi_label">Total Paid Out</span>
+                                <span class="o_mobile_kpi_val">LKR <t t-esc="formatMoney(paymentsTotal)"/></span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="o_mobile_pos_grid_wrapper">
+                    <div class="o_mobile_pos_grid_wrapper o_mobile_table_container">
                         <div t-if="state.paymentsLoading" class="o_mobile_pos_loading">
-                            <i class="fa fa-circle-o-notch fa-spin"/> Loading payments...
+                            <i class="fa fa-circle-o-notch fa-spin"/>
+                            <span>Loading payments...</span>
                         </div>
+
                         <div t-elif="!filteredPayments.length" class="o_mobile_pos_empty">
-                            <i class="fa fa-inbox"/>
-                            <div>No salary payments logged</div>
+                            <div class="o_mobile_pos_empty_icon">
+                                <i class="fa fa-money"/>
+                            </div>
+                            <div class="o_mobile_pos_empty_title">No salary payments logged</div>
+                            <div class="o_mobile_pos_empty_desc">Click 'Log Salary Payment' above to record a payment.</div>
                         </div>
-                        <table t-else="" class="o_mobile_report_table">
+
+                        <table t-else="" class="o_mobile_modern_table">
                             <thead>
                                 <tr>
                                     <th>Employee</th>
-                                    <th>Date</th>
-                                    <th>For Month</th>
-                                    <th class="text-end">Amount</th>
+                                    <th>Payment Date</th>
+                                    <th>Salary Period / Month</th>
+                                    <th class="text-end">Amount Paid</th>
                                     <th>Notes</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <t t-foreach="filteredPayments" t-as="p" t-key="p.id">
                                     <tr>
-                                        <td class="o_mobile_report_row_name">
-                                            <t t-esc="p.employee_id ? p.employee_id[1] : '—'"/>
+                                        <td>
+                                            <div class="o_mobile_bill_name_cell">
+                                                <i class="fa fa-user"/>
+                                                <span t-esc="p.employee_id ? p.employee_id[1] : '—'"/>
+                                            </div>
                                         </td>
-                                        <td><t t-esc="p.payment_date"/></td>
-                                        <td><t t-esc="p.for_month || '—'"/></td>
-                                        <td class="text-end">LKR <t t-esc="formatMoney(p.amount)"/></td>
-                                        <td><t t-esc="p.notes || '—'"/></td>
+                                        <td><span class="o_mobile_date_text" t-esc="p.payment_date"/></td>
+                                        <td><span class="o_mobile_payment_chip" t-esc="p.for_month || '—'"/></td>
+                                        <td class="text-end fw-bold o_mobile_amount_col">LKR <t t-esc="formatMoney(p.amount)"/></td>
+                                        <td><span class="o_mobile_date_text" t-esc="p.notes || '—'"/></td>
                                     </tr>
                                 </t>
                             </tbody>
@@ -229,12 +278,12 @@
                     </div>
                 </t>
 
-                <!-- Sales by Employee Tab -->
+                <!-- 4. Sales by Employee Tab -->
                 <t t-if="state.activeTab === 'sales'">
-                    <div class="o_mobile_pos_categories">
+                    <div class="o_mobile_pos_categories_bar">
                         <t t-foreach="salesDateFilters" t-as="df" t-key="df.key">
                             <button type="button"
-                                    t-att-class="'o_mobile_pos_cat_btn ' + (state.salesDateFilter === df.key ? 'active' : '')"
+                                    t-att-class="'o_mobile_category_pill ' + (state.salesDateFilter === df.key ? 'active' : '')"
                                     t-on-click="() => this.setSalesDateFilter(df.key)">
                                 <t t-esc="df.label"/>
                             </button>
@@ -242,40 +291,61 @@
                     </div>
 
                     <div class="o_mobile_report_summary">
-                        <div class="o_mobile_report_card">
-                            <span class="o_mobile_report_card_label">Bills</span>
-                            <span class="o_mobile_report_card_value"><t t-esc="salesTotals.bills"/></span>
+                        <div class="o_mobile_kpi_card">
+                            <div class="o_mobile_kpi_icon o_mobile_kpi_purple">
+                                <i class="fa fa-shopping-cart"/>
+                            </div>
+                            <div class="o_mobile_kpi_info">
+                                <span class="o_mobile_kpi_label">Confirmed Orders</span>
+                                <span class="o_mobile_kpi_val"><t t-esc="salesTotals.bills"/> bills</span>
+                            </div>
                         </div>
-                        <div class="o_mobile_report_card o_mobile_report_card_profit">
-                            <span class="o_mobile_report_card_label">Revenue</span>
-                            <span class="o_mobile_report_card_value">LKR <t t-esc="formatMoney(salesTotals.revenue)"/></span>
+
+                        <div class="o_mobile_kpi_card">
+                            <div class="o_mobile_kpi_icon o_mobile_kpi_green">
+                                <i class="fa fa-line-chart"/>
+                            </div>
+                            <div class="o_mobile_kpi_info">
+                                <span class="o_mobile_kpi_label">Staff Revenue</span>
+                                <span class="o_mobile_kpi_val">LKR <t t-esc="formatMoney(salesTotals.revenue)"/></span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="o_mobile_pos_grid_wrapper">
+                    <div class="o_mobile_pos_grid_wrapper o_mobile_table_container">
                         <div t-if="state.salesLoading" class="o_mobile_pos_loading">
-                            <i class="fa fa-circle-o-notch fa-spin"/> Loading sales...
+                            <i class="fa fa-circle-o-notch fa-spin"/>
+                            <span>Loading staff sales performance...</span>
                         </div>
+
                         <div t-elif="!state.salesRows.length" class="o_mobile_pos_empty">
-                            <i class="fa fa-inbox"/>
-                            <div>No confirmed sales in this period</div>
+                            <div class="o_mobile_pos_empty_icon">
+                                <i class="fa fa-bar-chart"/>
+                            </div>
+                            <div class="o_mobile_pos_empty_title">No confirmed sales in this period</div>
                         </div>
-                        <table t-else="" class="o_mobile_report_table">
+
+                        <table t-else="" class="o_mobile_modern_table">
                             <thead>
                                 <tr>
-                                    <th>Employee</th>
-                                    <th class="text-end">Bills</th>
-                                    <th class="text-end">Revenue</th>
-                                    <th class="text-end">Discount Given</th>
+                                    <th>Staff Member</th>
+                                    <th class="text-center">Total Bills</th>
+                                    <th class="text-end">Revenue Generated</th>
+                                    <th class="text-end">Discount Allowed</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <t t-foreach="state.salesRows" t-as="row" t-key="row.cashierId">
                                     <tr>
-                                        <td class="o_mobile_report_row_name"><t t-esc="row.cashierName"/></td>
-                                        <td class="text-end"><t t-esc="row.billCount"/></td>
-                                        <td class="text-end">LKR <t t-esc="formatMoney(row.revenue)"/></td>
-                                        <td class="text-end">LKR <t t-esc="formatMoney(row.discount)"/></td>
+                                        <td>
+                                            <div class="o_mobile_bill_name_cell">
+                                                <i class="fa fa-trophy text-warning"/>
+                                                <span t-esc="row.cashierName"/>
+                                            </div>
+                                        </td>
+                                        <td class="text-center fw-bold"><t t-esc="row.billCount"/></td>
+                                        <td class="text-end fw-bold o_mobile_amount_col text-success">LKR <t t-esc="formatMoney(row.revenue)"/></td>
+                                        <td class="text-end text-danger">LKR <t t-esc="formatMoney(row.discount)"/></td>
                                     </tr>
                                 </t>
                             </tbody>
@@ -285,16 +355,19 @@
 
             </div>
 
-            <!-- Slide-over Panel: Employee or Payment -->
+            <!-- Slide-over Drawer: Employee or Salary Form -->
             <div t-if="state.panelOpen" class="o_mobile_products_overlay" t-on-click="closePanel"/>
 
             <div t-att-class="'o_mobile_products_panel ' + (state.panelOpen ? 'open' : '')">
 
-                <!-- Employee form -->
+                <!-- Employee Form Mode -->
                 <t t-if="state.panelMode === 'employee'">
                     <div class="o_mobile_products_panel_header">
-                        <span t-if="state.isNewEmployee">Add Employee</span>
-                        <span t-else="">Edit Employee</span>
+                        <div class="o_mobile_drawer_title">
+                            <i t-att-class="'fa ' + (state.isNewEmployee ? 'fa-user-plus' : 'fa-user')"/>
+                            <span t-if="state.isNewEmployee">Add Employee</span>
+                            <span t-else="">Edit Employee Profile</span>
+                        </div>
                         <button type="button" class="o_mobile_products_panel_close" t-on-click="closePanel">
                             <i class="fa fa-times"/>
                         </button>
@@ -302,14 +375,14 @@
 
                     <div class="o_mobile_products_panel_body">
                         <t t-if="state.isNewEmployee">
-                            <div class="o_mobile_pos_categories o_mobile_employee_mode_toggle">
+                            <div class="o_mobile_status_tabs" style="margin-bottom: 14px;">
                                 <button type="button"
-                                        t-att-class="'o_mobile_pos_cat_btn ' + (state.empForm.loginMode === 'new' ? 'active' : '')"
+                                        t-att-class="'o_mobile_status_tab ' + (state.empForm.loginMode === 'new' ? 'active' : '')"
                                         t-on-click="() => this.setLoginMode('new')">
                                     Create New Login
                                 </button>
                                 <button type="button"
-                                        t-att-class="'o_mobile_pos_cat_btn ' + (state.empForm.loginMode === 'existing' ? 'active' : '')"
+                                        t-att-class="'o_mobile_status_tab ' + (state.empForm.loginMode === 'existing' ? 'active' : '')"
                                         t-on-click="() => this.setLoginMode('existing')">
                                     Link Existing User
                                 </button>
@@ -317,35 +390,35 @@
 
                             <t t-if="state.empForm.loginMode === 'new'">
                                 <div class="o_mobile_products_field">
-                                    <label>Full Name</label>
-                                    <input type="text" t-att-value="state.empForm.new_name" t-on-input="(ev) => this.onEmpFieldInput('new_name', ev)"/>
+                                    <label>Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" placeholder="e.g. John Doe" t-att-value="state.empForm.new_name" t-on-input="(ev) => this.onEmpFieldInput('new_name', ev)"/>
                                 </div>
                                 <div class="o_mobile_products_field">
-                                    <label>Login / Email</label>
-                                    <input type="text" t-att-value="state.empForm.new_login" t-on-input="(ev) => this.onEmpFieldInput('new_login', ev)"/>
+                                    <label>Login / Username / Email <span class="text-danger">*</span></label>
+                                    <input type="text" placeholder="e.g. john@mobileshop.com" t-att-value="state.empForm.new_login" t-on-input="(ev) => this.onEmpFieldInput('new_login', ev)"/>
                                 </div>
                                 <div class="o_mobile_products_field_row">
                                     <div class="o_mobile_products_field">
-                                        <label>Password</label>
-                                        <input type="password" t-att-value="state.empForm.new_password" t-on-input="(ev) => this.onEmpFieldInput('new_password', ev)"/>
+                                        <label>Password <span class="text-danger">*</span></label>
+                                        <input type="password" placeholder="••••••••" t-att-value="state.empForm.new_password" t-on-input="(ev) => this.onEmpFieldInput('new_password', ev)"/>
                                     </div>
                                     <div class="o_mobile_products_field">
                                         <label>Confirm Password</label>
-                                        <input type="password" t-att-value="state.empForm.new_password_confirm" t-on-input="(ev) => this.onEmpFieldInput('new_password_confirm', ev)"/>
+                                        <input type="password" placeholder="••••••••" t-att-value="state.empForm.new_password_confirm" t-on-input="(ev) => this.onEmpFieldInput('new_password_confirm', ev)"/>
                                     </div>
                                 </div>
                                 <div class="o_mobile_products_field">
-                                    <label>Role</label>
-                                    <div class="o_mobile_pos_categories">
+                                    <label>Access Role</label>
+                                    <div class="o_mobile_pos_categories_bar" style="margin-bottom: 0;">
                                         <button type="button"
-                                                t-att-class="'o_mobile_pos_cat_btn ' + (state.empForm.role === 'cashier' ? 'active' : '')"
+                                                t-att-class="'o_mobile_category_pill ' + (state.empForm.role === 'cashier' ? 'active' : '')"
                                                 t-on-click="() => this.setRole('cashier')">
-                                            Cashier
+                                            <i class="fa fa-user"/> Cashier
                                         </button>
                                         <button type="button"
-                                                t-att-class="'o_mobile_pos_cat_btn ' + (state.empForm.role === 'manager' ? 'active' : '')"
+                                                t-att-class="'o_mobile_category_pill ' + (state.empForm.role === 'manager' ? 'active' : '')"
                                                 t-on-click="() => this.setRole('manager')">
-                                            Owner / Manager
+                                            <i class="fa fa-shield"/> Owner / Manager
                                         </button>
                                     </div>
                                 </div>
@@ -353,27 +426,24 @@
 
                             <t t-else="">
                                 <div class="o_mobile_products_field">
-                                    <label>Login Account</label>
+                                    <label>System User Account <span class="text-danger">*</span></label>
                                     <select t-on-change="onEmpUserChange">
                                         <option value="">Select a system user...</option>
                                         <t t-foreach="state.availableUsers" t-as="u" t-key="u.id">
                                             <option t-att-value="u.id"><t t-esc="u.name"/> (<t t-esc="u.login"/>)</option>
                                         </t>
                                     </select>
-                                    <div t-if="!state.availableUsers.length" class="o_mobile_products_hint">
-                                        No unlinked users found — every existing login already has an employee profile.
-                                    </div>
                                 </div>
                             </t>
                         </t>
                         <div class="o_mobile_products_field" t-else="">
-                            <label>Login Account</label>
+                            <label>Linked User Account</label>
                             <input type="text" t-att-value="state.empForm.user_name" disabled="disabled"/>
                         </div>
 
                         <div class="o_mobile_products_field">
-                            <label>Position</label>
-                            <div class="o_mobile_products_field_row">
+                            <label>Designation / Position <span class="text-danger">*</span></label>
+                            <div class="o_mobile_products_field_row" style="grid-template-columns: 1fr auto;">
                                 <select t-on-change="onEmpPositionChange">
                                     <t t-foreach="state.positions" t-as="pos" t-key="pos.id">
                                         <option t-att-value="pos.id" t-att-selected="state.empForm.position_id === pos.id">
@@ -381,20 +451,20 @@
                                         </option>
                                     </t>
                                 </select>
-                                <button type="button" class="o_mobile_products_upload_btn" t-on-click="createNewPosition">
-                                    <i class="fa fa-plus"/> New
+                                <button type="button" class="o_mobile_mini_btn" t-on-click="createNewPosition">
+                                    <i class="fa fa-plus"/> New Position
                                 </button>
                             </div>
                         </div>
 
                         <div class="o_mobile_products_field_row">
                             <div class="o_mobile_products_field">
-                                <label>Phone</label>
-                                <input type="text" t-att-value="state.empForm.phone" t-on-input="(ev) => this.onEmpFieldInput('phone', ev)"/>
+                                <label>Phone Number</label>
+                                <input type="text" placeholder="07XXXXXXXX" t-att-value="state.empForm.phone" t-on-input="(ev) => this.onEmpFieldInput('phone', ev)"/>
                             </div>
                             <div class="o_mobile_products_field">
-                                <label>NIC / ID Number</label>
-                                <input type="text" t-att-value="state.empForm.nic" t-on-input="(ev) => this.onEmpFieldInput('nic', ev)"/>
+                                <label>NIC / ID Card Number</label>
+                                <input type="text" placeholder="e.g. 1990XXXXXXXX" t-att-value="state.empForm.nic" t-on-input="(ev) => this.onEmpFieldInput('nic', ev)"/>
                             </div>
                         </div>
 
@@ -404,14 +474,14 @@
                                 <input type="date" t-att-value="state.empForm.join_date" t-on-change="(ev) => this.onEmpFieldInput('join_date', ev)"/>
                             </div>
                             <div class="o_mobile_products_field">
-                                <label>Basic Salary</label>
-                                <input type="number" step="0.01" min="0" t-att-value="state.empForm.basic_salary" t-on-input="(ev) => this.onEmpNumberInput('basic_salary', ev)"/>
+                                <label>Basic Monthly Salary</label>
+                                <input type="number" step="0.01" min="0" placeholder="0.00" t-att-value="state.empForm.basic_salary" t-on-input="(ev) => this.onEmpNumberInput('basic_salary', ev)"/>
                             </div>
                         </div>
 
                         <div class="o_mobile_products_field">
-                            <label>Notes</label>
-                            <textarea rows="3" t-att-value="state.empForm.notes" t-on-input="(ev) => this.onEmpFieldInput('notes', ev)"/>
+                            <label>Internal Notes / Address</label>
+                            <textarea rows="3" placeholder="Residential address, emergency contacts, etc." t-att-value="state.empForm.notes" t-on-input="(ev) => this.onEmpFieldInput('notes', ev)"/>
                         </div>
                     </div>
 
@@ -420,23 +490,26 @@
                                 class="o_mobile_products_delete_btn"
                                 t-if="!state.isNewEmployee and state.empForm.active"
                                 t-on-click="archiveEmployee">
-                            <i class="fa fa-archive"/> Archive &amp; Disable Login
+                            <i class="fa fa-archive"/> Archive Staff Member
                         </button>
                         <button type="button"
                                 class="o_mobile_products_save_btn"
                                 t-att-disabled="state.empSaving"
                                 t-on-click="saveEmployee">
                             <i t-if="state.empSaving" class="fa fa-circle-o-notch fa-spin"/>
-                            <t t-if="!state.empSaving">Save</t>
+                            <t t-if="!state.empSaving">Save Profile</t>
                             <t t-else="">Saving...</t>
                         </button>
                     </div>
                 </t>
 
-                <!-- Salary payment form -->
+                <!-- Salary Payment Form Mode -->
                 <t t-if="state.panelMode === 'payment'">
                     <div class="o_mobile_products_panel_header">
-                        <span>Log Salary Payment</span>
+                        <div class="o_mobile_drawer_title">
+                            <i class="fa fa-money"/>
+                            <span>Log Salary Payment</span>
+                        </div>
                         <button type="button" class="o_mobile_products_panel_close" t-on-click="closePanel">
                             <i class="fa fa-times"/>
                         </button>
@@ -444,7 +517,7 @@
 
                     <div class="o_mobile_products_panel_body">
                         <div class="o_mobile_products_field">
-                            <label>Employee</label>
+                            <label>Staff Member <span class="text-danger">*</span></label>
                             <select t-on-change="onPaymentEmployeeChange">
                                 <t t-foreach="state.employees.filter((e) => e.active)" t-as="emp" t-key="emp.id">
                                     <option t-att-value="emp.id" t-att-selected="state.paymentForm.employee_id === emp.id">
@@ -456,23 +529,23 @@
 
                         <div class="o_mobile_products_field_row">
                             <div class="o_mobile_products_field">
-                                <label>Payment Date</label>
+                                <label>Disbursement Date <span class="text-danger">*</span></label>
                                 <input type="date" t-att-value="state.paymentForm.payment_date" t-on-change="(ev) => this.onPaymentFieldInput('payment_date', ev)"/>
                             </div>
                             <div class="o_mobile_products_field">
-                                <label>Amount</label>
-                                <input type="number" step="0.01" min="0" t-att-value="state.paymentForm.amount" t-on-input="(ev) => this.onPaymentNumberInput('amount', ev)"/>
+                                <label>Amount Paid (LKR) <span class="text-danger">*</span></label>
+                                <input type="number" step="0.01" min="0" placeholder="0.00" t-att-value="state.paymentForm.amount" t-on-input="(ev) => this.onPaymentNumberInput('amount', ev)"/>
                             </div>
                         </div>
 
                         <div class="o_mobile_products_field">
-                            <label>For Month <span class="o_mobile_products_hint">(e.g. "September 2026")</span></label>
-                            <input type="text" t-att-value="state.paymentForm.for_month" t-on-input="(ev) => this.onPaymentFieldInput('for_month', ev)"/>
+                            <label>For Month / Description <span class="o_mobile_products_hint">(e.g. "October 2026 Salary")</span></label>
+                            <input type="text" placeholder="e.g. October 2026" t-att-value="state.paymentForm.for_month" t-on-input="(ev) => this.onPaymentFieldInput('for_month', ev)"/>
                         </div>
 
                         <div class="o_mobile_products_field">
-                            <label>Notes</label>
-                            <input type="text" t-att-value="state.paymentForm.notes" t-on-input="(ev) => this.onPaymentFieldInput('notes', ev)"/>
+                            <label>Payment Remarks / Reference</label>
+                            <input type="text" placeholder="e.g. Bank transfer ref #12345" t-att-value="state.paymentForm.notes" t-on-input="(ev) => this.onPaymentFieldInput('notes', ev)"/>
                         </div>
                     </div>
 
@@ -482,7 +555,7 @@
                                 t-att-disabled="state.paymentSaving"
                                 t-on-click="savePayment">
                             <i t-if="state.paymentSaving" class="fa fa-circle-o-notch fa-spin"/>
-                            <t t-if="!state.paymentSaving">Log Payment</t>
+                            <t t-if="!state.paymentSaving">Confirm &amp; Record Payment</t>
                             <t t-else="">Saving...</t>
                         </button>
                     </div>
