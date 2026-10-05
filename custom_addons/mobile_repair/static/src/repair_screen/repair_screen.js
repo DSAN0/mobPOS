@@ -5,6 +5,7 @@ import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
+import { printReceiptReport } from "@mobile_shop_pos/utils/print_receipt";
 
 const STATUS_TABS = [
     { id: null, label: "All" },
@@ -135,15 +136,11 @@ export class MobileRepairScreen extends Component {
     /* ---------------------------------------------------------------- */
 
     async printIntakeReceipt(repairId) {
-        await this.action.doAction("mobile_repair.action_report_repair_intake", {
-            additionalContext: { active_ids: [repairId] },
-        });
+        await printReceiptReport("mobile_repair.report_repair_intake_document", repairId);
     }
 
     async printDeliveryReceipt(repairId) {
-        await this.action.doAction("mobile_repair.action_report_repair_delivery", {
-            additionalContext: { active_ids: [repairId] },
-        });
+        await printReceiptReport("mobile_repair.report_repair_delivery_document", repairId);
     }
 
     /* ---------------------------------------------------------------- */

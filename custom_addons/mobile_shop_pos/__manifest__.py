@@ -31,6 +31,7 @@
         "web.assets_backend": [
             "mobile_shop_pos/static/src/utils/attendance.js",
             "mobile_shop_pos/static/src/utils/barcode.js",
+            "mobile_shop_pos/static/src/utils/print_receipt.js",
             "mobile_shop_pos/static/src/pos_screen/pos_screen.js",
             "mobile_shop_pos/static/src/pos_screen/pos_screen.xml",
             "mobile_shop_pos/static/src/pos_screen/pos_screen.scss",

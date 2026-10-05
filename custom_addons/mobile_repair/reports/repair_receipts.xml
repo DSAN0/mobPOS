@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-    <!-- ============ INTAKE RECEIPT ============ -->
+    <!-- ============ INTAKE RECEIPT (80mm Thermal POS) ============ -->
 
     <record id="action_report_repair_intake" model="ir.actions.report">
         <field name="name">Repair Intake Receipt</field>
@@ -10,7 +10,7 @@
         <field name="report_name">mobile_repair.report_repair_intake_document</field>
         <field name="report_file">mobile_repair.report_repair_intake_document</field>
         <field name="print_report_name">'Intake Receipt - %s' % (object.name)</field>
-        <field name="paperformat_id" ref="base.paperformat_euro"/>
+        <field name="paperformat_id" ref="mobile_shop_pos.paperformat_mobile_pos_receipt_80mm"/>
         <field name="binding_model_id" ref="model_mobile_repair_order"/>
         <field name="binding_type">report</field>
     </record>
@@ -19,98 +19,111 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
                 <t t-set="company" t-value="doc.env.company"/>
-                <t t-call="web.basic_layout">
+                <div class="page" style="width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 2px 4px !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; line-height: 1.3; color: #000000; box-sizing: border-box !important;">
 
-                    <div class="page" style="font-family: Arial, Helvetica, sans-serif; color:#222; padding: 10px 30px;">
-
-                        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom: 4px solid #0d9488; padding-bottom: 16px; margin-bottom: 20px;">
-                            <div style="display:flex; align-items:center;">
-                                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"
-                                     style="max-height: 70px; max-width: 160px; margin-right: 18px;"/>
-                                <div>
-                                    <div style="font-size: 22px; font-weight: bold; color:#0d9488;">
-                                        <span t-field="company.name"/>
-                                    </div>
-                                    <div style="font-size: 11px; color:#555;" t-if="company.street or company.city">
-                                        <span t-field="company.street"/>
-                                        <span t-if="company.city">, </span>
-                                        <span t-field="company.city"/>
-                                    </div>
-                                    <div style="font-size: 11px; color:#555;" t-if="company.phone or company.email">
-                                        <span t-if="company.phone" t-field="company.phone"/>
-                                        <span t-if="company.phone and company.email"> · </span>
-                                        <span t-if="company.email" t-field="company.email"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="text-align:right;">
-                                <div style="font-size: 20px; font-weight: bold; color:#0d9488;">REPAIR INTAKE RECEIPT</div>
-                                <div style="font-size: 13px; margin-top: 4px;">
-                                    Job No: <strong t-field="doc.name"/>
-                                </div>
-                            </div>
+                    <!-- Header -->
+                    <div style="text-align: center; margin-bottom: 10px;">
+                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"
+                             style="max-height: 60px; max-width: 200px; margin: 0 auto 6px auto; display: block; filter: grayscale(100%) contrast(200%);"/>
+                        <div style="font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.15;">
+                            <span t-field="company.name"/>
                         </div>
-
-                        <table style="width:100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px;">
-                            <tr>
-                                <td style="padding:6px 0; width:50%; vertical-align:top;">
-                                    <div style="color:#777; font-size:11px;">RECEIVED DATE &amp; TIME</div>
-                                    <div style="font-weight:bold;">
-                                        <span t-field="doc.received_date" t-options="{'widget': 'datetime', 'format': 'dd MMM yyyy, hh:mm a'}"/>
-                                    </div>
-                                </td>
-                                <td style="padding:6px 0; vertical-align:top;">
-                                    <div style="color:#777; font-size:11px;">CUSTOMER</div>
-                                    <div style="font-weight:bold;"><span t-field="doc.customer_name"/></div>
-                                    <div><span t-field="doc.customer_phone"/></div>
-                                </td>
-                            </tr>
-                        </table>
-
-                        <table style="width:100%; border-collapse: collapse; font-size: 13px;">
-                            <thead>
-                                <tr style="background-color:#0d9488; color:#fff;">
-                                    <th style="padding:8px; text-align:left; width:30%;">Device</th>
-                                    <th style="padding:8px; text-align:left;">Reported Issue</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr style="background-color:#eefaf8;">
-                                    <td style="padding:10px; border-bottom:1px solid #eee; vertical-align:top;">
-                                        <span t-field="doc.device"/>
-                                    </td>
-                                    <td style="padding:10px; border-bottom:1px solid #eee; vertical-align:top;">
-                                        <span t-field="doc.issue_description"/>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <div style="display:flex; justify-content:flex-end; margin-top: 18px;">
-                            <table style="width: 280px; font-size: 13px;">
-                                <tr>
-                                    <td style="padding:4px 8px; font-weight:bold; font-size:15px;">Estimated Cost</td>
-                                    <td style="padding:4px 8px; text-align:right; font-weight:bold; font-size:15px; color:#0d9488;">
-                                        LKR <span t-field="doc.cost" t-options="{'widget': 'float', 'precision': 2}"/>
-                                    </td>
-                                </tr>
-                            </table>
+                        <div style="font-size: 15px; font-weight: 600; color: #000; margin-top: 3px;" t-if="company.street or company.city">
+                            <span t-field="company.street"/>
+                            <span t-if="company.street and company.city">, </span>
+                            <span t-field="company.city"/>
                         </div>
-
-                        <div style="margin-top: 40px; border-top: 1px solid #ddd; padding-top: 14px; font-size: 11px; color:#777; text-align:center;">
-                            <div>Please retain this receipt — it must be presented when collecting your device.</div>
-                            <div style="margin-top:4px;">Final cost may vary from the estimate above depending on the actual repair required.</div>
+                        <div style="font-size: 15px; font-weight: 600; color: #000;" t-if="company.phone or company.email">
+                            <span t-if="company.phone" t-field="company.phone"/>
+                            <span t-if="company.phone and company.email"> | </span>
+                            <span t-if="company.email" t-field="company.email"/>
                         </div>
-
                     </div>
 
-                </t>
+                    <!-- Full-width Divider -->
+                    <div style="border-top: 2px dashed #000; margin: 8px 0; width: 100%;"></div>
+
+                    <!-- Title & Job Info -->
+                    <div style="text-align: center; font-weight: 900; font-size: 20px; margin: 4px 0 8px 0;">
+                        *** REPAIR INTAKE RECEIPT ***
+                    </div>
+                    <table style="width: 100%; font-size: 16px; border-collapse: collapse; margin-bottom: 6px;">
+                        <tr>
+                            <td style="text-align: left; padding: 2px 0;">
+                                Job: <strong style="font-size: 17px;" t-field="doc.name"/>
+                            </td>
+                            <td style="text-align: right; padding: 2px 0; font-weight: 700;">
+                                <span t-field="doc.received_date" t-options="{'widget': 'datetime', 'format': 'dd/MM/yyyy HH:mm'}"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Full-width Divider -->
+                    <div style="border-top: 2px dashed #000; margin: 8px 0; width: 100%;"></div>
+
+                    <!-- Customer & Device Info -->
+                    <table style="width: 100%; font-size: 16px; border-collapse: collapse; margin-bottom: 6px;">
+                        <tr>
+                            <td style="width: 32%; font-weight: 800; padding: 4px 0;">Customer:</td>
+                            <td style="padding: 4px 0; font-weight: 700;"><span t-field="doc.customer_name"/></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 800; padding: 4px 0;">Phone:</td>
+                            <td style="padding: 4px 0; font-weight: 700;"><span t-field="doc.customer_phone"/></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 800; padding: 4px 0;">Device:</td>
+                            <td style="padding: 4px 0; font-weight: 900; font-size: 17px;"><span t-field="doc.device"/></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 800; padding: 4px 0; vertical-align: top;">Issue:</td>
+                            <td style="padding: 4px 0; vertical-align: top; font-weight: 600;"><span t-field="doc.issue_description"/></td>
+                        </tr>
+                    </table>
+
+                    <!-- Full-width Divider -->
+                    <div style="border-top: 2px dashed #000; margin: 8px 0; width: 100%;"></div>
+
+                    <!-- Cost Estimate -->
+                    <table style="width: 100%; font-size: 18px; border-collapse: collapse; margin: 6px 0;">
+                        <tr style="font-weight: 900;">
+                            <td style="text-align: left; padding: 6px 0;">Estimated Cost:</td>
+                            <td style="text-align: right; padding: 6px 0; font-size: 20px;">
+                                LKR <span t-field="doc.cost" t-options="{'widget': 'float', 'precision': 2}"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Full-width Divider -->
+                    <div style="border-top: 2px dashed #000; margin: 10px 0; width: 100%;"></div>
+
+                    <!-- Job Barcode -->
+                    <div style="text-align: center; margin: 10px 0 4px 0; width: 100%;">
+                        <img t-att-src="'/report/barcode/?type=Code128&amp;value=%s&amp;width=600&amp;height=100&amp;humanreadable=0' % doc.name.replace('/', '-')"
+                             style="width: 100%; max-width: 90%; height: 45px; display: block; margin: 0 auto;"/>
+                        <div style="font-size: 15px; font-weight: 800; letter-spacing: 1px; margin-top: 4px;">
+                            * <span t-field="doc.name"/> *
+                        </div>
+                    </div>
+
+                    <!-- Customer Signature & Footer -->
+                    <div style="margin-top: 20px; font-size: 14px; width: 100%;">
+                        <div style="border-bottom: 2px dotted #000; height: 26px; margin-bottom: 6px;"></div>
+                        <div style="text-align: center; font-weight: 700;">Customer Signature</div>
+                    </div>
+
+                    <div style="text-align: center; font-size: 14px; margin-top: 12px; line-height: 1.4; width: 100%;">
+                        <div style="font-weight: 700;">Please present this receipt when collecting device.</div>
+                        <div style="margin-top: 2px; font-size: 13px;">Final cost may vary depending on actual repair.</div>
+                    </div>
+
+                </div>
             </t>
         </t>
     </template>
 
 
-    <!-- ============ DELIVERY RECEIPT ============ -->
+    <!-- ============ DELIVERY RECEIPT (80mm Thermal POS) ============ -->
 
     <record id="action_report_repair_delivery" model="ir.actions.report">
         <field name="name">Repair Delivery Receipt</field>
@@ -119,7 +132,7 @@
         <field name="report_name">mobile_repair.report_repair_delivery_document</field>
         <field name="report_file">mobile_repair.report_repair_delivery_document</field>
         <field name="print_report_name">'Delivery Receipt - %s' % (object.name)</field>
-        <field name="paperformat_id" ref="base.paperformat_euro"/>
+        <field name="paperformat_id" ref="mobile_shop_pos.paperformat_mobile_pos_receipt_80mm"/>
         <field name="binding_model_id" ref="model_mobile_repair_order"/>
         <field name="binding_type">report</field>
     </record>
@@ -128,107 +141,124 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
                 <t t-set="company" t-value="doc.env.company"/>
-                <t t-call="web.basic_layout">
+                <div class="page" style="width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 2px 4px !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; line-height: 1.3; color: #000000; box-sizing: border-box !important;">
 
-                    <div class="page" style="font-family: Arial, Helvetica, sans-serif; color:#222; padding: 10px 30px;">
-
-                        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom: 4px solid #0d9488; padding-bottom: 16px; margin-bottom: 20px;">
-                            <div style="display:flex; align-items:center;">
-                                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"
-                                     style="max-height: 70px; max-width: 160px; margin-right: 18px;"/>
-                                <div>
-                                    <div style="font-size: 22px; font-weight: bold; color:#0d9488;">
-                                        <span t-field="company.name"/>
-                                    </div>
-                                    <div style="font-size: 11px; color:#555;" t-if="company.street or company.city">
-                                        <span t-field="company.street"/>
-                                        <span t-if="company.city">, </span>
-                                        <span t-field="company.city"/>
-                                    </div>
-                                    <div style="font-size: 11px; color:#555;" t-if="company.phone or company.email">
-                                        <span t-if="company.phone" t-field="company.phone"/>
-                                        <span t-if="company.phone and company.email"> · </span>
-                                        <span t-if="company.email" t-field="company.email"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div style="text-align:right;">
-                                <div style="font-size: 20px; font-weight: bold; color:#0d9488;">REPAIR DELIVERY RECEIPT</div>
-                                <div style="font-size: 13px; margin-top: 4px;">
-                                    Job No: <strong t-field="doc.name"/>
-                                </div>
-                            </div>
+                    <!-- Header -->
+                    <div style="text-align: center; margin-bottom: 10px;">
+                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"
+                             style="max-height: 60px; max-width: 200px; margin: 0 auto 6px auto; display: block; filter: grayscale(100%) contrast(200%);"/>
+                        <div style="font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.15;">
+                            <span t-field="company.name"/>
                         </div>
-
-                        <table style="width:100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px;">
-                            <tr>
-                                <td style="padding:6px 0; width:33%; vertical-align:top;">
-                                    <div style="color:#777; font-size:11px;">RECEIVED DATE &amp; TIME</div>
-                                    <div style="font-weight:bold;">
-                                        <span t-field="doc.received_date" t-options="{'widget': 'datetime', 'format': 'dd MMM yyyy, hh:mm a'}"/>
-                                    </div>
-                                </td>
-                                <td style="padding:6px 0; width:33%; vertical-align:top;">
-                                    <div style="color:#777; font-size:11px;">HANDOVER DATE &amp; TIME</div>
-                                    <div style="font-weight:bold;">
-                                        <span t-if="doc.delivered_date" t-field="doc.delivered_date" t-options="{'widget': 'datetime', 'format': 'dd MMM yyyy, hh:mm a'}"/>
-                                        <span t-if="not doc.delivered_date" style="color:#999;">—</span>
-                                    </div>
-                                </td>
-                                <td style="padding:6px 0; vertical-align:top;">
-                                    <div style="color:#777; font-size:11px;">CUSTOMER</div>
-                                    <div style="font-weight:bold;"><span t-field="doc.customer_name"/></div>
-                                    <div><span t-field="doc.customer_phone"/></div>
-                                </td>
-                            </tr>
-                        </table>
-
-                        <table style="width:100%; border-collapse: collapse; font-size: 13px;">
-                            <thead>
-                                <tr style="background-color:#0d9488; color:#fff;">
-                                    <th style="padding:8px; text-align:left; width:30%;">Device</th>
-                                    <th style="padding:8px; text-align:left;">Issue Repaired</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr style="background-color:#eefaf8;">
-                                    <td style="padding:10px; border-bottom:1px solid #eee; vertical-align:top;">
-                                        <span t-field="doc.device"/>
-                                    </td>
-                                    <td style="padding:10px; border-bottom:1px solid #eee; vertical-align:top;">
-                                        <span t-field="doc.issue_description"/>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <div style="display:flex; justify-content:flex-end; margin-top: 18px;">
-                            <table style="width: 280px; font-size: 13px;">
-                                <tr>
-                                    <td style="padding:4px 8px; font-weight:bold; font-size:16px;">Final Cost</td>
-                                    <td style="padding:4px 8px; text-align:right; font-weight:bold; font-size:16px; color:#0d9488;">
-                                        LKR <span t-field="doc.cost" t-options="{'widget': 'float', 'precision': 2}"/>
-                                    </td>
-                                </tr>
-                            </table>
+                        <div style="font-size: 15px; font-weight: 600; color: #000; margin-top: 3px;" t-if="company.street or company.city">
+                            <span t-field="company.street"/>
+                            <span t-if="company.street and company.city">, </span>
+                            <span t-field="company.city"/>
                         </div>
-
-                        <div style="margin-top: 60px; display:flex; justify-content:space-between;">
-                            <div style="width: 40%; border-top: 1px solid #999; padding-top: 6px; font-size: 11px; text-align:center; color:#555;">
-                                Handed over by (Shop)
-                            </div>
-                            <div style="width: 40%; border-top: 1px solid #999; padding-top: 6px; font-size: 11px; text-align:center; color:#555;">
-                                Received by (Customer)
-                            </div>
+                        <div style="font-size: 15px; font-weight: 600; color: #000;" t-if="company.phone or company.email">
+                            <span t-if="company.phone" t-field="company.phone"/>
+                            <span t-if="company.phone and company.email"> | </span>
+                            <span t-if="company.email" t-field="company.email"/>
                         </div>
-
-                        <div style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 14px; font-size: 11px; color:#777; text-align:center;">
-                            <div>Thank you for choosing us for your repair needs!</div>
-                        </div>
-
                     </div>
 
-                </t>
+                    <!-- Full-width Divider -->
+                    <div style="border-top: 2px dashed #000; margin: 8px 0; width: 100%;"></div>
+
+                    <!-- Title & Job Info -->
+                    <div style="text-align: center; font-weight: 900; font-size: 20px; margin: 4px 0 8px 0;">
+                        *** REPAIR DELIVERY RECEIPT ***
+                    </div>
+                    <table style="width: 100%; font-size: 16px; border-collapse: collapse; margin-bottom: 6px;">
+                        <tr>
+                            <td style="text-align: left; padding: 2px 0;">
+                                Job: <strong style="font-size: 17px;" t-field="doc.name"/>
+                            </td>
+                            <td style="text-align: right; padding: 2px 0; font-weight: 700;">
+                                <span t-if="doc.delivered_date" t-field="doc.delivered_date" t-options="{'widget': 'datetime', 'format': 'dd/MM/yyyy HH:mm'}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="font-size: 14px; font-weight: 600; color: #000; padding: 2px 0;">
+                                Received: <span t-field="doc.received_date" t-options="{'widget': 'datetime', 'format': 'dd/MM/yyyy HH:mm'}"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Full-width Divider -->
+                    <div style="border-top: 2px dashed #000; margin: 8px 0; width: 100%;"></div>
+
+                    <!-- Customer & Device Info -->
+                    <table style="width: 100%; font-size: 16px; border-collapse: collapse; margin-bottom: 6px;">
+                        <tr>
+                            <td style="width: 32%; font-weight: 800; padding: 4px 0;">Customer:</td>
+                            <td style="padding: 4px 0; font-weight: 700;"><span t-field="doc.customer_name"/></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 800; padding: 4px 0;">Phone:</td>
+                            <td style="padding: 4px 0; font-weight: 700;"><span t-field="doc.customer_phone"/></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 800; padding: 4px 0;">Device:</td>
+                            <td style="padding: 4px 0; font-weight: 900; font-size: 17px;"><span t-field="doc.device"/></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 800; padding: 4px 0; vertical-align: top;">Repaired:</td>
+                            <td style="padding: 4px 0; vertical-align: top; font-weight: 600;"><span t-field="doc.issue_description"/></td>
+                        </tr>
+                    </table>
+
+                    <!-- Full-width Divider -->
+                    <div style="border-top: 2px dashed #000; margin: 8px 0; width: 100%;"></div>
+
+                    <!-- Final Cost -->
+                    <table style="width: 100%; font-size: 20px; border-collapse: collapse; margin: 8px 0;">
+                        <tr style="font-weight: 900;">
+                            <td style="text-align: left; padding: 8px 0; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+                                TOTAL PAID:
+                            </td>
+                            <td style="text-align: right; padding: 8px 0; border-top: 2px solid #000; border-bottom: 2px solid #000; font-size: 22px;">
+                                LKR <span t-field="doc.cost" t-options="{'widget': 'float', 'precision': 2}"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Full-width Divider -->
+                    <div style="border-top: 2px dashed #000; margin: 10px 0; width: 100%;"></div>
+
+                    <!-- Barcode -->
+                    <div style="text-align: center; margin: 10px 0 4px 0; width: 100%;">
+                        <img t-att-src="'/report/barcode/?type=Code128&amp;value=%s&amp;width=600&amp;height=100&amp;humanreadable=0' % doc.name.replace('/', '-')"
+                             style="width: 100%; max-width: 90%; height: 45px; display: block; margin: 0 auto;"/>
+                        <div style="font-size: 15px; font-weight: 800; letter-spacing: 1px; margin-top: 4px;">
+                            * <span t-field="doc.name"/> *
+                        </div>
+                    </div>
+
+                    <!-- Signatures -->
+                    <table style="width: 100%; margin-top: 20px; font-size: 13px; text-align: center;">
+                        <tr>
+                            <td style="width: 48%;">
+                                <div style="border-bottom: 2px dotted #000; height: 22px; margin-bottom: 4px;"></div>
+                                <span style="font-weight: 700;">Shop Handover</span>
+                            </td>
+                            <td style="width: 4%;"></td>
+                            <td style="width: 48%;">
+                                <div style="border-bottom: 2px dotted #000; height: 22px; margin-bottom: 4px;"></div>
+                                <span style="font-weight: 700;">Customer Received</span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Footer -->
+                    <div style="text-align: center; font-size: 14px; margin-top: 12px; line-height: 1.4; width: 100%;">
+                        <div style="font-weight: 900; font-size: 15px;">THANK YOU FOR CHOOSING US!</div>
+                        <div style="margin-top: 4px; font-weight: 600;">
+                            Repairs covered under standard service warranty.
+                        </div>
+                    </div>
+
+                </div>
             </t>
         </t>
     </template>

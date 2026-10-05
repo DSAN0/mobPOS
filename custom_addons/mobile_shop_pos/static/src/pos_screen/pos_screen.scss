@@ -83,7 +83,10 @@ $mpos-radius: 12px;
         &_clear {
             cursor: pointer;
             color: $mpos-muted;
-            &:hover { color: $mpos-danger; }
+
+            &:hover {
+                color: $mpos-danger;
+            }
         }
     }
 
@@ -94,8 +97,14 @@ $mpos-radius: 12px;
         padding-bottom: 10px;
         margin-bottom: 6px;
 
-        &::-webkit-scrollbar { height: 4px; }
-        &::-webkit-scrollbar-thumb { background: $mpos-border; border-radius: 4px; }
+        &::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: $mpos-border;
+            border-radius: 4px;
+        }
     }
 
     &_cat_btn {
@@ -111,7 +120,9 @@ $mpos-radius: 12px;
         transition: all .15s ease;
         white-space: nowrap;
 
-        &:hover { border-color: $mpos-primary; }
+        &:hover {
+            border-color: $mpos-primary;
+        }
 
         &.active {
             background: $mpos-primary;
@@ -150,7 +161,9 @@ $mpos-radius: 12px;
             border-color: $mpos-primary;
         }
 
-        &:active { transform: translateY(0); }
+        &:active {
+            transform: translateY(0);
+        }
 
         &.out_of_stock {
             opacity: .45;
@@ -294,7 +307,8 @@ $mpos-radius: 12px;
         }
     }
 
-    &_loading, &_empty {
+    &_loading,
+    &_empty {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -304,7 +318,9 @@ $mpos-radius: 12px;
         color: $mpos-muted;
         font-size: 14px;
 
-        i { font-size: 28px; }
+        i {
+            font-size: 28px;
+        }
     }
 
     // ---------------------------------------------------------------
@@ -330,7 +346,10 @@ $mpos-radius: 12px;
         margin-bottom: 10px;
         flex: 0 0 auto;
 
-        i { margin-right: 6px; color: $mpos-primary; }
+        i {
+            margin-right: 6px;
+            color: $mpos-primary;
+        }
     }
 
     &_clear_btn {
@@ -344,7 +363,9 @@ $mpos-radius: 12px;
         align-items: center;
         gap: 4px;
 
-        &:hover { text-decoration: underline; }
+        &:hover {
+            text-decoration: underline;
+        }
     }
 
     &_cart_split {
@@ -391,7 +412,9 @@ $mpos-radius: 12px;
         gap: 8px;
         padding: 20px 0;
 
-        i { font-size: 22px; }
+        i {
+            font-size: 22px;
+        }
     }
 
     &_line {
@@ -402,7 +425,9 @@ $mpos-radius: 12px;
         padding: 9px 4px;
         border-bottom: 1px solid $mpos-border;
 
-        &:last-child { border-bottom: none; }
+        &:last-child {
+            border-bottom: none;
+        }
     }
 
     &_line_info {
@@ -482,7 +507,9 @@ $mpos-radius: 12px;
         color: $mpos-muted;
         cursor: pointer;
 
-        &:hover { color: $mpos-danger; }
+        &:hover {
+            color: $mpos-danger;
+        }
     }
 
     &_totals {
@@ -541,7 +568,9 @@ $mpos-radius: 12px;
         align-items: center;
         gap: 4px;
 
-        i { font-size: 14px; }
+        i {
+            font-size: 14px;
+        }
 
         &.active {
             background: $mpos-primary;
@@ -561,7 +590,8 @@ $mpos-radius: 12px;
         font-size: 12px;
     }
 
-    &_tendered_display, &_change_display {
+    &_tendered_display,
+    &_change_display {
         display: flex;
         justify-content: space-between;
     }
@@ -573,8 +603,13 @@ $mpos-radius: 12px;
     &_change_display {
         font-weight: 700;
 
-        &.negative { color: $mpos-danger; }
-        &.positive { color: $mpos-success; }
+        &.negative {
+            color: $mpos-danger;
+        }
+
+        &.positive {
+            color: $mpos-success;
+        }
     }
 
     &_quick_amounts {
@@ -592,7 +627,9 @@ $mpos-radius: 12px;
             font-weight: 600;
             cursor: pointer;
 
-            &:hover { border-color: $mpos-primary; }
+            &:hover {
+                border-color: $mpos-primary;
+            }
         }
     }
 
@@ -611,9 +648,14 @@ $mpos-radius: 12px;
         font-weight: 700;
         cursor: pointer;
 
-        &:hover { background: darken($mpos-bg, 4%); }
+        &:hover {
+            background: darken($mpos-bg, 4%);
+        }
 
-        &_back { color: $mpos-primary; }
+        &_back {
+            color: $mpos-primary;
+        }
+
         &_clear {
             grid-column: span 3;
             color: $mpos-danger;
@@ -632,7 +674,9 @@ $mpos-radius: 12px;
         cursor: pointer;
         transition: background .15s ease;
 
-        &:hover:not(:disabled) { background: $mpos-primary-dark; }
+        &:hover:not(:disabled) {
+            background: $mpos-primary-dark;
+        }
 
         &:disabled {
             background: $mpos-border;
@@ -679,7 +723,9 @@ $mpos-radius: 12px;
         cursor: pointer;
         z-index: 1;
 
-        &:hover { background: $mpos-border; }
+        &:hover {
+            background: $mpos-border;
+        }
     }
 
     &_details_img {
@@ -716,7 +762,9 @@ $mpos-radius: 12px;
         border-bottom: 1px solid $mpos-border;
         font-size: 13px;
 
-        &:last-of-type { border-bottom: none; }
+        &:last-of-type {
+            border-bottom: none;
+        }
     }
 
     &_details_label {
@@ -783,7 +831,9 @@ $mpos-radius: 12px;
         gap: 8px;
         transition: background .15s ease;
 
-        &:hover:not(:disabled) { background: $mpos-primary-dark; }
+        &:hover:not(:disabled) {
+            background: $mpos-primary-dark;
+        }
 
         &:disabled {
             background: $mpos-border;
@@ -836,6 +886,7 @@ $mpos-radius: 12px;
         padding-top: 12px;
     }
 }
+
 // ---------------------------------------------------------------------
 // Logged-in user chip + Log Out button (topbar)
 // ---------------------------------------------------------------------
@@ -850,7 +901,9 @@ $mpos-radius: 12px;
     color: $mpos-text;
     white-space: nowrap;
 
-    i { color: $mpos-primary; }
+    i {
+        color: $mpos-primary;
+    }
 }
 
 .o_mobile_pos_logout_btn {
@@ -868,7 +921,11 @@ $mpos-radius: 12px;
     align-items: center;
     gap: 6px;
 
-    &:hover { background: $mpos-danger; border-color: $mpos-danger; color: #fff; }
+    &:hover {
+        background: $mpos-danger;
+        border-color: $mpos-danger;
+        color: #fff;
+    }
 }
 
 // ---------------------------------------------------------------------
@@ -899,6 +956,8 @@ $mpos-radius: 12px;
         font-size: 14px;
         outline: none;
 
-        &::placeholder { color: #a3855a; }
+        &::placeholder {
+            color: #a3855a;
+        }
     }
 }

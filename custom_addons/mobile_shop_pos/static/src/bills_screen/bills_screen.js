@@ -7,6 +7,7 @@ import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { ensureCheckedIn } from "../utils/attendance";
+import { printReceiptReport } from "../utils/print_receipt";
 
 const DATE_FILTERS = [
     { key: "today", label: _t("Today") },
@@ -231,9 +232,10 @@ export class MobileShopBillsScreen extends Component {
         if (!this.state.detail) {
             return;
         }
-        await this.action.doAction("mobile_shop_pos.action_report_mobile_sale", {
-            additionalContext: { active_ids: [this.state.detail.id] },
-        });
+        await printReceiptReport(
+            "mobile_shop_pos.report_mobile_sale_document",
+            this.state.detail.id
+        );
     }
 
     cancelBill() {

@@ -7,6 +7,7 @@ import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
 import { ensureCheckedIn, checkOutAndLogout } from "../utils/attendance";
 import { findProductByBarcode } from "../utils/barcode";
+import { printReceiptReport } from "../utils/print_receipt";
 
 const QUICK_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "<"];
 
@@ -437,9 +438,7 @@ export class MobileShopPOSScreen extends Component {
 
             this.notification.add(_t("Sale confirmed"), { type: "success" });
 
-            await this.action.doAction("mobile_shop_pos.action_report_mobile_sale", {
-                additionalContext: { active_ids: [id] },
-            });
+            await printReceiptReport("mobile_shop_pos.report_mobile_sale_document", id);
 
             this.clearCart();
             await this.loadProducts();
