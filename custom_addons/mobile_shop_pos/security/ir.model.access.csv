@@ -6,9 +6,7 @@ access_mobile_product_category_manager,mobile.product.category.manager,model_mob
 access_mobile_spec_attribute_manager,mobile.spec.attribute.manager,model_mobile_spec_attribute,group_mobile_shop_manager,1,1,1,1
 access_mobile_product_spec_cashier,mobile.product.spec.cashier,model_mobile_product_spec,group_mobile_shop_cashier,1,0,0,0
 access_mobile_product_spec_manager,mobile.product.spec.manager,model_mobile_product_spec,group_mobile_shop_manager,1,1,1,1
-access_mobile_purchase_order_cashier,mobile.purchase.order.cashier,model_mobile_purchase_order,group_mobile_shop_cashier,1,1,1,0
 access_mobile_purchase_order_manager,mobile.purchase.order.manager,model_mobile_purchase_order,group_mobile_shop_manager,1,1,1,1
-access_mobile_purchase_line_cashier,mobile.purchase.line.cashier,model_mobile_purchase_line,group_mobile_shop_cashier,1,1,1,1
 access_mobile_purchase_line_manager,mobile.purchase.line.manager,model_mobile_purchase_line,group_mobile_shop_manager,1,1,1,1
 access_mobile_sale_order_cashier,mobile.sale.order.cashier,model_mobile_sale_order,group_mobile_shop_cashier,1,1,1,0
 access_mobile_sale_order_manager,mobile.sale.order.manager,model_mobile_sale_order,group_mobile_shop_manager,1,1,1,1

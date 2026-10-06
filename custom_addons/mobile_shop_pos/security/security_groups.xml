@@ -18,9 +18,9 @@
     <record id="group_mobile_shop_cashier" model="res.groups">
         <field name="name">Cashier</field>
         <field name="privilege_id" ref="privilege_mobile_shop"/>
-        <field name="comment">Can use the POS screen, create bills, and add stock.
+        <field name="comment">Can use the POS screen and create bills.
 Product catalog is read-only. Cannot manage categories/specifications,
-cannot see the Sales Report, and cannot delete bills or stock-in
+cannot see the Sales Report, cannot add stock, and cannot delete bills
 records once created.</field>
     </record>
 

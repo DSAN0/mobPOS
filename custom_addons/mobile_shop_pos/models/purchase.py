@@ -1,4 +1,5 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+from odoo.exceptions import AccessError
 
 
 class MobilePurchaseOrder(models.Model):
@@ -43,15 +44,14 @@ class MobilePurchaseOrder(models.Model):
             order.total_amount = sum(line.subtotal for line in order.line_ids)
 
     def action_receive(self):
+        if not self.env.user.has_group('mobile_shop_pos.group_mobile_shop_manager'):
+            raise AccessError(_("Only the Owner/Manager can add stock."))
+
         for order in self:
             if order.state == 'received':
                 continue
 
             for line in order.line_ids:
-                # sudo(): updating stock/cost on receipt is a system action
-                # tied to this specific operation, not a general product
-                # edit — Cashiers can add stock without needing broad write
-                # access to mobile.phone.product.
                 product = line.product_id.sudo()
                 product.stock_quantity += line.quantity
                 if line.cost_price:

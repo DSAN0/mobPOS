@@ -3,6 +3,7 @@
 import { Component, useState, onWillStart, onMounted, useRef } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { user } from "@web/core/user";
 import { _t } from "@web/core/l10n/translation";
 import { ensureCheckedIn } from "../utils/attendance";
 import { findProductByBarcode } from "../utils/barcode";
@@ -13,6 +14,7 @@ export class MobileShopStockScreen extends Component {
 
     setup() {
         this.orm = useService("orm");
+        this.action = useService("action");
         this.notification = useService("notification");
 
         this.state = useState({
@@ -33,6 +35,18 @@ export class MobileShopStockScreen extends Component {
 
         onWillStart(async () => {
             ensureCheckedIn(this.orm);
+            const isManager = await user.hasGroup("mobile_shop_pos.group_mobile_shop_manager");
+            if (!isManager) {
+                this.notification.add(
+                    _t("You don't have access to Add Stock."),
+                    { type: "danger" }
+                );
+                await this.action.doAction("mobile_shop_pos.mobile_pos_screen_action", {
+                    clearBreadcrumbs: true,
+                });
+                return;
+            }
+
             await this.loadCategories();
             await this.loadProducts();
         });
