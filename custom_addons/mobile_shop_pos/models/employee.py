@@ -143,6 +143,14 @@ class MobileEmployee(models.Model):
             # Managers — see action_create_login for the same reasoning.
             emp.user_id.sudo().active = False
 
+            # Automatically check out any open attendance sessions for this employee
+            open_attendances = self.env['mobile.employee.attendance'].sudo().search([
+                ('employee_id', '=', emp.id),
+                ('logout_time', '=', False),
+            ])
+            if open_attendances:
+                open_attendances.write({'logout_time': fields.Datetime.now()})
+
     def action_reactivate(self):
         if not self.env.user.has_group('mobile_shop_pos.group_mobile_shop_manager'):
             raise AccessError(_("Only the Owner/Manager can restore employees."))

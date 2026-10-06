@@ -6,7 +6,5 @@
     <record id="position_manager" model="mobile.employee.position">
         <field name="name">Owner / Manager</field>
     </record>
-    <record id="position_sales_assistant" model="mobile.employee.position">
-        <field name="name">Sales Assistant</field>
-    </record>
 </odoo>
+

@@ -70,9 +70,15 @@
                         </div>
 
                         <button type="button"
-                                t-att-class="'o_mobile_category_pill ' + (state.showArchived ? 'active' : '')"
+                                t-att-class="'o_mobile_archive_toggle_btn ' + (state.showArchived ? 'active' : '')"
                                 t-on-click="toggleShowArchived">
-                            <i class="fa fa-archive"/> Show Archived Staff
+                            <span class="o_mobile_archive_toggle_icon">
+                                <i class="fa fa-archive"/>
+                            </span>
+                            <span class="o_mobile_archive_toggle_label">Show Archived Staff</span>
+                            <span class="o_mobile_archive_switch_track">
+                                <span class="o_mobile_archive_switch_thumb"/>
+                            </span>
                         </button>
                     </div>
 
@@ -135,22 +141,31 @@
                 <!-- 2. Attendance Tab -->
                 <t t-if="state.activeTab === 'attendance'">
                     <div class="o_mobile_filter_controls_row">
-                        <div class="o_mobile_pos_categories_bar o_mobile_filter_group">
-                            <t t-foreach="attDateFilters" t-as="df" t-key="df.key">
-                                <button type="button"
-                                        t-att-class="'o_mobile_category_pill ' + (state.attDateFilter === df.key ? 'active' : '')"
-                                        t-on-click="() => this.setAttDateFilter(df.key)">
-                                    <t t-esc="df.label"/>
-                                </button>
-                            </t>
+                        <div class="o_mobile_date_filters_bar">
+                            <div class="o_mobile_filter_bar_label">
+                                <i class="fa fa-calendar-check-o"/>
+                                <span>Period:</span>
+                            </div>
+                            <div class="o_mobile_date_pills_group">
+                                <t t-foreach="attDateFilters" t-as="df" t-key="df.key">
+                                    <button type="button"
+                                            t-att-class="'o_mobile_date_filter_btn ' + (state.attDateFilter === df.key ? 'active' : '')"
+                                            t-on-click="() => this.setAttDateFilter(df.key)">
+                                        <t t-esc="df.label"/>
+                                    </button>
+                                </t>
+                            </div>
                         </div>
 
-                        <select class="o_mobile_employee_filter_select" t-on-change="setAttEmployeeFilter">
-                            <option value="">All Employees</option>
-                            <t t-foreach="state.employees" t-as="emp" t-key="emp.id">
-                                <option t-att-value="emp.id"><t t-esc="emp.name"/></option>
-                            </t>
-                        </select>
+                        <div class="o_mobile_employee_filter_wrapper">
+                            <i class="fa fa-user-circle o_mobile_select_prefix_icon"/>
+                            <select class="o_mobile_employee_filter_select" t-on-change="setAttEmployeeFilter">
+                                <option value="">All Employees</option>
+                                <t t-foreach="state.employees" t-as="emp" t-key="emp.id">
+                                    <option t-att-value="emp.id"><t t-esc="emp.name"/></option>
+                                </t>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="o_mobile_pos_grid_wrapper o_mobile_table_container">
@@ -280,14 +295,22 @@
 
                 <!-- 4. Sales by Employee Tab -->
                 <t t-if="state.activeTab === 'sales'">
-                    <div class="o_mobile_pos_categories_bar">
-                        <t t-foreach="salesDateFilters" t-as="df" t-key="df.key">
-                            <button type="button"
-                                    t-att-class="'o_mobile_category_pill ' + (state.salesDateFilter === df.key ? 'active' : '')"
-                                    t-on-click="() => this.setSalesDateFilter(df.key)">
-                                <t t-esc="df.label"/>
-                            </button>
-                        </t>
+                    <div class="o_mobile_filter_controls_row">
+                        <div class="o_mobile_date_filters_bar">
+                            <div class="o_mobile_filter_bar_label">
+                                <i class="fa fa-calendar"/>
+                                <span>Period:</span>
+                            </div>
+                            <div class="o_mobile_date_pills_group">
+                                <t t-foreach="salesDateFilters" t-as="df" t-key="df.key">
+                                    <button type="button"
+                                            t-att-class="'o_mobile_date_filter_btn ' + (state.salesDateFilter === df.key ? 'active' : '')"
+                                            t-on-click="() => this.setSalesDateFilter(df.key)">
+                                        <t t-esc="df.label"/>
+                                    </button>
+                                </t>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="o_mobile_report_summary">
@@ -443,18 +466,13 @@
 
                         <div class="o_mobile_products_field">
                             <label>Designation / Position <span class="text-danger">*</span></label>
-                            <div class="o_mobile_products_field_row" style="grid-template-columns: 1fr auto;">
-                                <select t-on-change="onEmpPositionChange">
-                                    <t t-foreach="state.positions" t-as="pos" t-key="pos.id">
-                                        <option t-att-value="pos.id" t-att-selected="state.empForm.position_id === pos.id">
-                                            <t t-esc="pos.name"/>
-                                        </option>
-                                    </t>
-                                </select>
-                                <button type="button" class="o_mobile_mini_btn" t-on-click="createNewPosition">
-                                    <i class="fa fa-plus"/> New Position
-                                </button>
-                            </div>
+                            <select t-on-change="onEmpPositionChange">
+                                <t t-foreach="state.positions" t-as="pos" t-key="pos.id">
+                                    <option t-att-value="pos.id" t-att-selected="state.empForm.position_id === pos.id">
+                                        <t t-esc="pos.name"/>
+                                    </option>
+                                </t>
+                            </select>
                         </div>
 
                         <div class="o_mobile_products_field_row">

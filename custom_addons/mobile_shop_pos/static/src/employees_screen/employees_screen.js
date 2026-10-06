@@ -179,7 +179,7 @@ export class MobileShopEmployeesScreen extends Component {
     async loadPositions() {
         this.state.positions = await this.orm.searchRead(
             "mobile.employee.position",
-            [],
+            [["name", "in", ["Cashier", "Owner / Manager", "Owner/Manager"]]],
             ["id", "name"],
             { order: "name asc" }
         );
@@ -246,7 +246,8 @@ export class MobileShopEmployeesScreen extends Component {
         await this.loadAvailableUsers();
         this.state.empForm = emptyEmployeeForm();
         if (this.state.positions.length) {
-            this.state.empForm.position_id = this.state.positions[0].id;
+            const defaultPos = this.state.positions.find((p) => p.name.includes("Cashier")) || this.state.positions[0];
+            this.state.empForm.position_id = defaultPos.id;
         }
         this.state.isNewEmployee = true;
         this.state.panelMode = "employee";
@@ -283,6 +284,15 @@ export class MobileShopEmployeesScreen extends Component {
 
     setRole(role) {
         this.state.empForm.role = role;
+        if (this.state.positions.length) {
+            const isManager = role === "manager";
+            const match = this.state.positions.find((p) =>
+                isManager ? p.name.includes("Manager") : p.name.includes("Cashier")
+            );
+            if (match) {
+                this.state.empForm.position_id = match.id;
+            }
+        }
     }
 
     onEmpFieldInput(field, ev) {
@@ -300,24 +310,6 @@ export class MobileShopEmployeesScreen extends Component {
 
     onEmpPositionChange(ev) {
         this.state.empForm.position_id = parseInt(ev.target.value, 10) || false;
-    }
-
-    async createNewPosition() {
-        const name = window.prompt(_t("New position name (e.g. Sales Assistant):"));
-        if (!name || !name.trim()) {
-            return;
-        }
-        try {
-            const newId = await this.orm.create("mobile.employee.position", [{ name: name.trim() }]);
-            const id = Array.isArray(newId) ? newId[0] : newId;
-            await this.loadPositions();
-            this.state.empForm.position_id = id;
-        } catch (error) {
-            const message =
-                (error && error.data && error.data.message) ||
-                _t("Could not create this position.");
-            this.notification.add(message, { type: "danger" });
-        }
     }
 
     async saveEmployee() {
@@ -420,6 +412,9 @@ export class MobileShopEmployeesScreen extends Component {
                     this.notification.add(_t("Employee archived"), { type: "success" });
                     this.state.panelOpen = false;
                     await this.loadEmployees();
+                    if (this.state.attendance.length) {
+                        await this.loadAttendance();
+                    }
                 } catch (error) {
                     const message =
                         (error && error.data && error.data.message) ||
@@ -427,7 +422,7 @@ export class MobileShopEmployeesScreen extends Component {
                     this.notification.add(message, { type: "danger" });
                 }
             },
-            cancel: () => {},
+            cancel: () => { },
         });
     }
 
@@ -646,22 +641,30 @@ export class MobileShopEmployeesScreen extends Component {
         this.state.salesLoading = true;
         try {
             const domain = [["state", "=", "confirmed"], ...this.getSalesDateDomain()];
-            const groups = await this.orm.readGroup(
+            const orders = await this.orm.searchRead(
                 "mobile.sale.order",
                 domain,
-                ["total_amount:sum", "total_discount:sum", "__count"],
-                ["cashier_id"]
+                ["id", "cashier_id", "total_amount", "total_discount"]
             );
-            this.state.salesRows = groups
-                .filter((g) => g.cashier_id)
-                .map((g) => ({
-                    cashierId: g.cashier_id[0],
-                    cashierName: g.cashier_id[1],
-                    billCount: g.__count,
-                    revenue: g.total_amount,
-                    discount: g.total_discount,
-                }))
-                .sort((a, b) => b.revenue - a.revenue);
+            const cashierMap = {};
+            for (const order of orders) {
+                if (!order.cashier_id) continue;
+                const cid = order.cashier_id[0];
+                const cname = order.cashier_id[1];
+                if (!cashierMap[cid]) {
+                    cashierMap[cid] = {
+                        cashierId: cid,
+                        cashierName: cname,
+                        billCount: 0,
+                        revenue: 0,
+                        discount: 0,
+                    };
+                }
+                cashierMap[cid].billCount += 1;
+                cashierMap[cid].revenue += (order.total_amount || 0);
+                cashierMap[cid].discount += (order.total_discount || 0);
+            }
+            this.state.salesRows = Object.values(cashierMap).sort((a, b) => b.revenue - a.revenue);
         } finally {
             this.state.salesLoading = false;
         }

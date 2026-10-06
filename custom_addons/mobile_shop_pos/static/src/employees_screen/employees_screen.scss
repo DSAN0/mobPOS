@@ -61,6 +61,29 @@
     }
 }
 
+.o_mobile_employee_filter_wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+
+    .o_mobile_select_prefix_icon {
+        position: absolute;
+        left: 14px;
+        font-size: 14px;
+        color: #64748B;
+        pointer-events: none;
+        transition: color 0.2s ease;
+    }
+
+    .o_mobile_employee_filter_select {
+        padding-left: 36px;
+    }
+
+    &:focus-within .o_mobile_select_prefix_icon {
+        color: $mpos-primary;
+    }
+}
+
 .o_mobile_employee_filter_select {
     border: 1px solid $mpos-border;
     border-radius: $mpos-radius-full;
@@ -72,9 +95,167 @@
     min-width: 220px;
     box-shadow: $mpos-shadow-sm;
     outline: none;
+    transition: all 0.2s ease;
 
     &:focus {
         border-color: $mpos-primary;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+}
+
+// --------------------------------------------------------------------------
+// Show Archived Staff Toggle Button
+// --------------------------------------------------------------------------
+.o_mobile_archive_toggle_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 14px;
+    border-radius: $mpos-radius-full;
+    font-size: 13px;
+    font-weight: 600;
+    background: #FFFFFF;
+    border: 1px solid $mpos-border;
+    color: #475569;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+
+    .o_mobile_archive_toggle_icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #F1F5F9;
+        color: #64748B;
+        font-size: 12px;
+        transition: all 0.2s ease;
+    }
+
+    .o_mobile_archive_toggle_label {
+        letter-spacing: -0.01em;
+    }
+
+    .o_mobile_archive_switch_track {
+        width: 32px;
+        height: 18px;
+        border-radius: 9999px;
+        background: #CBD5E1;
+        position: relative;
+        transition: background-color 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .o_mobile_archive_switch_thumb {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #FFFFFF;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    &:hover {
+        background: #F8FAFC;
+        border-color: #CBD5E1;
+        color: #0F172A;
+
+        .o_mobile_archive_toggle_icon {
+            background: #E2E8F0;
+            color: #334155;
+        }
+    }
+
+    &.active {
+        background: #EEF2FF;
+        border-color: #C7D2FE;
+        color: #4338CA;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+
+        .o_mobile_archive_toggle_icon {
+            background: #4F46E5;
+            color: #FFFFFF;
+            transform: scale(1.05);
+        }
+
+        .o_mobile_archive_switch_track {
+            background: #4F46E5;
+        }
+
+        .o_mobile_archive_switch_thumb {
+            transform: translateX(14px);
+        }
+    }
+}
+
+// --------------------------------------------------------------------------
+// Date Filter Pills Bar
+// --------------------------------------------------------------------------
+.o_mobile_date_filters_bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.o_mobile_filter_bar_label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $mpos-muted;
+    user-select: none;
+
+    i {
+        font-size: 13px;
+        color: $mpos-primary;
+    }
+}
+
+.o_mobile_date_pills_group {
+    display: inline-flex;
+    align-items: center;
+    background: #F1F5F9;
+    border-radius: $mpos-radius-full;
+    padding: 3px;
+    gap: 3px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.o_mobile_date_filter_btn {
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    border-radius: $mpos-radius-full;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #64748B;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+
+    &:hover {
+        color: #0F172A;
+        background: rgba(255, 255, 255, 0.6);
+    }
+
+    &.active {
+        background: #FFFFFF;
+        color: $mpos-primary;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.18), 0 1px 2px rgba(15, 23, 42, 0.04);
+        transform: translateY(-0.5px);
     }
 }
 
