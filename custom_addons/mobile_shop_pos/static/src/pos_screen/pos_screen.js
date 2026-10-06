@@ -29,8 +29,14 @@ export class MobileShopPOSScreen extends Component {
             document.body.classList.add("o_mobile_shop_kiosk");
             // Auto-focus barcode scan input for immediate physical scanning
             this.scanInputRef.el?.focus();
+            // Global keyboard shortcut: Shift → focus Tendered, Escape → focus Scan
+            this._onGlobalKeydown = this._handleGlobalKeydown.bind(this);
+            document.addEventListener("keydown", this._onGlobalKeydown, true);
         });
-        onWillUnmount(() => document.body.classList.remove("o_mobile_shop_kiosk"));
+        onWillUnmount(() => {
+            document.body.classList.remove("o_mobile_shop_kiosk");
+            document.removeEventListener("keydown", this._onGlobalKeydown, true);
+        });
 
         this.state = useState({
             categories: [{ id: null, name: "All" }],
@@ -335,6 +341,12 @@ export class MobileShopPOSScreen extends Component {
     }
 
     onScanKeydown(ev) {
+        if (ev.key === "Shift") {
+            // Shift in scan input → jump to tendered
+            ev.preventDefault();
+            this._focusTendered();
+            return;
+        }
         if (ev.key !== "Enter") {
             return;
         }
@@ -347,6 +359,105 @@ export class MobileShopPOSScreen extends Component {
             return;
         }
         this.addToCart(product);
+    }
+
+    onTenderedKeydown(ev) {
+        if (ev.key === "Enter") {
+            ev.preventDefault();
+            this.confirmSale();
+        } else if (ev.key === "Escape") {
+            ev.preventDefault();
+            this._focusScan();
+        }
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Keyboard navigation helpers                                        */
+    /* ---------------------------------------------------------------- */
+
+    _focusTendered() {
+        const el = this.tenderedInputRef.el;
+        if (!el || el.disabled) return;
+        el.focus();
+        el.select();
+    }
+
+    _focusScan() {
+        this.scanInputRef.el?.focus();
+    }
+
+    _handleGlobalKeydown(ev) {
+        // Don't steal keys while user is typing inside a qty / search / other input
+        const tag = document.activeElement?.tagName?.toLowerCase();
+        const isTypingInInput = (tag === "input" || tag === "textarea") &&
+            document.activeElement !== this.scanInputRef.el &&
+            document.activeElement !== this.tenderedInputRef.el;
+        if (isTypingInInput) return;
+
+        // Also skip if a modifier (Ctrl/Alt/Meta) is held — system shortcuts
+        if (ev.ctrlKey || ev.altKey || ev.metaKey) return;
+
+        switch (ev.key) {
+
+            // ── Shift ── → focus Tendered field
+            case "Shift":
+                if (document.activeElement !== this.tenderedInputRef.el) {
+                    ev.preventDefault();
+                    this._focusTendered();
+                }
+                break;
+
+            // ── Escape ── → back to scan
+            case "Escape":
+                ev.preventDefault();
+                this._focusScan();
+                break;
+
+            // ── + or = ── → increment last cart item
+            case "+":
+            case "=": {
+                if (!this.state.cart.length) break;
+                ev.preventDefault();
+                const lastLine = this.state.cart[this.state.cart.length - 1];
+                this.incrementLine(lastLine);
+                break;
+            }
+
+            // ── - ── → decrement last cart item
+            case "-": {
+                if (!this.state.cart.length) break;
+                ev.preventDefault();
+                const lastLine = this.state.cart[this.state.cart.length - 1];
+                this.decrementLine(lastLine);
+                break;
+            }
+
+            // ── E ── → Exact tendered (cash only)
+            case "e":
+            case "E":
+                if (this.state.paymentMethod === "cash" && this.state.cart.length) {
+                    ev.preventDefault();
+                    this.setExactTendered();
+                }
+                break;
+
+            // ── C ── → Card payment
+            case "c":
+            case "C":
+                ev.preventDefault();
+                this.setPaymentMethod("card");
+                break;
+
+            // ── O ── → Online payment
+            case "o":
+            case "O":
+                ev.preventDefault();
+                this.setPaymentMethod("online");
+                break;
+
+            default:
+                break;
+        }
     }
 
     /* ---------------------------------------------------------------- */

@@ -54,7 +54,9 @@
                            t-on-input="onScanInput"
                            t-on-keydown="onScanKeydown"/>
                     <div class="o_mobile_scan_badge_group">
-                        <span class="o_mobile_scan_kbd_hint"><i class="fa fa-level-down fa-rotate-90"/> Enter</span>
+                        <span class="o_mobile_scan_kbd_hint"><i class="fa fa-level-down fa-rotate-90"/> Enter adds product</span>
+                        <span class="o_mobile_scan_kbd_hint o_mobile_scan_kbd_shift"><kbd>Shift</kbd> to pay</span>
+                        <span class="o_mobile_scan_kbd_hint"><kbd>+</kbd><kbd>-</kbd> qty</span>
                         <span class="o_mobile_scan_badge">
                             <span class="o_mobile_scan_dot"/>
                             Scanner Ready
@@ -348,19 +350,24 @@
                     <button type="button"
                             t-att-class="'o_mobile_pos_segment_btn ' + (state.paymentMethod === 'card' ? 'active' : '')"
                             t-on-click="() => this.setPaymentMethod('card')">
-                        Card
+                        Card <kbd class="o_mobile_segment_kbd">C</kbd>
                     </button>
                     <button type="button"
                             t-att-class="'o_mobile_pos_segment_btn ' + (state.paymentMethod === 'online' ? 'active' : '')"
                             t-on-click="() => this.setPaymentMethod('online')">
-                        Online
+                        Online <kbd class="o_mobile_segment_kbd">O</kbd>
                     </button>
                 </div>
 
                 <!-- Tendered & Change Row -->
                 <div class="o_mobile_pos_tendered_row">
                     <div class="o_mobile_pos_tendered_input_group">
-                        <label>Tendered</label>
+                        <label>
+                            Tendered
+                            <span class="o_mobile_kbd_hint" title="Press Shift to jump here from scanner">
+                                <kbd>Shift</kbd>
+                            </span>
+                        </label>
                         <input type="text"
                                t-ref="tenderedInput"
                                class="o_mobile_tendered_field"
@@ -368,13 +375,15 @@
                                t-att-disabled="state.paymentMethod !== 'cash'"
                                t-on-input="onTenderedInput"
                                t-on-focus="onTenderedFocus"
-                               t-on-blur="onTenderedBlur"/>
+                               t-on-blur="onTenderedBlur"
+                               t-on-keydown="onTenderedKeydown"
+                               placeholder="Enter amount..."/>
                         <button t-if="state.paymentMethod === 'cash' &amp;&amp; state.cart.length"
                                 type="button"
                                 class="o_mobile_exact_btn"
-                                title="Exact Amount"
+                                title="Exact Amount (E)"
                                 t-on-click="setExactTendered">
-                            Exact
+                            Exact <kbd class="o_mobile_exact_kbd">E</kbd>
                         </button>
                     </div>
 
@@ -400,6 +409,7 @@
                         <i t-if="state.processing" class="fa fa-circle-o-notch fa-spin"/>
                         <t t-if="!state.processing">
                             Charge <t t-esc="formatMoney(total)"/>
+                            <kbd class="o_mobile_charge_kbd_hint">Enter</kbd>
                         </t>
                         <t t-else="">Processing...</t>
                     </button>
