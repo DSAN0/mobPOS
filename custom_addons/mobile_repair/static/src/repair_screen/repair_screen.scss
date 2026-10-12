@@ -25,7 +25,9 @@ $rep-radius: 12px;
     padding: 16px;
     overflow: hidden;
 
-    * { box-sizing: border-box; }
+    * {
+        box-sizing: border-box;
+    }
 
     &_topbar {
         display: flex;
@@ -56,7 +58,9 @@ $rep-radius: 12px;
         padding: 8px 16px;
         min-width: 220px;
 
-        i.fa-search { color: $rep-muted; }
+        i.fa-search {
+            color: $rep-muted;
+        }
 
         input {
             border: none;
@@ -69,7 +73,10 @@ $rep-radius: 12px;
         &_clear {
             cursor: pointer;
             color: $rep-muted;
-            &:hover { color: $rep-danger; }
+
+            &:hover {
+                color: $rep-danger;
+            }
         }
     }
 
@@ -88,7 +95,9 @@ $rep-radius: 12px;
         gap: 6px;
         transition: background .15s ease;
 
-        &:hover { background: $rep-primary-dark; }
+        &:hover {
+            background: $rep-primary-dark;
+        }
     }
 
     &_tabs {
@@ -98,8 +107,14 @@ $rep-radius: 12px;
         padding-bottom: 10px;
         margin-bottom: 6px;
 
-        &::-webkit-scrollbar { height: 4px; }
-        &::-webkit-scrollbar-thumb { background: $rep-border; border-radius: 4px; }
+        &::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: $rep-border;
+            border-radius: 4px;
+        }
     }
 
     &_tab_btn {
@@ -115,7 +130,9 @@ $rep-radius: 12px;
         transition: all .15s ease;
         white-space: nowrap;
 
-        &:hover { border-color: $rep-primary; }
+        &:hover {
+            border-color: $rep-primary;
+        }
 
         &.active {
             background: $rep-primary;
@@ -137,7 +154,8 @@ $rep-radius: 12px;
         padding-bottom: 20px;
     }
 
-    &_loading, &_empty {
+    &_loading,
+    &_empty {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -147,7 +165,9 @@ $rep-radius: 12px;
         color: $rep-muted;
         font-size: 14px;
 
-        i { font-size: 28px; }
+        i {
+            font-size: 28px;
+        }
     }
 
     &_card {
@@ -188,11 +208,25 @@ $rep-radius: 12px;
         color: #fff;
         background: $rep-muted;
 
-        &.status_received { background: $rep-warning; }
-        &.status_in_progress { background: #3B82F6; }
-        &.status_ready { background: $rep-primary; }
-        &.status_delivered { background: $rep-success; }
-        &.status_cancelled { background: $rep-danger; }
+        &.status_received {
+            background: $rep-warning;
+        }
+
+        &.status_in_progress {
+            background: #3B82F6;
+        }
+
+        &.status_ready {
+            background: $rep-primary;
+        }
+
+        &.status_delivered {
+            background: $rep-success;
+        }
+
+        &.status_cancelled {
+            background: $rep-danger;
+        }
     }
 
     &_customer {
@@ -244,21 +278,30 @@ $rep-radius: 12px;
         white-space: nowrap;
         transition: all .15s ease;
 
-        &:hover { border-color: $rep-primary; color: $rep-primary; }
+        &:hover {
+            border-color: $rep-primary;
+            color: $rep-primary;
+        }
 
         &.primary {
             background: $rep-primary;
             border-color: $rep-primary;
             color: #fff;
 
-            &:hover { background: $rep-primary-dark; color: #fff; }
+            &:hover {
+                background: $rep-primary-dark;
+                color: #fff;
+            }
         }
 
         &.danger {
             color: $rep-danger;
             border-color: $rep-danger;
 
-            &:hover { background: $rep-danger; color: #fff; }
+            &:hover {
+                background: $rep-danger;
+                color: #fff;
+            }
         }
     }
 
@@ -306,7 +349,9 @@ $rep-radius: 12px;
             cursor: pointer;
             color: $rep-text;
 
-            &:hover { background: $rep-border; }
+            &:hover {
+                background: $rep-border;
+            }
         }
     }
 
@@ -328,7 +373,8 @@ $rep-radius: 12px;
             color: $rep-muted;
         }
 
-        input, textarea {
+        input,
+        textarea {
             border: 1px solid $rep-border;
             border-radius: 8px;
             padding: 9px 12px;
@@ -336,10 +382,14 @@ $rep-radius: 12px;
             font-family: inherit;
             outline: none;
 
-            &:focus { border-color: $rep-primary; }
+            &:focus {
+                border-color: $rep-primary;
+            }
         }
 
-        textarea { resize: vertical; }
+        textarea {
+            resize: vertical;
+        }
     }
 
     &_panel_footer {
@@ -360,7 +410,9 @@ $rep-radius: 12px;
         padding: 11px;
         cursor: pointer;
 
-        &:hover { background: $rep-border; }
+        &:hover {
+            background: $rep-border;
+        }
     }
 
     &_save_btn {
@@ -375,7 +427,9 @@ $rep-radius: 12px;
         cursor: pointer;
         transition: background .15s ease;
 
-        &:hover:not(:disabled) { background: $rep-primary-dark; }
+        &:hover:not(:disabled) {
+            background: $rep-primary-dark;
+        }
 
         &:disabled {
             background: $rep-border;

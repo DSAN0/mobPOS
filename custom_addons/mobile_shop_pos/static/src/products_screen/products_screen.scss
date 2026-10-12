@@ -206,6 +206,7 @@
         &::-webkit-scrollbar {
             width: 4px;
         }
+
         &::-webkit-scrollbar-thumb {
             background: $mpos-border;
             border-radius: 4px;
@@ -421,7 +422,9 @@
         margin: 0;
     }
 
-    input, textarea, select {
+    input,
+    textarea,
+    select {
         width: 100%;
         border: 1px solid $mpos-border;
         background: #FFFFFF;

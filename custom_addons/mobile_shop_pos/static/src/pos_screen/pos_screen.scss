@@ -412,13 +412,16 @@ $mpos-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 
             &::-webkit-scrollbar {
                 width: 6px;
             }
+
             &::-webkit-scrollbar-track {
                 background: transparent;
             }
+
             &::-webkit-scrollbar-thumb {
                 background: #CBD5E1;
                 border-radius: 4px;
             }
+
             &::-webkit-scrollbar-thumb:hover {
                 background: #94A3B8;
             }
@@ -617,10 +620,12 @@ $mpos-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 
         &::-webkit-scrollbar {
             width: 6px;
         }
+
         &::-webkit-scrollbar-thumb {
             background: #CBD5E1;
             border-radius: 6px;
         }
+
         &::-webkit-scrollbar-thumb:hover {
             background: #94A3B8;
         }
@@ -980,6 +985,7 @@ $mpos-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 
         &::-webkit-scrollbar {
             width: 4px;
         }
+
         &::-webkit-scrollbar-thumb {
             background: #CBD5E1;
             border-radius: 4px;
@@ -1510,6 +1516,7 @@ $mpos-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 
         opacity: 0;
         transform: translateX(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -1517,8 +1524,13 @@ $mpos-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 
 }
 
 @keyframes mposFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes mposScaleUp {
@@ -1526,6 +1538,7 @@ $mpos-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 
         opacity: 0;
         transform: scale(0.95) translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -1537,10 +1550,12 @@ $mpos-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 
         transform: scale(0.95);
         box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
     }
+
     70% {
         transform: scale(1.05);
         box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
     }
+
     100% {
         transform: scale(0.95);
         box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
@@ -1556,11 +1571,13 @@ $mpos-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 
             flex-basis: 140px;
             min-width: 140px;
         }
+
         .o_mobile_pane_brands,
         .o_mobile_pane_models {
             flex-basis: 130px;
             min-width: 130px;
         }
+
         &_cart {
             flex-basis: 360px;
             max-width: 360px;
@@ -1648,7 +1665,7 @@ kbd {
     color: rgba(255, 255, 255, 0.9);
     font-size: 0.65rem;
     vertical-align: middle;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.15);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 // Kbd inside payment segment (Card / Online) buttons

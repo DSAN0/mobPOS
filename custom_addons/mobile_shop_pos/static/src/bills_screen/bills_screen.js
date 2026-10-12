@@ -278,7 +278,7 @@ export class MobileShopBillsScreen extends Component {
                     this.state.cancelling = false;
                 }
             },
-            cancel: () => {},
+            cancel: () => { },
         });
     }
 }

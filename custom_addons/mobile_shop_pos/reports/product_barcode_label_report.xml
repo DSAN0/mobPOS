@@ -28,8 +28,7 @@
         <field name="report_file">mobile_shop_pos.report_product_barcode_label_document</field>
         <field name="print_report_name">'Barcode Label - %s' % (object.name)</field>
         <field name="paperformat_id" ref="paperformat_mobile_barcode_label"/>
-        <field name="binding_model_id" ref="model_mobile_phone_product"/>
-        <field name="binding_type">report</field>
+        <field name="binding_model_id" eval="False"/>
     </record>
 
     <!-- No web.basic_layout here on purpose: that adds the company

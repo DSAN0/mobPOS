@@ -605,12 +605,12 @@ export class MobileShopProductsScreen extends Component {
                     this.notification.add(message, { type: "danger" });
                 }
             },
-            cancel: () => {},
+            cancel: () => { },
         });
     }
 
     /* ---------------------------------------------------------------- */
-    /* Barcode label printing                                             */
+    /* Barcode management                                                 */
     /* ---------------------------------------------------------------- */
 
     async regenerateBarcode() {
@@ -633,25 +633,6 @@ export class MobileShopProductsScreen extends Component {
         } finally {
             this.state.regenerating = false;
         }
-    }
-
-    async printLabelsFor(product) {
-        if (!product || !product.id || !product.barcode) {
-            this.notification.add(_t("This product has no barcode yet — try Regenerate/Save first"), { type: "warning" });
-            return;
-        }
-        const qtyStr = window.prompt(_t("How many labels to print?"), "1");
-        if (qtyStr === null) {
-            return;
-        }
-        const qty = parseInt(qtyStr, 10);
-        if (!qty || qty < 1) {
-            this.notification.add(_t("Enter a valid quantity"), { type: "danger" });
-            return;
-        }
-        await this.action.doAction("mobile_shop_pos.action_report_product_barcode_label", {
-            additionalContext: { active_ids: [product.id], label_qty: qty },
-        });
     }
 }
 

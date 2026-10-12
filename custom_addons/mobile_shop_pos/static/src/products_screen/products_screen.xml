@@ -214,13 +214,6 @@
                                                         t-on-click.stop="() => this.openEditProduct(product)">
                                                     <i class="fa fa-pencil"/>
                                                 </button>
-                                                <button t-if="product.barcode"
-                                                        type="button"
-                                                        class="o_mobile_card_action_btn o_mobile_print_action_btn"
-                                                        title="Print Barcode Label"
-                                                        t-on-click.stop="() => this.printLabelsFor(product)">
-                                                    <i class="fa fa-print"/>
-                                                </button>
                                             </div>
                                         </div>
 
@@ -302,11 +295,6 @@
                                             t-att-disabled="state.regenerating"
                                             t-on-click="regenerateBarcode">
                                         <i class="fa fa-refresh"/> Regenerate
-                                    </button>
-                                    <button type="button"
-                                            class="o_mobile_mini_btn primary"
-                                            t-on-click="() => this.printLabelsFor(state.form)">
-                                        <i class="fa fa-print"/> Print Labels
                                     </button>
                                 </div>
                             </div>
