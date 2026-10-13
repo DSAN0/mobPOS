@@ -4,110 +4,390 @@
     <t t-name="mobile_repair.RepairScreen">
         <div class="o_mobile_repair">
 
+            <!-- ================= TOPBAR ================= -->
             <div class="o_mobile_repair_topbar">
                 <div class="o_mobile_repair_brand">
                     <i class="fa fa-wrench" role="img"/>
-                    <span>Repair Jobs</span>
+                    <span>Mobile Care &amp; POS</span>
                 </div>
 
-                <div class="o_mobile_repair_search">
-                    <i class="fa fa-search"/>
-                    <input type="text"
-                           placeholder="Search by name, phone, device, job no..."
-                           t-att-value="state.searchTerm"
-                           t-on-input="onSearchInput"/>
-                    <i t-if="state.searchTerm"
-                       class="fa fa-times o_mobile_repair_search_clear"
-                       t-on-click="clearSearch"/>
-                </div>
-
-                <button type="button" class="o_mobile_repair_new_btn" t-on-click="openNewRepairPanel">
-                    <i class="fa fa-plus"/> Log New Repair
-                </button>
-            </div>
-
-            <div class="o_mobile_repair_tabs">
-                <t t-foreach="statusTabs" t-as="tab" t-key="tab.id || 'all'">
+                <!-- Page Navigation Pills -->
+                <div class="o_mobile_repair_nav">
                     <button type="button"
-                            t-att-class="'o_mobile_repair_tab_btn ' + (state.activeStatus === tab.id ? 'active' : '')"
-                            t-on-click="() => this.setStatusFilter(tab.id)">
-                        <t t-esc="tab.label"/>
+                            t-att-class="'o_mobile_repair_nav_btn ' + (state.activePage === 'repairs' ? 'active' : '')"
+                            t-on-click="() => this.switchPage('repairs')">
+                        <i class="fa fa-wrench"/>
+                        <span>Repair Jobs</span>
+                        <span t-if="activeRepairsCount > 0" class="o_mobile_repair_badge">
+                            <t t-esc="activeRepairsCount"/>
+                        </span>
+                    </button>
+                    <button type="button"
+                            t-att-class="'o_mobile_repair_nav_btn ' + (state.activePage === 'sales' ? 'active' : '')"
+                            t-on-click="() => this.switchPage('sales')">
+                        <i class="fa fa-line-chart"/>
+                        <span>Sales &amp; Revenue</span>
+                    </button>
+                </div>
+
+                <!-- Context Actions for Repairs View -->
+                <t t-if="state.activePage === 'repairs'">
+                    <div class="o_mobile_repair_search">
+                        <i class="fa fa-search"/>
+                        <input type="text"
+                               placeholder="Search by name, phone, device, job no..."
+                               t-att-value="state.searchTerm"
+                               t-on-input="onSearchInput"/>
+                        <i t-if="state.searchTerm"
+                           class="fa fa-times o_mobile_repair_search_clear"
+                           t-on-click="clearSearch"/>
+                    </div>
+
+                    <button type="button" class="o_mobile_repair_new_btn" t-on-click="openNewRepairPanel">
+                        <i class="fa fa-plus"/> Log New Repair
+                    </button>
+                </t>
+
+                <!-- Context Actions for Sales View -->
+                <t t-else="">
+                    <button type="button" class="o_mobile_repair_refresh_btn" t-on-click="refreshAllData" title="Refresh Sales Data">
+                        <i t-att-class="'fa fa-refresh ' + (state.salesLoading ? 'fa-spin' : '')"/>
+                        <span>Refresh Data</span>
                     </button>
                 </t>
             </div>
 
-            <div class="o_mobile_repair_list_wrapper">
-                <div t-if="state.loading" class="o_mobile_repair_loading">
-                    <i class="fa fa-circle-o-notch fa-spin"/> Loading repair jobs...
-                </div>
-
-                <div t-elif="!filteredRepairs.length" class="o_mobile_repair_empty">
-                    <i class="fa fa-wrench"/>
-                    <div>No repair jobs found</div>
-                </div>
-
-                <div t-else="" class="o_mobile_repair_list">
-                    <t t-foreach="filteredRepairs" t-as="repair" t-key="repair.id">
-                        <div class="o_mobile_repair_card">
-
-                            <div class="o_mobile_repair_card_main">
-                                <div class="o_mobile_repair_card_top">
-                                    <span class="o_mobile_repair_job_no" t-esc="repair.name"/>
-                                    <span t-attf-class="o_mobile_repair_status_badge status_#{repair.status}">
-                                        <t t-esc="statusLabel(repair.status)"/>
-                                    </span>
-                                </div>
-                                <div class="o_mobile_repair_customer">
-                                    <t t-esc="repair.customer_name"/> · <t t-esc="repair.customer_phone"/>
-                                </div>
-                                <div class="o_mobile_repair_device" t-esc="repair.device"/>
-                                <div class="o_mobile_repair_issue" t-esc="repair.issue_description"/>
-                                <div class="o_mobile_repair_meta">
-                                    <span>Received: <t t-esc="repair.received_date"/></span>
-                                    <span t-if="repair.delivered_date">Delivered: <t t-esc="repair.delivered_date"/></span>
-                                    <span class="o_mobile_repair_cost">LKR <t t-esc="formatMoney(repair.cost)"/></span>
-                                </div>
-                            </div>
-
-                            <div class="o_mobile_repair_card_actions">
-                                <button t-if="repair.status === 'received'" type="button"
-                                        class="o_mobile_repair_action_btn"
-                                        t-on-click="() => this.markInProgress(repair)">
-                                    Start Repair
-                                </button>
-                                <button t-if="repair.status === 'in_progress'" type="button"
-                                        class="o_mobile_repair_action_btn"
-                                        t-on-click="() => this.markReady(repair)">
-                                    Mark Ready
-                                </button>
-                                <button t-if="repair.status === 'ready'" type="button"
-                                        class="o_mobile_repair_action_btn primary"
-                                        t-on-click="() => this.markDelivered(repair)">
-                                    Mark Delivered
-                                </button>
-                                <button t-if="state.isManager and repair.status !== 'delivered' and repair.status !== 'cancelled'" type="button"
-                                        class="o_mobile_repair_action_btn danger"
-                                        t-on-click="() => this.cancelRepair(repair)">
-                                    Cancel
-                                </button>
-                                <button type="button"
-                                        class="o_mobile_repair_action_btn"
-                                        title="Reprint Intake Receipt"
-                                        t-on-click="() => this.printIntakeReceipt(repair.id)">
-                                    <i class="fa fa-print"/> Intake
-                                </button>
-                                <button t-if="repair.status === 'delivered'" type="button"
-                                        class="o_mobile_repair_action_btn"
-                                        title="Reprint Delivery Receipt"
-                                        t-on-click="() => this.printDeliveryReceipt(repair.id)">
-                                    <i class="fa fa-print"/> Delivery
-                                </button>
-                            </div>
-
-                        </div>
+            <!-- ================= PAGE 1: REPAIR JOBS ================= -->
+            <t t-if="state.activePage === 'repairs'">
+                <div class="o_mobile_repair_tabs">
+                    <t t-foreach="statusTabs" t-as="tab" t-key="tab.id || 'all'">
+                        <button type="button"
+                                t-att-class="'o_mobile_repair_tab_btn ' + (state.activeStatus === tab.id ? 'active' : '')"
+                                t-on-click="() => this.setStatusFilter(tab.id)">
+                            <t t-esc="tab.label"/>
+                        </button>
                     </t>
                 </div>
-            </div>
+
+                <div class="o_mobile_repair_list_wrapper">
+                    <div t-if="state.loading" class="o_mobile_repair_loading">
+                        <i class="fa fa-circle-o-notch fa-spin"/> Loading repair jobs...
+                    </div>
+
+                    <div t-elif="!filteredRepairs.length" class="o_mobile_repair_empty">
+                        <i class="fa fa-wrench"/>
+                        <div>No repair jobs found</div>
+                    </div>
+
+                    <div t-else="" class="o_mobile_repair_list">
+                        <t t-foreach="filteredRepairs" t-as="repair" t-key="repair.id">
+                            <div class="o_mobile_repair_card">
+
+                                <div class="o_mobile_repair_card_main">
+                                    <div class="o_mobile_repair_card_top">
+                                        <span class="o_mobile_repair_job_no" t-esc="repair.name"/>
+                                        <span t-attf-class="o_mobile_repair_status_badge status_#{repair.status}">
+                                            <t t-esc="statusLabel(repair.status)"/>
+                                        </span>
+                                    </div>
+                                    <div class="o_mobile_repair_customer">
+                                        <t t-esc="repair.customer_name"/> · <t t-esc="repair.customer_phone"/>
+                                    </div>
+                                    <div class="o_mobile_repair_device" t-esc="repair.device"/>
+                                    <div class="o_mobile_repair_issue" t-esc="repair.issue_description"/>
+                                    <div class="o_mobile_repair_meta">
+                                        <span>Received: <t t-esc="repair.received_date"/></span>
+                                        <span t-if="repair.delivered_date">Delivered: <t t-esc="repair.delivered_date"/></span>
+                                        
+                                        <!-- Cost breakdown display -->
+                                        <div class="o_mobile_repair_cost_info">
+                                            <t t-if="repair.additional_cost">
+                                                <span class="o_mobile_repair_cost_est">Est: LKR <t t-esc="formatMoney(repair.cost)"/></span>
+                                                <span class="o_mobile_repair_cost_extra">+ Extra: LKR <t t-esc="formatMoney(repair.additional_cost)"/></span>
+                                                <span class="o_mobile_repair_cost_total">Total: LKR <t t-esc="formatMoney(repair.total_cost)"/></span>
+                                                <span t-if="repair.additional_cost_reason" class="o_mobile_repair_cost_note" t-att-title="repair.additional_cost_reason">
+                                                    (<t t-esc="repair.additional_cost_reason"/>)
+                                                </span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="o_mobile_repair_cost">Cost: LKR <t t-esc="formatMoney(repair.total_cost || repair.cost)"/></span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="o_mobile_repair_card_actions">
+                                    <button t-if="repair.status === 'received'" type="button"
+                                            class="o_mobile_repair_action_btn"
+                                            t-on-click="() => this.markInProgress(repair)">
+                                        Start Repair
+                                    </button>
+                                    <button t-if="repair.status === 'in_progress'" type="button"
+                                            class="o_mobile_repair_action_btn"
+                                            t-on-click="() => this.markReady(repair)">
+                                        Mark Ready
+                                    </button>
+                                    <button t-if="repair.status === 'ready'" type="button"
+                                            class="o_mobile_repair_action_btn primary"
+                                            t-on-click="() => this.openDeliverModal(repair)">
+                                        <i class="fa fa-check"/> Deliver Device
+                                    </button>
+
+                                    <!-- Additional cost button: accessible during repair or ready -->
+                                    <button t-if="repair.status !== 'delivered' and repair.status !== 'cancelled'" type="button"
+                                            class="o_mobile_repair_action_btn extra_cost_btn"
+                                            title="Add or update additional repair cost or part price difference"
+                                            t-on-click="() => this.openAddCostModal(repair)">
+                                        <i class="fa fa-plus-circle"/> Additional Cost
+                                    </button>
+
+                                    <button t-if="state.isManager and repair.status !== 'delivered' and repair.status !== 'cancelled'" type="button"
+                                            class="o_mobile_repair_action_btn danger"
+                                            t-on-click="() => this.cancelRepair(repair)">
+                                        Cancel
+                                    </button>
+                                    <button type="button"
+                                            class="o_mobile_repair_action_btn"
+                                            title="Reprint Intake Receipt"
+                                            t-on-click="() => this.printIntakeReceipt(repair.id)">
+                                        <i class="fa fa-print"/> Intake
+                                    </button>
+                                    <button t-if="repair.status === 'delivered'" type="button"
+                                            class="o_mobile_repair_action_btn"
+                                            title="Reprint Delivery Receipt"
+                                            t-on-click="() => this.printDeliveryReceipt(repair.id)">
+                                        <i class="fa fa-print"/> Delivery
+                                    </button>
+                                </div>
+
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+
+            <!-- ================= PAGE 2: SALES & REVENUE ================= -->
+            <t t-else="">
+                <div class="o_mobile_repair_sales_wrapper">
+
+                    <!-- Filter Bar: Date Ranges & Sources -->
+                    <div class="o_mobile_repair_filter_bar">
+                        
+                        <!-- Date Filter Pills -->
+                        <div class="o_mobile_repair_filter_group">
+                            <span class="o_mobile_repair_filter_title"><i class="fa fa-calendar"/> Period:</span>
+                            <div class="o_mobile_repair_pills">
+                                <t t-foreach="salesDateFilters" t-as="df" t-key="df.id">
+                                    <button type="button"
+                                            t-att-class="'o_mobile_repair_pill ' + (state.salesDateFilter === df.id ? 'active' : '')"
+                                            t-on-click="() => this.setSalesDateFilter(df.id)">
+                                        <t t-esc="df.label"/>
+                                    </button>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- Custom Date Range Inputs -->
+                        <div t-if="state.salesDateFilter === 'custom'" class="o_mobile_repair_custom_dates">
+                            <div class="o_mobile_repair_date_input">
+                                <label>From:</label>
+                                <input type="date" t-att-value="state.salesCustomFrom"
+                                       t-on-change="(ev) => this.onSalesCustomDateChange('salesCustomFrom', ev)"/>
+                            </div>
+                            <div class="o_mobile_repair_date_input">
+                                <label>To:</label>
+                                <input type="date" t-att-value="state.salesCustomTo"
+                                       t-on-change="(ev) => this.onSalesCustomDateChange('salesCustomTo', ev)"/>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- KPI Summary Metric Cards -->
+                    <div class="o_mobile_repair_kpi_grid">
+                        
+                        <!-- KPI 1: Repair Revenue -->
+                        <div class="o_mobile_repair_kpi_card primary_card">
+                            <div class="kpi_icon"><i class="fa fa-money"/></div>
+                            <div class="kpi_details">
+                                <div class="kpi_label">Total Repair Revenue</div>
+                                <div class="kpi_value">LKR <t t-esc="formatMoney(salesMetrics.repairRevenue)"/></div>
+                                <div class="kpi_sub">
+                                    <span>Labor: LKR <t t-esc="formatMoney(salesMetrics.repairBaseRevenue)"/></span>
+                                    <span> · Extra: +LKR <t t-esc="formatMoney(salesMetrics.repairExtraRevenue)"/></span>
+                                </div>
+                                <div class="kpi_badge"><t t-esc="salesMetrics.deliveredCount"/> Delivered Jobs</div>
+                            </div>
+                        </div>
+
+                        <!-- KPI 2: Repair Service Revenue -->
+                        <div class="o_mobile_repair_kpi_card teal_card">
+                            <div class="kpi_icon"><i class="fa fa-wrench"/></div>
+                            <div class="kpi_details">
+                                <div class="kpi_label">Repair Revenue</div>
+                                <div class="kpi_value">LKR <t t-esc="formatMoney(salesMetrics.repairRevenue)"/></div>
+                                <div class="kpi_sub">
+                                    <span>Labor: LKR <t t-esc="formatMoney(salesMetrics.repairBaseRevenue)"/></span>
+                                    <span> · Extra: +LKR <t t-esc="formatMoney(salesMetrics.repairExtraRevenue)"/></span>
+                                </div>
+                                <div class="kpi_badge"><t t-esc="salesMetrics.deliveredCount"/> Delivered Jobs</div>
+                            </div>
+                        </div>
+
+                        <!-- KPI 3: Average Repair Ticket -->
+                        <div class="o_mobile_repair_kpi_card">
+                            <div class="kpi_icon"><i class="fa fa-calculator"/></div>
+                            <div class="kpi_details">
+                                <div class="kpi_label">Average Repair Ticket</div>
+                                <div class="kpi_value">LKR <t t-esc="formatMoney(salesMetrics.avgTicket)"/></div>
+                                <div class="kpi_sub">Across <t t-esc="salesMetrics.deliveredCount"/> delivered repairs</div>
+                            </div>
+                        </div>
+
+                        <!-- KPI 5: Pending Repair Pipeline -->
+                        <div class="o_mobile_repair_kpi_card amber_card">
+                            <div class="kpi_icon"><i class="fa fa-clock-o"/></div>
+                            <div class="kpi_details">
+                                <div class="kpi_label">Pending Pipeline</div>
+                                <div class="kpi_value">LKR <t t-esc="formatMoney(salesMetrics.pendingPipeline)"/></div>
+                                <div class="kpi_sub"><t t-esc="salesMetrics.pendingCount"/> active jobs currently in repair</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Charts Grid Area -->
+                    <div class="o_mobile_repair_charts_grid">
+
+                        <!-- Chart 1: Revenue Over Time -->
+                        <div class="o_mobile_repair_chart_box wide_chart">
+                            <div class="chart_header">
+                                <div class="chart_title">
+                                    <i class="fa fa-bar-chart"/> Revenue Timeline
+                                </div>
+                                <div class="chart_subtitle">Daily repair revenue split by service labor and spare parts / extra costs</div>
+                            </div>
+                            <div class="chart_canvas_wrapper">
+                                <canvas t-ref="trendCanvas"/>
+                            </div>
+                        </div>
+
+                        <!-- Chart 2: Revenue Distribution (Donut) -->
+                        <div class="o_mobile_repair_chart_box">
+                            <div class="chart_header">
+                                <div class="chart_title">
+                                    <i class="fa fa-pie-chart"/> Revenue Distribution
+                                </div>
+                                <div class="chart_subtitle">Service labor vs. spare parts &amp; additional costs</div>
+                            </div>
+                            <div class="chart_canvas_wrapper">
+                                <canvas t-ref="breakdownCanvas"/>
+                            </div>
+                        </div>
+
+                        <!-- Chart 3: Top Devices Repaired -->
+                        <div class="o_mobile_repair_chart_box">
+                            <div class="chart_header">
+                                <div class="chart_title">
+                                    <i class="fa fa-mobile"/> Top Repaired Devices
+                                </div>
+                                <div class="chart_subtitle">Models generating highest repair revenue</div>
+                            </div>
+                            <div class="chart_canvas_wrapper">
+                                <canvas t-ref="devicesCanvas"/>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Ledger Table of Filtered Transactions -->
+                    <div class="o_mobile_repair_table_card">
+                        
+                        <div class="o_mobile_repair_table_header">
+                            <div class="table_title">
+                                <i class="fa fa-list-alt"/> Revenue Transactions Ledger
+                                <span class="table_count">(<t t-esc="filteredTransactions.length"/> entries)</span>
+                            </div>
+
+                            <div class="table_search">
+                                <i class="fa fa-search"/>
+                                <input type="text"
+                                       placeholder="Filter ledger by ref, customer, phone, device..."
+                                       t-att-value="state.salesSearchTerm"
+                                       t-on-input="onSalesSearchInput"/>
+                                <i t-if="state.salesSearchTerm"
+                                   class="fa fa-times table_search_clear"
+                                   t-on-click="clearSalesSearch"/>
+                            </div>
+                        </div>
+
+                        <div class="o_mobile_repair_table_responsive">
+                            <table class="o_mobile_repair_ledger_table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Ref No</th>
+                                        <th>Customer</th>
+                                        <th>Device</th>
+                                        <th>Issue</th>
+                                        <th class="text-end">Base Cost (LKR)</th>
+                                        <th class="text-end">Extra (LKR)</th>
+                                        <th class="text-end">Total (LKR)</th>
+                                        <th class="text-center">Receipt</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="!filteredTransactions.length">
+                                        <tr>
+                                            <td colspan="9" class="text-center py-4 text-muted">
+                                                <i class="fa fa-info-circle"/> No transactions found for the selected period and filters.
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-foreach="filteredTransactions" t-as="row" t-key="row.id">
+                                            <tr>
+                                                <td class="text-nowrap font-medium" t-esc="row.dateFormatted"/>
+                                                <td>
+                                                    <span class="ref_tag" t-esc="row.ref"/>
+                                                </td>
+                                                <td t-esc="row.customerName"/>
+                                                <td t-esc="row.details.split('(')[0].trim()"/>
+                                                <td class="details_cell" t-esc="row.details.includes('(') ? '(' + row.details.split('(').slice(1).join('(') : ''"/>
+                                                <td class="text-end text-muted">
+                                                    <t t-esc="formatMoney(row.baseAmount)"/>
+                                                </td>
+                                                <td class="text-end">
+                                                    <t t-if="row.extraAmount > 0">
+                                                        <span class="extra_amount">+<t t-esc="formatMoney(row.extraAmount)"/></span>
+                                                        <span t-if="row.extraReason" class="extra_reason" t-att-title="row.extraReason">
+                                                            (<t t-esc="row.extraReason"/>)
+                                                        </span>
+                                                    </t>
+                                                    <t t-else="">-</t>
+                                                </td>
+                                                <td class="text-end total_amount_cell">
+                                                    LKR <t t-esc="formatMoney(row.totalAmount)"/>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button"
+                                                            class="table_receipt_btn"
+                                                            title="Reprint Delivery Receipt"
+                                                            t-on-click="() => this.printDeliveryReceipt(row.recordId)">
+                                                        <i class="fa fa-print"/>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div>
+            </t>
 
             <!-- ============ NEW REPAIR PANEL ============ -->
             <div t-if="state.panelOpen" class="o_mobile_repair_overlay" t-on-click="closePanel">
@@ -160,6 +440,117 @@
                                 t-on-click="submitNewRepair">
                             <t t-if="!state.saving">Log Repair</t>
                             <t t-else="">Saving...</t>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ============ ADDITIONAL COST MODAL (While Repairing) ============ -->
+            <div t-if="state.costModalOpen" class="o_mobile_repair_overlay" t-on-click="closeCostModal">
+                <div class="o_mobile_repair_panel" t-on-click.stop="() => {}">
+
+                    <div class="o_mobile_repair_panel_header">
+                        <span><i class="fa fa-wrench"/> Add / Update Repair Cost</span>
+                        <button type="button" t-on-click="closeCostModal"><i class="fa fa-times"/></button>
+                    </div>
+
+                    <div class="o_mobile_repair_panel_body" t-if="state.costModalRepair">
+                        <div class="o_mobile_repair_summary_box">
+                            <div><strong>Job No:</strong> <span class="text-primary" t-esc="state.costModalRepair.name"/></div>
+                            <div><strong>Device:</strong> <span t-esc="state.costModalRepair.device"/> (<span t-esc="state.costModalRepair.customer_name"/>)</div>
+                            <div><strong>Estimated Cost:</strong> LKR <span t-esc="formatMoney(state.costModalRepair.cost)"/></div>
+                        </div>
+
+                        <div class="o_mobile_repair_field">
+                            <label>Additional Cost (LKR)</label>
+                            <input type="number" step="0.01" min="0"
+                                   t-att-value="state.costForm.additional_cost"
+                                   t-on-input="(ev) => this.onCostFormInput('additional_cost', ev)"/>
+                            <small class="o_mobile_repair_hint">Enter extra charges for spare parts, additional issues, or price difference.</small>
+                        </div>
+
+                        <div class="o_mobile_repair_field">
+                            <label>Reason / Description for Extra Cost</label>
+                            <input type="text"
+                                   placeholder="e.g. Display part price increased / New battery / Charging IC"
+                                   t-att-value="state.costForm.reason"
+                                   t-on-input="(ev) => this.onCostFormInput('reason', ev)"/>
+                        </div>
+
+                        <div class="o_mobile_repair_total_preview">
+                            <span class="preview_label">New Total Cost:</span>
+                            <span class="preview_amount">
+                                LKR <t t-esc="formatMoney(previewCostModalTotal)"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_repair_panel_footer">
+                        <button type="button" class="o_mobile_repair_cancel_btn" t-on-click="closeCostModal">
+                            Cancel
+                        </button>
+                        <button type="button" class="o_mobile_repair_save_btn"
+                                t-att-disabled="state.saving"
+                                t-on-click="saveAdditionalCost">
+                            <t t-if="!state.saving">Save Cost</t>
+                            <t t-else="">Saving...</t>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ============ DELIVER & SETTLE MODAL ============ -->
+            <div t-if="state.deliverModalOpen" class="o_mobile_repair_overlay" t-on-click="closeDeliverModal">
+                <div class="o_mobile_repair_panel" t-on-click.stop="() => {}">
+
+                    <div class="o_mobile_repair_panel_header">
+                        <span><i class="fa fa-check-circle" style="color: #2FAE60;"/> Deliver Device &amp; Settle</span>
+                        <button type="button" t-on-click="closeDeliverModal"><i class="fa fa-times"/></button>
+                    </div>
+
+                    <div class="o_mobile_repair_panel_body" t-if="state.deliverModalRepair">
+                        <div class="o_mobile_repair_summary_box">
+                            <div><strong>Job No:</strong> <span class="text-primary" t-esc="state.deliverModalRepair.name"/></div>
+                            <div><strong>Customer:</strong> <span t-esc="state.deliverModalRepair.customer_name"/> · <span t-esc="state.deliverModalRepair.customer_phone"/></div>
+                            <div><strong>Device:</strong> <span t-esc="state.deliverModalRepair.device"/></div>
+                            <div><strong>Estimated Cost:</strong> LKR <span t-esc="formatMoney(state.deliverModalRepair.cost)"/></div>
+                        </div>
+
+                        <div class="o_mobile_repair_field">
+                            <label>Additional Cost (LKR)</label>
+                            <input type="number" step="0.01" min="0"
+                                   t-att-value="state.deliverForm.additional_cost"
+                                   t-on-input="(ev) => this.onDeliverFormInput('additional_cost', ev)"/>
+                            <small class="o_mobile_repair_hint">Any last-minute cost adjustment, extra issue fix, or spare part price change.</small>
+                        </div>
+
+                        <div class="o_mobile_repair_field">
+                            <label>Reason / Note for Extra Cost</label>
+                            <input type="text"
+                                   placeholder="e.g. Spare part price adjustment / Extra work done"
+                                   t-att-value="state.deliverForm.reason"
+                                   t-on-input="(ev) => this.onDeliverFormInput('reason', ev)"/>
+                        </div>
+
+                        <div class="o_mobile_repair_total_preview highlight">
+                            <span class="preview_label">Final Amount to Collect:</span>
+                            <span class="preview_amount">
+                                LKR <t t-esc="formatMoney(previewDeliverModalTotal)"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="o_mobile_repair_panel_footer">
+                        <button type="button" class="o_mobile_repair_cancel_btn" t-on-click="closeDeliverModal">
+                            Cancel
+                        </button>
+                        <button type="button" class="o_mobile_repair_save_btn primary"
+                                t-att-disabled="state.saving"
+                                t-on-click="confirmDeliver">
+                            <t t-if="!state.saving"><i class="fa fa-print"/> Deliver &amp; Print Receipt</t>
+                            <t t-else="">Processing...</t>
                         </button>
                     </div>
 

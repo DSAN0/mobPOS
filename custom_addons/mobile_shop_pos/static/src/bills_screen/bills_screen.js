@@ -222,7 +222,7 @@ export class MobileShopBillsScreen extends Component {
             this.state.detailLines = await this.orm.searchRead(
                 "mobile.sale.line",
                 [["sale_id", "=", bill.id]],
-                ["id", "product_id", "quantity", "price", "subtotal"],
+                ["id", "product_id", "quantity", "price", "subtotal", "list_price", "discount_percent", "discount_total"],
                 { order: "id asc" }
             );
         } finally {

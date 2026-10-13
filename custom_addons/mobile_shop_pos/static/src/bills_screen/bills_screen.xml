@@ -214,10 +214,23 @@
                             <tbody>
                                 <t t-foreach="state.detailLines" t-as="line" t-key="line.id">
                                     <tr>
-                                        <td class="fw-bold"><t t-esc="line.product_id[1]"/></td>
-                                        <td class="text-center"><t t-esc="line.quantity"/></td>
-                                        <td class="text-end">LKR <t t-esc="formatMoney(line.price)"/></td>
-                                        <td class="text-end fw-bold">LKR <t t-esc="formatMoney(line.subtotal)"/></td>
+                                        <td>
+                                            <div class="fw-bold"><t t-esc="line.product_id[1]"/></div>
+                                            <div t-if="line.discount_percent &gt; 0" class="text-muted small mt-1">
+                                                <span>Real: LKR <t t-esc="formatMoney(line.list_price || line.price)"/></span>
+                                                <span class="text-danger ms-1">(-<t t-esc="Math.round(line.discount_percent)"/>%)</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center align-top"><t t-esc="line.quantity"/></td>
+                                        <td class="text-end align-top">
+                                            <div t-if="line.discount_percent &gt; 0" class="text-muted small text-decoration-line-through">
+                                                LKR <t t-esc="formatMoney(line.list_price || line.price)"/>
+                                            </div>
+                                            <div class="fw-semibold">
+                                                LKR <t t-esc="formatMoney(line.price)"/>
+                                            </div>
+                                        </td>
+                                        <td class="text-end fw-bold align-top">LKR <t t-esc="formatMoney(line.subtotal)"/></td>
                                     </tr>
                                 </t>
                             </tbody>

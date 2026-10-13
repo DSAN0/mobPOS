@@ -260,6 +260,37 @@ $rep-radius: 12px;
         color: $rep-primary-dark;
     }
 
+    &_cost_info {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    &_cost_est {
+        color: $rep-muted;
+        font-weight: 500;
+    }
+
+    &_cost_extra {
+        color: #d97706;
+        font-weight: 600;
+    }
+
+    &_cost_total {
+        font-weight: 700;
+        color: $rep-primary-dark;
+        background: rgba(13, 148, 136, 0.12);
+        padding: 1px 7px;
+        border-radius: 4px;
+    }
+
+    &_cost_note {
+        color: $rep-muted;
+        font-style: italic;
+        font-size: 11px;
+    }
+
     &_card_actions {
         display: flex;
         gap: 8px;
@@ -301,6 +332,18 @@ $rep-radius: 12px;
             &:hover {
                 background: $rep-danger;
                 color: #fff;
+            }
+        }
+
+        &.extra_cost_btn {
+            background: #fffbeb;
+            border-color: #fcd34d;
+            color: #b45309;
+
+            &:hover {
+                background: #fef3c7;
+                border-color: #f59e0b;
+                color: #92400e;
             }
         }
     }
@@ -392,6 +435,66 @@ $rep-radius: 12px;
         }
     }
 
+    &_summary_box {
+        background: $rep-bg;
+        border: 1px solid $rep-border;
+        border-radius: 8px;
+        padding: 12px 14px;
+        font-size: 13px;
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+
+        strong {
+            color: $rep-text;
+        }
+
+        .text-primary {
+            color: $rep-primary;
+            font-weight: 700;
+        }
+    }
+
+    &_hint {
+        font-size: 11.5px;
+        color: $rep-muted;
+        margin-top: 2px;
+        line-height: 1.3;
+    }
+
+    &_total_preview {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(13, 148, 136, 0.08);
+        border: 1px solid rgba(13, 148, 136, 0.25);
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin-top: 4px;
+
+        .preview_label {
+            font-weight: 700;
+            font-size: 13.5px;
+            color: $rep-text;
+        }
+
+        .preview_amount {
+            font-weight: 800;
+            font-size: 16.5px;
+            color: $rep-primary-dark;
+        }
+
+        &.highlight {
+            background: rgba(47, 174, 96, 0.1);
+            border-color: rgba(47, 174, 96, 0.35);
+
+            .preview_amount {
+                color: #1e7e43;
+            }
+        }
+    }
+
     &_panel_footer {
         display: flex;
         gap: 10px;
@@ -435,6 +538,522 @@ $rep-radius: 12px;
             background: $rep-border;
             color: $rep-muted;
             cursor: not-allowed;
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Page Navigation (Repairs vs Sales & Revenue)
+    // ---------------------------------------------------------------
+    &_nav {
+        display: flex;
+        gap: 4px;
+        background: $rep-card-bg;
+        padding: 4px;
+        border: 1px solid $rep-border;
+        border-radius: 999px;
+    }
+
+    &_nav_btn {
+        padding: 7px 16px;
+        border-radius: 999px;
+        border: none;
+        background: transparent;
+        font-size: 13px;
+        font-weight: 600;
+        color: $rep-muted;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all .15s ease;
+
+        &:hover {
+            color: $rep-text;
+            background: $rep-bg;
+        }
+
+        &.active {
+            background: $rep-primary;
+            color: #fff;
+            box-shadow: 0 2px 6px rgba(13, 148, 136, 0.25);
+        }
+    }
+
+    &_badge {
+        background: #e13b3b;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 999px;
+        line-height: 1.2;
+    }
+
+    &_refresh_btn {
+        border: 1px solid $rep-border;
+        background: $rep-card-bg;
+        color: $rep-text;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all .15s ease;
+
+        &:hover {
+            border-color: $rep-primary;
+            color: $rep-primary;
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Sales & Revenue Dashboard Layout
+    // ---------------------------------------------------------------
+    &_sales_wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        overflow-y: auto;
+        padding-right: 4px;
+        padding-bottom: 24px;
+    }
+
+    &_filter_bar {
+        background: $rep-card-bg;
+        border: 1px solid $rep-border;
+        border-radius: $rep-radius;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    &_filter_group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    &_filter_title {
+        font-size: 12px;
+        font-weight: 700;
+        color: $rep-muted;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    &_pills {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    &_pill {
+        border: 1px solid $rep-border;
+        background: $rep-bg;
+        color: $rep-text;
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+
+        &:hover {
+            border-color: $rep-primary;
+        }
+
+        &.active {
+            background: $rep-primary;
+            border-color: $rep-primary;
+            color: #fff;
+        }
+    }
+
+    &_custom_dates {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: $rep-bg;
+        padding: 4px 10px;
+        border-radius: 8px;
+        border: 1px solid $rep-border;
+    }
+
+    &_date_input {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: $rep-muted;
+
+        input[type="date"] {
+            border: 1px solid $rep-border;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 12px;
+            outline: none;
+            background: #fff;
+            color: $rep-text;
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // KPI Metrics Cards Grid
+    // ---------------------------------------------------------------
+    &_kpi_grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 12px;
+    }
+
+    &_kpi_card {
+        background: $rep-card-bg;
+        border: 1px solid $rep-border;
+        border-radius: $rep-radius;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform .15s ease, box-shadow .15s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .kpi_icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: $rep-bg;
+            color: $rep-primary;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .kpi_details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .kpi_label {
+            font-size: 11px;
+            font-weight: 700;
+            color: $rep-muted;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi_value {
+            font-size: 19px;
+            font-weight: 800;
+            color: $rep-text;
+            margin: 2px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .kpi_sub {
+            font-size: 11px;
+            color: $rep-muted;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .kpi_badge {
+            display: inline-block;
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 999px;
+            margin-top: 4px;
+            background: rgba(13, 148, 136, 0.1);
+            color: $rep-primary-dark;
+        }
+
+        &.primary_card {
+            border-left: 4px solid $rep-primary;
+            .kpi_icon {
+                background: rgba(13, 148, 136, 0.12);
+                color: $rep-primary;
+            }
+            .kpi_value {
+                color: $rep-primary-dark;
+            }
+        }
+
+        &.teal_card {
+            border-left: 4px solid #0d9488;
+            .kpi_icon {
+                background: rgba(13, 148, 136, 0.12);
+                color: #0d9488;
+            }
+        }
+
+        &.indigo_card {
+            border-left: 4px solid #6366f1;
+            .kpi_icon {
+                background: rgba(99, 102, 241, 0.12);
+                color: #6366f1;
+            }
+            .kpi_badge {
+                background: rgba(99, 102, 241, 0.12);
+                color: #4338ca;
+            }
+        }
+
+        &.amber_card {
+            border-left: 4px solid #f59e0b;
+            .kpi_icon {
+                background: rgba(245, 158, 11, 0.12);
+                color: #f59e0b;
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Charts Grid Area
+    // ---------------------------------------------------------------
+    &_charts_grid {
+        display: grid;
+        grid-template-columns: 2fr 1.2fr 1.2fr;
+        gap: 14px;
+
+        @media (max-width: 1200px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &_chart_box {
+        background: $rep-card-bg;
+        border: 1px solid $rep-border;
+        border-radius: $rep-radius;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        min-height: 310px;
+
+        .chart_header {
+            margin-bottom: 12px;
+        }
+
+        .chart_title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: $rep-text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart_subtitle {
+            font-size: 11px;
+            color: $rep-muted;
+            margin-top: 2px;
+        }
+
+        .chart_canvas_wrapper {
+            flex: 1;
+            position: relative;
+            min-height: 230px;
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // Ledger Transactions Table
+    // ---------------------------------------------------------------
+    &_table_card {
+        background: $rep-card-bg;
+        border: 1px solid $rep-border;
+        border-radius: $rep-radius;
+        padding: 16px;
+    }
+
+    &_table_header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        .table_title {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: $rep-text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table_count {
+            font-size: 12px;
+            color: $rep-muted;
+            font-weight: normal;
+        }
+
+        .table_search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid $rep-border;
+            border-radius: 999px;
+            padding: 6px 14px;
+            background: $rep-bg;
+            min-width: 260px;
+
+            i.fa-search {
+                color: $rep-muted;
+            }
+
+            input {
+                border: none;
+                outline: none;
+                background: transparent;
+                font-size: 12.5px;
+                flex: 1;
+            }
+
+            .table_search_clear {
+                cursor: pointer;
+                color: $rep-muted;
+                &:hover {
+                    color: $rep-danger;
+                }
+            }
+        }
+    }
+
+    &_table_responsive {
+        overflow-x: auto;
+    }
+
+    &_ledger_table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+
+        th {
+            text-align: left;
+            padding: 10px 12px;
+            background: $rep-bg;
+            color: $rep-muted;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            border-bottom: 1px solid $rep-border;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid $rep-border;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: rgba(13, 148, 136, 0.02);
+        }
+
+        .ref_tag {
+            font-family: monospace;
+            font-weight: 700;
+            color: $rep-primary-dark;
+            background: $rep-bg;
+            padding: 2px 7px;
+            border-radius: 4px;
+            border: 1px solid $rep-border;
+        }
+
+        .type_badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 999px;
+
+            &.repair {
+                background: rgba(13, 148, 136, 0.12);
+                color: $rep-primary-dark;
+            }
+
+            &.pos {
+                background: rgba(99, 102, 241, 0.12);
+                color: #4338ca;
+            }
+        }
+
+        .customer_name {
+            font-weight: 600;
+            color: $rep-text;
+        }
+
+        .customer_phone {
+            font-size: 11px;
+            color: $rep-muted;
+        }
+
+        .details_cell {
+            color: $rep-muted;
+            max-width: 240px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .extra_amount {
+            color: #d97706;
+            font-weight: 600;
+        }
+
+        .extra_reason {
+            font-size: 10.5px;
+            color: $rep-muted;
+            display: block;
+        }
+
+        .total_amount_cell {
+            font-weight: 800;
+            color: $rep-primary-dark;
+            font-size: 13.5px;
+        }
+
+        .table_receipt_btn {
+            border: 1px solid $rep-border;
+            background: $rep-bg;
+            color: $rep-text;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .15s ease;
+
+            &:hover {
+                border-color: $rep-primary;
+                color: $rep-primary;
+                background: #fff;
+            }
         }
     }
 }

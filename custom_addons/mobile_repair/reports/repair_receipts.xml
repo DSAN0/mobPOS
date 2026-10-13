@@ -99,7 +99,7 @@
 
                     <!-- Job Barcode -->
                     <div style="text-align: center; margin: 10px 0 4px 0; width: 100%;">
-                        <img t-att-src="'/report/barcode/?type=Code128&amp;value=%s&amp;width=600&amp;height=100&amp;humanreadable=0' % doc.name.replace('/', '-')"
+                        <img t-att-src="'/report/barcode/Code128/%s?width=600&amp;height=100&amp;humanreadable=0' % doc.name.replace('/', '-')"
                              style="width: 100%; max-width: 90%; height: 45px; display: block; margin: 0 auto;"/>
                         <div style="font-size: 15px; font-weight: 800; letter-spacing: 1px; margin-top: 4px;">
                             * <span t-field="doc.name"/> *
@@ -211,6 +211,27 @@
                     <!-- Full-width Divider -->
                     <div style="border-top: 2px dashed #000; margin: 8px 0; width: 100%;"></div>
 
+                    <!-- Cost Breakdown if Additional Cost exists -->
+                    <table t-if="doc.additional_cost" style="width: 100%; font-size: 15px; border-collapse: collapse; margin-bottom: 6px;">
+                        <tr>
+                            <td style="padding: 2px 0; color: #333;">Initial Estimate:</td>
+                            <td style="text-align: right; padding: 2px 0; font-weight: 700;">
+                                LKR <span t-field="doc.cost" t-options="{'widget': 'float', 'precision': 2}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 2px 0; color: #333;">
+                                Additional Cost:
+                                <div t-if="doc.additional_cost_reason" style="font-size: 13px; color: #555; font-weight: normal;">
+                                    (<span t-field="doc.additional_cost_reason"/>)
+                                </div>
+                            </td>
+                            <td style="text-align: right; padding: 2px 0; font-weight: 700;">
+                                + LKR <span t-field="doc.additional_cost" t-options="{'widget': 'float', 'precision': 2}"/>
+                            </td>
+                        </tr>
+                    </table>
+
                     <!-- Final Cost -->
                     <table style="width: 100%; font-size: 20px; border-collapse: collapse; margin: 8px 0;">
                         <tr style="font-weight: 900;">
@@ -218,7 +239,7 @@
                                 TOTAL PAID:
                             </td>
                             <td style="text-align: right; padding: 8px 0; border-top: 2px solid #000; border-bottom: 2px solid #000; font-size: 22px;">
-                                LKR <span t-field="doc.cost" t-options="{'widget': 'float', 'precision': 2}"/>
+                                LKR <span t-field="doc.total_cost" t-options="{'widget': 'float', 'precision': 2}"/>
                             </td>
                         </tr>
                     </table>
@@ -228,7 +249,7 @@
 
                     <!-- Barcode -->
                     <div style="text-align: center; margin: 10px 0 4px 0; width: 100%;">
-                        <img t-att-src="'/report/barcode/?type=Code128&amp;value=%s&amp;width=600&amp;height=100&amp;humanreadable=0' % doc.name.replace('/', '-')"
+                        <img t-att-src="'/report/barcode/Code128/%s?width=600&amp;height=100&amp;humanreadable=0' % doc.name.replace('/', '-')"
                              style="width: 100%; max-width: 90%; height: 45px; display: block; margin: 0 auto;"/>
                         <div style="font-size: 15px; font-weight: 800; letter-spacing: 1px; margin-top: 4px;">
                             * <span t-field="doc.name"/> *
